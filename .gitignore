@@ -1,0 +1,26 @@
+# Node (frontend)
+node_modules/
+dist/
+.vscode/
+.env
+npm-debug.log*
+
+# .NET (backend)
+bin/
+obj/
+*.user
+*.suo
+*.vs/
+*.db
+
+# IDE
+.idea/
+.vs/
+*.iml
+
+# Logs
+*.log
+
+# Others
+.DS_Store
+.env.local
