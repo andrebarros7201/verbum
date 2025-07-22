@@ -13,7 +13,7 @@ public class Post {
     [Required]
     [MinLength(3)]
     [MaxLength(500)]
-    public string Content { get; set; }
+    public string Text { get; set; }
 
     [Required] public int UserId { get; set; }
     [Required] public User User { get; set; }
