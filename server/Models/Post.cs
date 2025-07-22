@@ -25,6 +25,6 @@ public class Post {
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
     // Relationships
-    public List<Vote> Votes { get; set; } = new();
+    public List<VotePost> Votes { get; set; } = new();
     public List<Comment> Comments { get; set; } = new();
 }

@@ -1,11 +1,15 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Verbum.API.Models;
 
 public class UserCommunity {
-    public int UserId { get; set; }
-    public User User { get; set; }
+    [Required] public int UserId { get; set; }
 
-    public int CommunityId { get; set; }
-    public Community Community { get; set; }
+    [Required] public User User { get; set; }
+
+    [Required] public int CommunityId { get; set; }
+
+    [Required] public Community Community { get; set; }
 
     public bool IsAdmin { get; set; }
 }

@@ -13,8 +13,8 @@ public class Community {
     [Required] [StringLength(300)] public string Description { get; set; }
     [Required] public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    [Required] public int UserId { get; set; }
-    [Required] public User Owner { get; set; }
+     public int UserId { get; set; }
+     public User Owner { get; set; }
 
     // Relationships
     public List<UserCommunity> Members { get; set; } = new();
