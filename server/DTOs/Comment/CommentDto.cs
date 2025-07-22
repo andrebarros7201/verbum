@@ -7,5 +7,6 @@ public class CommentDto {
     public string Text { get; set; }
     public UserDto Author { get; set; }
     public int Votes { get; set; }
-    public DateTime Created { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 }
