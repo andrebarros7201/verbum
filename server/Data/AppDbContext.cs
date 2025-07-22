@@ -12,78 +12,115 @@ public class AppDbContext : DbContext {
     public DbSet<UserCommunity> UserCommunities { get; set; }
     public DbSet<Post> Posts { get; set; }
     public DbSet<Comment> Comments { get; set; }
-    public DbSet<Vote> Votes { get; set; }
+    public DbSet<VotePost> VotePosts { get; set; }
+    public DbSet<VoteComment> VoteComments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
 
-        // USER COMMUNITY
-        // Composite Key
+        // USER COMMUNITY - Composite Key
         modelBuilder.Entity<UserCommunity>()
             .HasKey(c => new { c.UserId, c.CommunityId });
 
+        // USER COMMUNITY - USER relationship
         modelBuilder.Entity<UserCommunity>()
             .HasOne(uc => uc.User)
             .WithMany(u => u.CommunitiesJoined)
-            .HasForeignKey(uc => uc.UserId);
+            .HasForeignKey(uc => uc.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
+        // USER COMMUNITY - COMMUNITY relationship
         modelBuilder.Entity<UserCommunity>()
             .HasOne(uc => uc.Community)
             .WithMany(c => c.Members)
-            .HasForeignKey(uc => uc.CommunityId);
+            .HasForeignKey(uc => uc.CommunityId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-        // POST - USER
+        // COMMUNITY - OWNER relationship
+        modelBuilder.Entity<Community>()
+            .HasOne(c => c.Owner)
+            .WithMany()
+            .HasForeignKey(c => c.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // POST - USER relationship
         modelBuilder.Entity<Post>()
             .HasOne(p => p.User)
             .WithMany(u => u.Posts)
             .HasForeignKey(p => p.UserId)
-            .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 
-        // POST - COMMUNITY
+        // POST - COMMUNITY relationship
         modelBuilder.Entity<Post>()
             .HasOne(p => p.Community)
             .WithMany(c => c.Posts)
             .HasForeignKey(p => p.CommunityId)
-            .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 
-        // COMMENT - USER
+        // COMMENT - USER relationship
         modelBuilder.Entity<Comment>()
             .HasOne(c => c.User)
             .WithMany(u => u.Comments)
             .HasForeignKey(c => c.UserId)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
-        // COMMENT - POST
+        // COMMENT - POST relationship
         modelBuilder.Entity<Comment>()
             .HasOne(c => c.Post)
             .WithMany(p => p.Comments)
             .HasForeignKey(c => c.PostId)
-            .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 
-        // VOTE - USER
-        modelBuilder.Entity<Vote>()
+        // VOTE - USER relationship
+        modelBuilder.Entity<VotePost>()
             .HasOne(v => v.User)
-            .WithMany(u => u.Votes)
+            .WithMany(u => u.VotePosts)
             .HasForeignKey(v => v.UserId)
-            .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 
-        // VOTE - POST
-        modelBuilder.Entity<Vote>()
+        modelBuilder.Entity<VoteComment>()
+            .HasOne(v => v.User)
+            .WithMany(u => u.VoteComments)
+            .HasForeignKey(v => v.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // VOTE - POST relationship
+        modelBuilder.Entity<VotePost>()
             .HasOne(v => v.Post)
             .WithMany(p => p.Votes)
             .HasForeignKey(v => v.PostId)
+            .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
 
-        // VOTE - COMMENT
-        modelBuilder.Entity<Vote>()
+        // VOTE - COMMENT relationship
+        modelBuilder.Entity<VoteComment>()
             .HasOne(v => v.Comment)
             .WithMany(c => c.Votes)
             .HasForeignKey(v => v.CommentId)
+            .IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
+
+        // Additional optimizations
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.Username)
+            .IsUnique();
+
+        modelBuilder.Entity<Community>()
+            .HasIndex(c => c.Name)
+            .IsUnique();
+
+        modelBuilder.Entity<Post>()
+            .HasIndex(p => p.CommunityId);
+
+        modelBuilder.Entity<Comment>()
+            .HasIndex(c => c.PostId);
+
+        modelBuilder.Entity<VotePost>()
+            .HasIndex(v => new { v.UserId, v.PostId })
+            .HasFilter("[PostId] IS NOT NULL");
+
+        modelBuilder.Entity<VoteComment>()
+            .HasIndex(v => new { v.UserId, v.CommentId })
+            .HasFilter("[CommentId] IS NOT NULL");
     }
 }
