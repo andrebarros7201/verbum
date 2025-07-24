@@ -10,6 +10,7 @@ namespace Verbum.API;
 
 public class Program {
     public static void Main(string[] args) {
+        Env.Load();
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddControllers();
@@ -20,6 +21,7 @@ public class Program {
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<IUserRepository, UserRepository>();
+        builder.Services.AddTransient<TokenService>();
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
@@ -35,7 +37,6 @@ public class Program {
         app.UseHttpsRedirection();
         app.UseAuthorization();
         app.MapControllers();
-        Env.Load();
 
         app.Run();
     }
