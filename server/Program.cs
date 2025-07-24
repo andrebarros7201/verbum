@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Verbum.API.Data;
 using Verbum.API.Interfaces.Repositories;
+using Verbum.API.Interfaces.Services;
 using Verbum.API.Repositories;
+using Verbum.API.Services;
 
 namespace Verbum.API;
 
@@ -15,6 +17,7 @@ public class Program {
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
         builder.Services.AddScoped<IUserRepository, UserRepository>();
+        builder.Services.AddScoped<IAuthService, AuthService>();
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
