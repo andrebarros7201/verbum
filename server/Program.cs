@@ -1,5 +1,8 @@
+using System.Text;
 using DotNetEnv;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Verbum.API.Data;
 using Verbum.API.Interfaces.Repositories;
 using Verbum.API.Interfaces.Services;
@@ -23,6 +26,24 @@ public class Program {
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddTransient<TokenService>();
 
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
+            options.Events = new JwtBearerEvents {
+                OnMessageReceived = context => {
+                    context.Token = context.Request.Cookies["token"];
+                    return Task.CompletedTask;
+                }
+            };
+            options.TokenValidationParameters = new TokenValidationParameters {
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = false,
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.ASCII.GetBytes(Configuration.JWT_SECRET)
+                )
+            };
+        });
+
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
@@ -35,6 +56,7 @@ public class Program {
         }
 
         app.UseHttpsRedirection();
+        app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
 

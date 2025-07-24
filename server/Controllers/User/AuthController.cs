@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Verbum.API.DTOs.User;
 using Verbum.API.Interfaces.Services;
@@ -59,5 +60,16 @@ public class AuthController : ControllerBase {
         bool result = await _authService.Register(dto);
 
         return result ? Created() : Conflict("User already exists");
+    }
+
+    /// <summary>
+    ///     Deletes the user JWT Token Cookie
+    /// </summary>
+    /// <response code="200">Deletes the token</response>
+    [Authorize]
+    [HttpGet("logout")]
+    public async Task<IActionResult> GetMe() {
+        Response.Cookies.Delete("token");
+        return Ok();
     }
 }
