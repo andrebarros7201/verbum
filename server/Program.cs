@@ -1,3 +1,4 @@
+using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Verbum.API.Data;
 using Verbum.API.Interfaces.Repositories;
@@ -34,6 +35,7 @@ public class Program {
         app.UseHttpsRedirection();
         app.UseAuthorization();
         app.MapControllers();
+        Env.Load();
 
         app.Run();
     }
