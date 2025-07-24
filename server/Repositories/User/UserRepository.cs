@@ -12,10 +12,20 @@ public class UserRepository : IUserRepository {
         _db = db;
     }
 
+    /// <summary>
+    ///     Finds the user on db
+    /// </summary>
+    /// <param name="username">Users Username</param>
+    /// <returns>User record</returns>
     public async Task<User> GetUserByUsernameAsync(string username) {
         return await _db.Users.FirstOrDefaultAsync(u => u.Username == username);
     }
 
+    /// <summary>
+    ///     Create a new user
+    /// </summary>
+    /// <param name="user">User object</param>
+    /// <returns>User record</returns>
     public async Task<User> AddAsync(User user) {
         _db.Users.Add(user);
         await _db.SaveChangesAsync();
@@ -36,6 +46,8 @@ public class UserRepository : IUserRepository {
 
     public async Task<bool> DeleteAsync(int id) {
         var user = await _db.Users.FindAsync(id);
+
+        // User not found
         if (user == null) {
             return false;
         }
