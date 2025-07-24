@@ -1,6 +1,5 @@
 namespace Verbum.API;
 
 static class Configuration {
-
-    internal static string JwtKey { get; set; } = Environment.GetEnvironmentVariable("JWT_KEY");
+    internal static string JWT_SECRET { get; } = Environment.GetEnvironmentVariable("JWT_SECRET");
 }
