@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Verbum.API.Data;
 using Verbum.API.Interfaces.Repositories;
 using Verbum.API.Models;
@@ -11,8 +12,8 @@ public class UserRepository : IUserRepository {
         _db = db;
     }
 
-    public async Task<User> GetUserByIdAsync(int id) {
-        return await _db.Users.FindAsync(id);
+    public async Task<User> GetUserByUsernameAsync(string username) {
+        return await _db.Users.FirstOrDefaultAsync(u => u.Username == username);
     }
 
     public async Task<User> AddAsync(User user) {
