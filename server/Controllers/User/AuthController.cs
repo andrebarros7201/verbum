@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Verbum.API.DTOs.User;
 using Verbum.API.Interfaces.Services;
+using Verbum.API.Services;
 
 namespace Verbum.API.Controllers;
 
@@ -8,9 +9,11 @@ namespace Verbum.API.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase {
     private readonly IAuthService _authService;
+    private readonly TokenService _tokenService;
 
-    public AuthController(IAuthService authService) {
+    public AuthController(IAuthService authService, TokenService tokenService) {
         _authService = authService;
+        _tokenService = tokenService;
     }
 
     /// <summary>
@@ -32,7 +35,12 @@ public class AuthController : ControllerBase {
             return NotFound(new { message = "Invalid credentials" });
         }
 
-        return Ok(result);
+        string token = _tokenService.GenerateToken(result);
+
+        Response.Cookies.Append("token", token,
+            new CookieOptions { HttpOnly = true, Secure = true, Expires = DateTime.UtcNow.AddDays(7), SameSite = SameSiteMode.Strict });
+
+        return Ok(new { message = "Login successful" });
     }
 
     /// <summary>
