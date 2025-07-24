@@ -7,11 +7,6 @@ using Verbum.API.DTOs.User;
 namespace Verbum.API.Services;
 
 public class TokenService {
-    private readonly IConfiguration _configuration;
-
-    public TokenService(IConfiguration configuration) {
-        _configuration = configuration;
-    }
 
     public string GenerateToken(UserDto user) {
         var handler = new JwtSecurityTokenHandler();
