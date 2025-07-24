@@ -4,8 +4,8 @@ namespace Verbum.API.Models;
 
 public class User {
     public int Id { get; set; }
-    [Required] [MinLength(3)] public string Username { get; set; }
-    [Required] [MinLength(6)] public string Password { get; set; }
+    [Required] [MinLength(3)] public string Username { get; set; } = string.Empty;
+    [Required] [MinLength(6)] public string Password { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     // Relationships
