@@ -40,7 +40,7 @@ public class AuthController : ControllerBase {
         Response.Cookies.Append("token", token,
             new CookieOptions { HttpOnly = true, Secure = true, Expires = DateTime.UtcNow.AddDays(7), SameSite = SameSiteMode.Strict });
 
-        return Ok(new { message = "Login successful" });
+        return Ok();
     }
 
     /// <summary>
