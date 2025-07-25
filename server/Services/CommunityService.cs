@@ -103,7 +103,8 @@ public class CommunityService : ICommunityService {
         var community = new Community {
             Name = dto.Name,
             Description = dto.Description,
-            UserId = userId
+            UserId = userId,
+            Owner = user
         };
 
         await _communityRepository.AddAsync(community);
