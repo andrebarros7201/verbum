@@ -10,5 +10,5 @@ public interface ICommunityService {
     Task<CommunityDto> UpdateCommunity(UpdateCommunityDto dto);
     Task<bool> JoinCommunity(int communityId, int userId);
     Task<bool> LeaveCommunity(int communityId, int userId);
-    Task<bool> DeleteCommunity(int id);
+    Task<bool> DeleteCommunity(int communityId, int userId);
 }
