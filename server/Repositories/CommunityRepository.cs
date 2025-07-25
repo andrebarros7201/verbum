@@ -14,15 +14,15 @@ public class CommunityRepository : ICommunityRepository {
 
 
     public async Task<Community> GetCommunityByIdAsync(int id) {
-        return await _db.Communities.Include(c => c.Members).FirstOrDefaultAsync(c => c.Id == id);
+        return await _db.Communities.Include(c => c.Members).ThenInclude(m => m.User).FirstOrDefaultAsync(c => c.Id == id);
     }
 
     public async Task<List<Community>> GetAllCommunitiesAsync() {
-        return await _db.Communities.Include(c => c.Members).ToListAsync();
+        return await _db.Communities.Include(c => c.Members).ThenInclude(m => m.User).ToListAsync();
     }
 
     public async Task<List<Community>> GetCommunitiesByNameAsync(string name) {
-        IQueryable<Community> result = _db.Communities.Where(c => c.Name.Contains(name)).Include(c => c.Members);
+        IQueryable<Community> result = _db.Communities.Where(c => c.Name.Contains(name)).Include(c => c.Members).ThenInclude(m => m.User);
         return await result.ToListAsync();
     }
 

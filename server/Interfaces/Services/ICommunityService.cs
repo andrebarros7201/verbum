@@ -8,5 +8,7 @@ public interface ICommunityService {
     Task<List<CommunityDto>> GetCommunitiesByName(string name);
     Task<CommunityDto> CreateCommunity(CreateCommunityDto dto, int userId);
     Task<CommunityDto> UpdateCommunity(UpdateCommunityDto dto);
+    Task<bool> JoinCommunity(int communityId, int userId);
+    Task<bool> LeaveCommunity(int communityId, int userId);
     Task<bool> DeleteCommunity(int id);
 }

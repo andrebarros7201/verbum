@@ -1,5 +1,6 @@
 using Verbum.API.DTOs.Community;
 using Verbum.API.DTOs.User;
+using Verbum.API.Interfaces;
 using Verbum.API.Interfaces.Repositories;
 using Verbum.API.Interfaces.Services;
 using Verbum.API.Models;
@@ -8,11 +9,14 @@ namespace Verbum.API.Services;
 
 public class CommunityService : ICommunityService {
     private readonly ICommunityRepository _communityRepository;
+    private readonly IUserCommunityRepository _userCommunityRepository;
     private readonly IUserRepository _userRepository;
 
-    public CommunityService(ICommunityRepository communityRepository, IUserRepository userRepository) {
+    public CommunityService(ICommunityRepository communityRepository, IUserRepository userRepository,
+        IUserCommunityRepository userCommunityRepository) {
         _communityRepository = communityRepository;
         _userRepository = userRepository;
+        _userCommunityRepository = userCommunityRepository;
     }
 
     public async Task<CommunityDto> GetCommunityById(int id) {
@@ -41,6 +45,40 @@ public class CommunityService : ICommunityService {
 
     public Task<CommunityDto> UpdateCommunity(UpdateCommunityDto dto) {
         throw new NotImplementedException();
+    }
+
+    public async Task<bool> JoinCommunity(int id, int userId) {
+        var community = await _communityRepository.GetCommunityByIdAsync(id);
+        if (community == null) {
+            return false;
+        }
+
+        bool isMember = community.Members.Any(m => m.UserId == userId);
+        if (isMember) {
+            return false;
+        }
+
+        var uc = new UserCommunity {
+            UserId = userId,
+            CommunityId = id
+        };
+        await _userCommunityRepository.AddUserToCommunity(uc);
+        return true;
+    }
+
+    public async Task<bool> LeaveCommunity(int id, int userId) {
+        var community = await _communityRepository.GetCommunityByIdAsync(id);
+        if (community == null) {
+            return false;
+        }
+
+        var uc = await _userCommunityRepository.GetUserCommunity(userId, id);
+        if (uc == null) {
+            return false;
+        }
+
+        await _userCommunityRepository.RemoveUserFromCommunity(uc);
+        return true;
     }
 
     public Task<bool> DeleteCommunity(int id) {

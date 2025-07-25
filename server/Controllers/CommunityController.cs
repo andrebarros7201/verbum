@@ -55,4 +55,29 @@ public class CommunityController : ControllerBase {
 
         return Ok(result);
     }
+
+    [HttpPost("{id}/join")]
+    public async Task<IActionResult> JoinCommunity([FromRoute] int id) {
+        string? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdClaim == null) {
+            return Unauthorized();
+        }
+
+        int userId = int.Parse(userIdClaim);
+        await _communityService.JoinCommunity(id, userId);
+        return Ok();
+    }
+
+    [HttpPost("{id}/leave")]
+    public async Task<IActionResult> LeaveCommunity([FromRoute] int id) {
+        string? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdClaim == null) {
+            return Unauthorized();
+        }
+
+        int userId = int.Parse(userIdClaim);
+        bool result = await _communityService.LeaveCommunity(id, userId);
+        return result ? Ok() : NotFound(new { message = "Something went wrong" });
+        ;
+    }
 }
