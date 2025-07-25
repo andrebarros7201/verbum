@@ -3,6 +3,7 @@ using Verbum.API.Models;
 namespace Verbum.API.Interfaces.Repositories;
 
 public interface ICommunityRepository {
+    Task<List<Community>> GetAllCommunitiesAsync();
     Task<Community> GetCommunityByIdAsync(int id);
     Task<Community> GetCommunityByNameAsync(string name);
     Task<List<Community>> GetCommunitiesByNameAsync(string name);
