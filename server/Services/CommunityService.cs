@@ -1,4 +1,5 @@
 using Verbum.API.DTOs.Community;
+using Verbum.API.DTOs.User;
 using Verbum.API.Interfaces.Repositories;
 using Verbum.API.Interfaces.Services;
 using Verbum.API.Models;
@@ -16,17 +17,26 @@ public class CommunityService : ICommunityService {
 
     public async Task<CommunityDto> GetCommunityById(int id) {
         var result = await _communityRepository.GetCommunityByIdAsync(id);
-        return new CommunityDto { Id = result.Id, Name = result.Name, Description = result.Description };
+        return new CommunityDto {
+            Id = result.Id, Name = result.Name, Description = result.Description,
+            Members = result.Members.Select(m => new UserDto { Id = m.UserId, Username = m.User.Username }).ToList()
+        };
     }
 
     public async Task<List<CommunityDto>> GetCommunities() {
         List<Community> result = await _communityRepository.GetAllCommunitiesAsync();
-        return result.Select(c => new CommunityDto { Id = c.Id, Name = c.Name, Description = c.Description }).ToList();
+        return result.Select(c => new CommunityDto {
+            Id = c.Id, Name = c.Name, Description = c.Description,
+            Members = c.Members.Select(m => new UserDto { Id = m.UserId, Username = m.User.Username }).ToList()
+        }).ToList();
     }
 
     public async Task<List<CommunityDto>> GetCommunitiesByName(string name) {
         List<Community> result = await _communityRepository.GetCommunitiesByNameAsync(name);
-        return result.Select(c => new CommunityDto { Id = c.Id, Name = c.Name, Description = c.Description }).ToList();
+        return result.Select(c => new CommunityDto {
+            Id = c.Id, Name = c.Name, Description = c.Description,
+            Members = c.Members.Select(m => new UserDto { Id = m.UserId, Username = m.User.Username }).ToList()
+        }).ToList();
     }
 
     public Task<CommunityDto> UpdateCommunity(UpdateCommunityDto dto) {
