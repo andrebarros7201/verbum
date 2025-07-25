@@ -39,7 +39,7 @@ public class Program {
                 ValidateIssuer = false,
                 ValidateAudience = false,
                 ValidateLifetime = true,
-                ValidateIssuerSigningKey = false,
+                ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(
                     Encoding.ASCII.GetBytes(Configuration.JWT_SECRET)
                 )

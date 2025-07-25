@@ -40,7 +40,7 @@ public class UserController : ControllerBase {
         string token = _tokenService.GenerateToken(result);
 
         Response.Cookies.Append("token", token,
-            new CookieOptions { HttpOnly = true, Secure = true, Expires = DateTime.UtcNow.AddDays(7), SameSite = SameSiteMode.Strict });
+            new CookieOptions { HttpOnly = true, Secure = false, Expires = DateTime.UtcNow.AddDays(7), SameSite = SameSiteMode.Lax });
 
         return Ok();
     }
