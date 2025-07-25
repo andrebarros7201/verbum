@@ -24,6 +24,10 @@ public class UserCommunityRepository : IUserCommunityRepository {
 
     public async Task<bool> RemoveUserFromCommunity(UserCommunity uc) {
         var userCommunity = await _db.UserCommunities.FindAsync(uc.UserId, uc.CommunityId);
+        if (userCommunity == null) {
+            return false;
+        }
+
         _db.UserCommunities.Remove(userCommunity);
         await _db.SaveChangesAsync();
         return true;
