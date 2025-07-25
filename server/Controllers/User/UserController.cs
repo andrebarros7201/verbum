@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Verbum.API.Interfaces.Services;
 
@@ -12,9 +14,12 @@ public class UserController : ControllerBase {
         _userService = userService;
     }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteUser(int id) {
-        bool result = await _userService.DeleteUser(id);
+
+    [Authorize]
+    [HttpDelete]
+    public async Task<IActionResult> DeleteUser() {
+        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        bool result = await _userService.DeleteUser(userId);
         return result ? Ok() : NotFound(new { message = "User not found" });
     }
 }
