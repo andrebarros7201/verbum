@@ -21,10 +21,6 @@ public class CommunityRepository : ICommunityRepository {
         return await _db.Communities.ToListAsync();
     }
 
-    public async Task<Community> GetCommunityByNameAsync(string name) {
-        return await _db.Communities.FirstOrDefaultAsync(c => c.Name == name);
-    }
-
     public async Task<List<Community>> GetCommunitiesByNameAsync(string name) {
         IQueryable<Community> result = _db.Communities.Where(c => c.Name.Contains(name));
         return await result.ToListAsync();
