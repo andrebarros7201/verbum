@@ -47,34 +47,37 @@ public class CommunityService : ICommunityService {
         throw new NotImplementedException();
     }
 
-    public async Task<bool> JoinCommunity(int id, int userId) {
-        var community = await _communityRepository.GetCommunityByIdAsync(id);
+    public async Task<bool> JoinCommunity(int communityId, int userId) {
+        var community = await _communityRepository.GetCommunityByIdAsync(communityId);
         if (community == null) {
             return false;
         }
 
-        bool isMember = community.Members.Any(m => m.UserId == userId);
-        if (isMember) {
-            return false;
+        var uc = await _userCommunityRepository.GetUserCommunity(userId, communityId);
+        // User is already a member
+        if (uc != null) {
+            return true;
         }
 
-        var uc = new UserCommunity {
+        var newUc = new UserCommunity {
             UserId = userId,
-            CommunityId = id
+            CommunityId = communityId
         };
-        await _userCommunityRepository.AddUserToCommunity(uc);
+
+        await _userCommunityRepository.AddUserToCommunity(newUc);
         return true;
     }
 
-    public async Task<bool> LeaveCommunity(int id, int userId) {
-        var community = await _communityRepository.GetCommunityByIdAsync(id);
+    public async Task<bool> LeaveCommunity(int communityId, int userId) {
+        var community = await _communityRepository.GetCommunityByIdAsync(communityId);
         if (community == null) {
             return false;
         }
 
-        var uc = await _userCommunityRepository.GetUserCommunity(userId, id);
+        var uc = await _userCommunityRepository.GetUserCommunity(userId, communityId);
+        // User is not a member
         if (uc == null) {
-            return false;
+            return true;
         }
 
         await _userCommunityRepository.RemoveUserFromCommunity(uc);
