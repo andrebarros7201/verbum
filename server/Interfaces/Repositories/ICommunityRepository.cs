@@ -1,0 +1,12 @@
+using Verbum.API.Models;
+
+namespace Verbum.API.Interfaces.Repositories;
+
+public interface ICommunityRepository {
+    Task<Community> GetCommunityByIdAsync(int id);
+    Task<Community> GetCommunityByNameAsync(string name);
+    Task<List<Community>> GetCommunitiesByNameAsync(string name);
+    Task<Community> AddAsync(Community community);
+    Task<Community> UpdateAsync(Community community);
+    Task<bool> DeleteAsync(int id);
+}
