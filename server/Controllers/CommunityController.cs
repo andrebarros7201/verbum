@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Verbum.API.DTOs.Community;
 using Verbum.API.Interfaces.Services;
@@ -28,6 +30,29 @@ public class CommunityController : ControllerBase {
     [HttpGet("{name}")]
     public async Task<IActionResult> GetCommunitiesByName(string name) {
         List<CommunityDto> result = await _communityService.GetCommunitiesByName(name);
+        return Ok(result);
+    }
+
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> CreateCommunity([FromBody] CreateCommunityDto dto) {
+        string? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdClaim == null) {
+            return Unauthorized();
+        }
+
+        int userId = int.Parse(userIdClaim);
+
+        if (!ModelState.IsValid) {
+            return BadRequest(ModelState);
+        }
+
+        var result = await _communityService.CreateCommunity(dto, userId);
+
+        if (result == null) {
+            return Conflict(new { message = "Community already exists" });
+        }
+
         return Ok(result);
     }
 }

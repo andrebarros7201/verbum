@@ -26,8 +26,10 @@ public class CommunityRepository : ICommunityRepository {
         return await result.ToListAsync();
     }
 
-    public Task<Community> AddAsync(Community community) {
-        throw new NotImplementedException();
+    public async Task<Community> AddAsync(Community community) {
+        await _db.Communities.AddAsync(community);
+        await _db.SaveChangesAsync();
+        return community;
     }
 
     public Task<Community> UpdateAsync(Community community) {
