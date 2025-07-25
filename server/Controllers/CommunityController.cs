@@ -15,8 +15,8 @@ public class CommunityController : ControllerBase {
         _communityService = communityService;
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetCommunityById(int id) {
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetCommunityById([FromRoute] int id) {
         var result = await _communityService.GetCommunityById(id);
         return Ok(result);
     }
@@ -27,8 +27,8 @@ public class CommunityController : ControllerBase {
         return Ok(result);
     }
 
-    [HttpGet("{name}")]
-    public async Task<IActionResult> GetCommunitiesByName(string name) {
+    [HttpGet("search")]
+    public async Task<IActionResult> GetCommunitiesByName([FromQuery] string name) {
         List<CommunityDto> result = await _communityService.GetCommunitiesByName(name);
         return Ok(result);
     }
