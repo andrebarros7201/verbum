@@ -64,8 +64,8 @@ public class CommunityController : ControllerBase {
         }
 
         int userId = int.Parse(userIdClaim);
-        await _communityService.JoinCommunity(id, userId);
-        return Ok();
+        bool result = await _communityService.JoinCommunity(id, userId);
+        return result ? Ok() : BadRequest(new { message = "Something went wrong" });
     }
 
     [HttpPost("{id}/leave")]
