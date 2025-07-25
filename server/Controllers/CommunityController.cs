@@ -77,7 +77,6 @@ public class CommunityController : ControllerBase {
 
         int userId = int.Parse(userIdClaim);
         bool result = await _communityService.LeaveCommunity(id, userId);
-        return result ? Ok() : NotFound(new { message = "Something went wrong" });
-        ;
+        return result ? Ok() : BadRequest(new { message = "Something went wrong" });
     }
 }
