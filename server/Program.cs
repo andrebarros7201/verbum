@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Verbum.API.Data;
+using Verbum.API.Interfaces;
 using Verbum.API.Interfaces.Repositories;
 using Verbum.API.Interfaces.Services;
 using Verbum.API.Repositories;
@@ -26,6 +27,7 @@ public class Program {
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<ICommunityRepository, CommunityRepository>();
         builder.Services.AddScoped<ICommunityService, CommunityService>();
+        builder.Services.AddScoped<IUserCommunityRepository, UserCommunityRepository>();
         builder.Services.AddTransient<TokenService>();
 
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
