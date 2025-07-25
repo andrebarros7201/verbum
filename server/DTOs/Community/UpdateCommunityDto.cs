@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Verbum.API.DTOs.Community;
 
-public class UpdateCommunity {
+public class UpdateCommunityDto {
     [Required]
     [MinLength(3)]
     [MaxLength(20)]
