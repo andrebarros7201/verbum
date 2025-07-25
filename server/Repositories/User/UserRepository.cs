@@ -12,6 +12,11 @@ public class UserRepository : IUserRepository {
         _db = db;
     }
 
+    public async Task<User> GetUserByIdAsync(int id) {
+        return await _db.Users.FindAsync(id);
+    }
+
+
     /// <summary>
     ///     Finds the user on db
     /// </summary>
