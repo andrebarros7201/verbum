@@ -84,10 +84,6 @@ public class CommunityService : ICommunityService {
         return true;
     }
 
-    public Task<bool> DeleteCommunity(int id) {
-        throw new NotImplementedException();
-    }
-
     public async Task<CommunityDto> CreateCommunity(CreateCommunityDto dto, int userId) {
         List<Community> exists = await _communityRepository.GetCommunitiesByNameAsync(dto.Name);
         if (exists.Count > 0) {
@@ -109,5 +105,20 @@ public class CommunityService : ICommunityService {
 
         await _communityRepository.AddAsync(community);
         return new CommunityDto { Id = community.Id, Name = community.Name, Description = community.Description };
+    }
+
+    public async Task<bool> DeleteCommunity(int communityId, int ownerId) {
+        var community = await _communityRepository.GetCommunityByIdAsync(communityId);
+        if (community == null) {
+            return false;
+        }
+
+        if (community.UserId != ownerId) {
+            return false;
+        }
+
+        bool result = await _communityRepository.DeleteAsync(communityId);
+
+        return result;
     }
 }

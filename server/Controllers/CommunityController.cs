@@ -79,4 +79,19 @@ public class CommunityController : ControllerBase {
         bool result = await _communityService.LeaveCommunity(id, userId);
         return result ? Ok() : BadRequest(new { message = "Something went wrong" });
     }
+
+    [Authorize]
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteCommunity([FromRoute] int id) {
+        string? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdClaim == null) {
+            return Unauthorized();
+        }
+
+        int userId = int.Parse(userIdClaim);
+        bool result = await _communityService.DeleteCommunity(id, userId);
+        return result ? Ok() : BadRequest(new { message = "Something went wrong" });
+    }
+
+    // TODO implement the update community
 }

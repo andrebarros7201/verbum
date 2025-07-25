@@ -36,7 +36,14 @@ public class CommunityRepository : ICommunityRepository {
         throw new NotImplementedException();
     }
 
-    public Task<bool> DeleteAsync(int id) {
-        throw new NotImplementedException();
+    public async Task<bool> DeleteAsync(int id) {
+        var community = await _db.Communities.FindAsync(id);
+        if (community == null) {
+            return false;
+        }
+
+        _db.Communities.Remove(community);
+        await _db.SaveChangesAsync();
+        return true;
     }
 }
