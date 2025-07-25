@@ -22,7 +22,7 @@ public class CommunityService : ICommunityService {
     public async Task<CommunityDto> GetCommunityById(int id) {
         var result = await _communityRepository.GetCommunityByIdAsync(id);
         return new CommunityDto {
-            Id = result.Id, Name = result.Name, Description = result.Description,
+            Id = result.Id, Name = result.Name, Description = result.Description, UserId = result.UserId,
             Members = result.Members.Select(m => new UserDto { Id = m.UserId, Username = m.User.Username }).ToList()
         };
     }
@@ -30,7 +30,7 @@ public class CommunityService : ICommunityService {
     public async Task<List<CommunityDto>> GetCommunities() {
         List<Community> result = await _communityRepository.GetAllCommunitiesAsync();
         return result.Select(c => new CommunityDto {
-            Id = c.Id, Name = c.Name, Description = c.Description,
+            Id = c.Id, Name = c.Name, Description = c.Description, UserId = c.UserId,
             Members = c.Members.Select(m => new UserDto { Id = m.UserId, Username = m.User.Username }).ToList()
         }).ToList();
     }
@@ -38,7 +38,7 @@ public class CommunityService : ICommunityService {
     public async Task<List<CommunityDto>> GetCommunitiesByName(string name) {
         List<Community> result = await _communityRepository.GetCommunitiesByNameAsync(name);
         return result.Select(c => new CommunityDto {
-            Id = c.Id, Name = c.Name, Description = c.Description,
+            Id = c.Id, Name = c.Name, Description = c.Description, UserId = c.UserId,
             Members = c.Members.Select(m => new UserDto { Id = m.UserId, Username = m.User.Username }).ToList()
         }).ToList();
     }
