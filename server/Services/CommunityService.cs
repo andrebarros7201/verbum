@@ -19,26 +19,53 @@ public class CommunityService : ICommunityService {
         _userCommunityRepository = userCommunityRepository;
     }
 
-    public async Task<CommunityDto> GetCommunityById(int id) {
+    /// <summary>
+    ///     Find a Community based on received ID
+    /// </summary>
+    /// <param name="id">Community ID</param>
+    /// <returns>Returns a community dto or null if it didn't find a community</returns>
+    public async Task<CommunityDto?> GetCommunityById(int id) {
         var result = await _communityRepository.GetCommunityByIdAsync(id);
+        if (result == null) {
+            return null;
+        }
+
         return new CommunityDto {
-            Id = result.Id, Name = result.Name, Description = result.Description, UserId = result.UserId,
+            Id = result.Id,
+            Name = result.Name,
+            Description = result.Description,
+            Owner = new UserDto { Id = result.UserId, Username = result.Owner.Username },
             Members = result.Members.Select(m => new UserDto { Id = m.UserId, Username = m.User.Username }).ToList()
         };
     }
 
+    /// <summary>
+    ///     Fetch all the communities as a list of Community DTO
+    /// </summary>
+    /// <returns>A list of Community DTO</returns>
     public async Task<List<CommunityDto>> GetCommunities() {
         List<Community> result = await _communityRepository.GetAllCommunitiesAsync();
         return result.Select(c => new CommunityDto {
-            Id = c.Id, Name = c.Name, Description = c.Description, UserId = c.UserId,
+            Id = c.Id,
+            Name = c.Name,
+            Description = c.Description,
+            Owner = new UserDto { Id = c.UserId, Username = c.Owner.Username },
             Members = c.Members.Select(m => new UserDto { Id = m.UserId, Username = m.User.Username }).ToList()
         }).ToList();
     }
 
+    /// <summary>
+    ///     Finds all the communities where its name contains the name received as argument
+    /// </summary>
+    /// <param name="name">Community Name</param>
+    /// <returns>Returns a list of Community DTO</returns>
     public async Task<List<CommunityDto>> GetCommunitiesByName(string name) {
         List<Community> result = await _communityRepository.GetCommunitiesByNameAsync(name);
         return result.Select(c => new CommunityDto {
-            Id = c.Id, Name = c.Name, Description = c.Description, UserId = c.UserId,
+            Id = c.Id,
+            Name = c.Name,
+            Description = c.Description,
+            Owner = new UserDto { Id = c.UserId, Username = c.Owner.Username },
             Members = c.Members.Select(m => new UserDto { Id = m.UserId, Username = m.User.Username }).ToList()
         }).ToList();
     }
@@ -100,11 +127,19 @@ public class CommunityService : ICommunityService {
             Name = dto.Name,
             Description = dto.Description,
             UserId = userId,
-            Owner = user
+            Owner = user,
+            Members = []
         };
 
         await _communityRepository.AddAsync(community);
-        return new CommunityDto { Id = community.Id, Name = community.Name, Description = community.Description };
+        await JoinCommunity(community.Id, userId);
+        return new CommunityDto {
+            Id = community.Id,
+            Name = community.Name,
+            Description = community.Description,
+            Owner = new UserDto { Id = community.UserId, Username = community.Owner.Username },
+            Members = community.Members.Select(m => new UserDto { Id = m.UserId, Username = m.User.Username }).ToList()
+        };
     }
 
     public async Task<bool> DeleteCommunity(int communityId, int ownerId) {
