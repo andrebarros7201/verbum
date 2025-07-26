@@ -12,18 +12,44 @@ public class CommunityRepository : ICommunityRepository {
         _db = db;
     }
 
-
-    public async Task<Community> GetCommunityByIdAsync(int id) {
-        return await _db.Communities.Include(c => c.Members).ThenInclude(m => m.User).FirstOrDefaultAsync(c => c.Id == id);
+    /// <summary>
+    ///     Finds the community by its ID
+    /// </summary>
+    /// <param name="id">Community ID</param>
+    /// <returns>Returns the community (model) or null.</returns>
+    public async Task<Community?> GetCommunityByIdAsync(int id) {
+        return await _db.Communities
+            .Where(c => c.Id == id)
+            .Include(c => c.Members)
+            .ThenInclude(m => m.User)
+            .FirstOrDefaultAsync();
     }
 
+    /// <summary>
+    ///     Fetch all the communities
+    /// </summary>
+    /// <returns>Returns a list with all the communities available. Never returns null. Can return a list of length 0.</returns>
     public async Task<List<Community>> GetAllCommunitiesAsync() {
-        return await _db.Communities.Include(c => c.Members).ThenInclude(m => m.User).ToListAsync();
+        return await _db.Communities
+            .Include(c => c.Members)
+            .ThenInclude(m => m.User)
+            .ToListAsync();
     }
 
+    /// <summary>
+    ///     Finds all communities that contain the name provided in the argument
+    /// </summary>
+    /// <param name="name">Name to find</param>
+    /// <returns>
+    ///     Returns a list of all the communities that contain the name provided. Can return an empty list if there was
+    ///     none.
+    /// </returns>
     public async Task<List<Community>> GetCommunitiesByNameAsync(string name) {
-        IQueryable<Community> result = _db.Communities.Where(c => c.Name.Contains(name)).Include(c => c.Members).ThenInclude(m => m.User);
-        return await result.ToListAsync();
+        return await _db.Communities
+            .Where(c => c.Name.ToLower().Contains(name.Trim().ToLower()))
+            .Include(c => c.Members)
+            .ThenInclude(m => m.User)
+            .ToListAsync();
     }
 
     public async Task<Community> AddAsync(Community community) {
