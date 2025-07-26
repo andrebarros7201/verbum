@@ -6,6 +6,6 @@ public class CommunityDto {
     public int Id { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
-    public int UserId { get; set; }
+    public UserDto Owner { get; set; }
     public List<UserDto> Members { get; set; }
 }
