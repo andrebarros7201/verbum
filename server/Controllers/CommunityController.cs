@@ -18,7 +18,7 @@ public class CommunityController : ControllerBase {
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetCommunityById([FromRoute] int id) {
         var result = await _communityService.GetCommunityById(id);
-        return Ok(result);
+        return result != null ? Ok(result) : NotFound(new { message = "Community not found" });
     }
 
     [HttpGet]
@@ -80,6 +80,7 @@ public class CommunityController : ControllerBase {
         return result ? Ok() : BadRequest(new { message = "Something went wrong" });
     }
 
+    // Only the owner can delete the community
     [Authorize]
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteCommunity([FromRoute] int id) {
@@ -92,6 +93,4 @@ public class CommunityController : ControllerBase {
         bool result = await _communityService.DeleteCommunity(id, userId);
         return result ? Ok() : BadRequest(new { message = "Something went wrong" });
     }
-
-    // TODO implement the update community
 }
