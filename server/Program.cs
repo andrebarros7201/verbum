@@ -28,6 +28,8 @@ public class Program {
         builder.Services.AddScoped<ICommunityRepository, CommunityRepository>();
         builder.Services.AddScoped<ICommunityService, CommunityService>();
         builder.Services.AddScoped<IUserCommunityRepository, UserCommunityRepository>();
+        builder.Services.AddScoped<IPostRepository, PostRepository>();
+        builder.Services.AddScoped<IPostService, PostService>();
         builder.Services.AddTransient<TokenService>();
 
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
