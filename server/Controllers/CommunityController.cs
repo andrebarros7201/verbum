@@ -23,13 +23,13 @@ public class CommunityController : ControllerBase {
 
     [HttpGet]
     public async Task<IActionResult> GetCommunities() {
-        List<CommunityDto> result = await _communityService.GetCommunities();
+        List<CommunitySimpleDto> result = await _communityService.GetCommunities();
         return Ok(result);
     }
 
     [HttpGet("search")]
     public async Task<IActionResult> GetCommunitiesByName([FromQuery] string name) {
-        List<CommunityDto> result = await _communityService.GetCommunitiesByName(name);
+        List<CommunitySimpleDto> result = await _communityService.GetCommunitiesByName(name);
         return Ok(result);
     }
 
