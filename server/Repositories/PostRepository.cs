@@ -13,7 +13,7 @@ public class PostRepository : IPostRepository {
     }
 
     public async Task<Post> GetPostByIdAsync(int id) {
-        return await _db.Posts.Include(p => p.User).FirstOrDefaultAsync(p => p.Id == id);
+        return await _db.Posts.Include(p => p.User).Include(p => p.Community).FirstOrDefaultAsync(p => p.Id == id);
     }
 
     public Task<List<Post>> GetPostsByCommunityIdAsync(int communityId) {

@@ -1,3 +1,4 @@
+using Verbum.API.DTOs.Comment;
 using Verbum.API.DTOs.Community;
 using Verbum.API.DTOs.Post;
 using Verbum.API.DTOs.User;
@@ -22,8 +23,34 @@ public class PostService : IPostService {
         _userCommunityRepository = userCommunityRepository;
     }
 
-    public Task<PostSimpleDto> GetPostById(int id) {
-        throw new NotImplementedException();
+    public async Task<PostCompleteDto?> GetPostById(int id) {
+        var post = await _postRepository.GetPostByIdAsync(id);
+        if (post == null) {
+            return null;
+        }
+
+        return new PostCompleteDto {
+            Id = post.Id,
+            Title = post.Title,
+            Text = post.Text,
+            Created = post.CreatedAt,
+            Updated = post.UpdatedAt,
+            User = new UserSimpleDto { Id = post.User.Id, Username = post.User.Username },
+            Votes = post.Votes != null ? post.Votes.Aggregate(0, (acc, curr) => acc + curr.Value) : 0,
+            Community = new CommunitySimpleDto {
+                Id = post.Community.Id, Name = post.Community.Name, Description = post.Community.Description,
+                MembersCount = post.Community.Members.Count, UserId = post.Community.UserId
+            },
+            CommentsCount = post.Comments.Count,
+            Comments = post.Comments.Select(c => new CommentDto {
+                Id = c.Id,
+                Author = new UserSimpleDto { Id = c.User.Id, Username = c.User.Username },
+                CreatedAt = c.CreatedAt,
+                Text = c.Text,
+                UpdatedAt = c.UpdatedAt,
+                Votes = c.Votes.Aggregate(0, (acc, curr) => acc + curr.Value)
+            }).ToList()
+        };
     }
 
     public Task<List<PostSimpleDto>> GetPostsByCommunityId(int communityId) {

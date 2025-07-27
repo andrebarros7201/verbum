@@ -15,6 +15,12 @@ public class PostController : ControllerBase {
         _postService = postService;
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetPostById([FromRoute] int id) {
+        var result = await _postService.GetPostById(id);
+        return result != null ? Ok(result) : NotFound(new { message = "Post not found" });
+    }
+
     [Authorize]
     [HttpPost]
     public async Task<IActionResult> CreatePost([FromBody] CreatePostDto dto) {
