@@ -36,12 +36,14 @@ public class AuthController : ControllerBase {
             return NotFound(new { message = "Invalid credentials" });
         }
 
-        string token = _tokenService.GenerateToken(result);
+        var user = new UserSimpleDto { Id = result.Id, Username = result.Username };
+
+        string token = _tokenService.GenerateToken(user);
 
         Response.Cookies.Append("token", token,
             new CookieOptions { HttpOnly = true, Secure = false, Expires = DateTime.UtcNow.AddDays(7), SameSite = SameSiteMode.Lax });
 
-        return Ok();
+        return Ok(result);
     }
 
     /// <summary>

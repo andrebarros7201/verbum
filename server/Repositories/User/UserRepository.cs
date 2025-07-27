@@ -22,8 +22,11 @@ public class UserRepository : IUserRepository {
     /// </summary>
     /// <param name="username">Users Username</param>
     /// <returns>User record</returns>
-    public async Task<User> GetUserByUsernameAsync(string username) {
-        return await _db.Users.FirstOrDefaultAsync(u => u.Username == username);
+    public async Task<User?> GetUserByUsernameAsync(string username) {
+        return await _db.Users.Include(u => u.Posts)
+            .Include(u => u.Comments)
+            .Include(u => u.CommunitiesJoined).ThenInclude(uc => uc.Community)
+            .FirstOrDefaultAsync(u => u.Username == username);
     }
 
     /// <summary>
@@ -31,7 +34,7 @@ public class UserRepository : IUserRepository {
     /// </summary>
     /// <param name="user">User object</param>
     /// <returns>User record</returns>
-    public async Task<User> AddAsync(User user) {
+    public async Task<User?> AddAsync(User? user) {
         _db.Users.Add(user);
         await _db.SaveChangesAsync();
         return user;
