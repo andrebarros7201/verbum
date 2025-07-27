@@ -13,5 +13,5 @@ public class CreatePostDto {
     [MaxLength(500)]
     public string Text { get; set; }
 
-    public int CommunityId { get; set; }
+    [Required] public int CommunityId { get; set; }
 }
