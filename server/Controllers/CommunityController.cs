@@ -107,11 +107,6 @@ public class CommunityController : ControllerBase {
             return BadRequest(ModelState);
         }
 
-        var community = await _communityService.GetCommunityById(id);
-        if (community == null) {
-            return NotFound(new { message = "Community not found" });
-        }
-
         var result = await _communityService.UpdateCommunity(userId, id, dto);
         return result != null ? Ok(result) : BadRequest(new { message = "Something went wrong" });
     }

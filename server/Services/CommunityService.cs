@@ -155,6 +155,9 @@ public class CommunityService : ICommunityService {
 
     public async Task<CommunityDto> UpdateCommunity(int userId, int communityId, UpdateCommunityDto dto) {
         var community = await _communityRepository.GetCommunityByIdAsync(communityId);
+        if (community == null) {
+            return null;
+        }
 
         bool isAdminOrOwner = community.Members.Any(m => m.UserId == userId) || community.UserId == userId;
         if (!isAdminOrOwner) {
