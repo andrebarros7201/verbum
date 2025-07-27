@@ -12,7 +12,7 @@ public class AuthService : IAuthService {
         _userRepository = userRepository;
     }
 
-    public async Task<UserDto?> Login(UserLoginDto user) {
+    public async Task<UserSimpleDto?> Login(UserLoginDto user) {
         var existingUser = await _userRepository.GetUserByUsernameAsync(user.Username);
         if (existingUser == null) {
             return null;
@@ -21,7 +21,7 @@ public class AuthService : IAuthService {
         // Check if hashed password matches password stored in db
         bool isMatch = BCrypt.Net.BCrypt.Verify(user.Password, existingUser.Password);
 
-        return isMatch ? new UserDto { Id = existingUser.Id, Username = existingUser.Username } : null;
+        return isMatch ? new UserSimpleDto { Id = existingUser.Id, Username = existingUser.Username } : null;
     }
 
     public async Task<bool> Register(CreateUserDto user) {

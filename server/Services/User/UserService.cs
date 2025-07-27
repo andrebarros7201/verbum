@@ -11,13 +11,13 @@ public class UserService : IUserService {
         _userRepository = userRepository;
     }
 
-    public async Task<UserDto> GetUser(string username) {
+    public async Task<UserSimpleDto> GetUser(string username) {
         var user = await _userRepository.GetUserByUsernameAsync(username);
 
-        return user == null ? null : new UserDto { Id = user.Id, Username = user.Username };
+        return user == null ? null : new UserSimpleDto { Id = user.Id, Username = user.Username };
     }
 
-    public async Task<UserDto> UpdateUser(UpdateUserDto dto) {
+    public async Task<UserSimpleDto> UpdateUser(UpdateUserDto dto) {
         var user = await _userRepository.GetUserByIdAsync(dto.Id);
         if (user == null) {
             return null;
@@ -27,7 +27,7 @@ public class UserService : IUserService {
         user.Password = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
         var updatedUser = await _userRepository.UpdateAsync(user);
-        return updatedUser == null ? null : new UserDto { Id = updatedUser.Id, Username = updatedUser.Username };
+        return updatedUser == null ? null : new UserSimpleDto { Id = updatedUser.Id, Username = updatedUser.Username };
     }
 
     public async Task<bool> DeleteUser(int id) {
