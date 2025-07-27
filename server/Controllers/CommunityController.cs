@@ -93,4 +93,26 @@ public class CommunityController : ControllerBase {
         bool result = await _communityService.DeleteCommunity(id, userId);
         return result ? Ok() : BadRequest(new { message = "Something went wrong" });
     }
+
+    [Authorize]
+    [HttpPatch("{id:int}")]
+    public async Task<IActionResult> UpdateCommunity([FromRoute] int id, [FromBody] UpdateCommunityDto dto) {
+        string? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdClaim == null) {
+            return Unauthorized();
+        }
+
+        int userId = int.Parse(userIdClaim);
+        if (!ModelState.IsValid) {
+            return BadRequest(ModelState);
+        }
+
+        var community = await _communityService.GetCommunityById(id);
+        if (community == null) {
+            return NotFound(new { message = "Community not found" });
+        }
+
+        var result = await _communityService.UpdateCommunity(userId, id, dto);
+        return result != null ? Ok(result) : BadRequest(new { message = "Something went wrong" });
+    }
 }

@@ -58,8 +58,10 @@ public class CommunityRepository : ICommunityRepository {
         return community;
     }
 
-    public Task<Community> UpdateAsync(Community community) {
-        throw new NotImplementedException();
+    public async Task<Community> UpdateAsync(Community community) {
+        _db.Communities.Update(community);
+        await _db.SaveChangesAsync();
+        return community;
     }
 
     public async Task<bool> DeleteAsync(int id) {

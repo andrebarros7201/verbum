@@ -70,10 +70,6 @@ public class CommunityService : ICommunityService {
         }).ToList();
     }
 
-    public Task<CommunityDto> UpdateCommunity(UpdateCommunityDto dto) {
-        throw new NotImplementedException();
-    }
-
     public async Task<bool> JoinCommunity(int communityId, int userId) {
         var community = await _communityRepository.GetCommunityByIdAsync(communityId);
         if (community == null) {
@@ -155,5 +151,27 @@ public class CommunityService : ICommunityService {
         bool result = await _communityRepository.DeleteAsync(communityId);
 
         return result;
+    }
+
+    public async Task<CommunityDto> UpdateCommunity(int userId, int communityId, UpdateCommunityDto dto) {
+        var community = await _communityRepository.GetCommunityByIdAsync(communityId);
+
+        bool isAdminOrOwner = community.Members.Any(m => m.UserId == userId) || community.UserId == userId;
+        if (!isAdminOrOwner) {
+            return null;
+        }
+
+        community.Name = dto.Name;
+        community.Description = dto.Description;
+
+        await _communityRepository.UpdateAsync(community);
+
+        return new CommunityDto {
+            Id = community.Id,
+            Name = community.Name,
+            Description = community.Description,
+            Owner = new UserDto { Id = community.UserId, Username = community.Owner.Username },
+            Members = community.Members.Select(m => new UserDto { Id = m.UserId, Username = m.User.Username }).ToList()
+        };
     }
 }
