@@ -119,8 +119,14 @@ public class AppDbContext : DbContext {
             .HasIndex(v => new { v.UserId, v.PostId })
             .HasFilter("[PostId] IS NOT NULL");
 
+        modelBuilder.Entity<VotePost>()
+            .HasKey(c => new { c.UserId, c.PostId });
+
         modelBuilder.Entity<VoteComment>()
             .HasIndex(v => new { v.UserId, v.CommentId })
             .HasFilter("[CommentId] IS NOT NULL");
+
+        modelBuilder.Entity<VoteComment>()
+            .HasKey(c => new { c.UserId, c.CommentId });
     }
 }
