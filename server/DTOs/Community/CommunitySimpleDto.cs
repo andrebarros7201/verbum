@@ -1,11 +1,9 @@
-using Verbum.API.DTOs.User;
-
 namespace Verbum.API.DTOs.Community;
 
-public class CommunityDto {
+public class CommunitySimpleDto {
     public int Id { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
-    public UserDto Owner { get; set; }
-    public List<UserDto> Members { get; set; }
+    public int UserId { get; set; }
+    public int MembersCount { get; set; }
 }

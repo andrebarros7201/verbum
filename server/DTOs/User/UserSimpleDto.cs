@@ -1,6 +1,6 @@
 namespace Verbum.API.DTOs.User;
 
-public class UserDto {
+public class UserSimpleDto {
     public int Id { get; set; }
     public string Username { get; set; }
 }

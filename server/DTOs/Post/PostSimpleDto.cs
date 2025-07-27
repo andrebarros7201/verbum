@@ -3,11 +3,12 @@ using Verbum.API.DTOs.User;
 
 namespace Verbum.API.DTOs.Post;
 
-public class PostDto {
+public class PostSimpleDto {
     public int Id { get; set; }
     public string Title { get; set; } = string.Empty;
-    public string Text { get; set; } = string.Empty;
+    public int Votes { get; set; }
+    public int CommentsCount { get; set; }
     public DateTime Created { get; set; }
-    public UserDto User { get; set; }
-    public CommunityDto Community { get; set; }
+    public UserSimpleDto UserSimple { get; set; }
+    public CommunitySimpleDto Community { get; set; }
 }
