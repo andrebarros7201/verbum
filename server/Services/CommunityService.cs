@@ -141,6 +141,10 @@ public class CommunityService : ICommunityService {
                     CommentsCount = p.Comments.Count,
                     Created = p.CreatedAt,
                     Title = p.Title,
+                    Community = new CommunitySimpleDto {
+                        Id = p.Community.Id, Name = p.Community.Name, Description = p.Community.Description,
+                        MembersCount = p.Community.Members.Count, UserId = p.Community.UserId
+                    },
                     User = new UserSimpleDto { Id = p.User.Id, Username = p.User.Username },
                     Votes = p?.Votes?.Aggregate(0, (acc, curr) => acc + curr.Value) ?? 0
                 })

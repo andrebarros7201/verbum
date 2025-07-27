@@ -22,6 +22,7 @@ public class CommunityRepository : ICommunityRepository {
             .Where(c => c.Id == id)
             .Include(c => c.Members)
             .ThenInclude(m => m.User)
+            .Include(c => c.Posts)
             .FirstOrDefaultAsync();
     }
 
