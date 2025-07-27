@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Verbum.API.Data;
 using Verbum.API.Interfaces.Repositories;
 using Verbum.API.Models;
@@ -11,8 +12,8 @@ public class PostRepository : IPostRepository {
         _db = db;
     }
 
-    public Task<Post> GetPostByIdAsync(int id) {
-        throw new NotImplementedException();
+    public async Task<Post> GetPostByIdAsync(int id) {
+        return await _db.Posts.Include(p => p.User).FirstOrDefaultAsync(p => p.Id == id);
     }
 
     public Task<List<Post>> GetPostsByCommunityIdAsync(int communityId) {
@@ -29,7 +30,14 @@ public class PostRepository : IPostRepository {
         throw new NotImplementedException();
     }
 
-    public Task<bool> DeleteAsync(int id) {
-        throw new NotImplementedException();
+    public async Task<bool> DeleteAsync(int id) {
+        var post = await _db.Posts.FindAsync(id);
+        if (post == null) {
+            return false;
+        }
+
+        _db.Posts.Remove(post);
+        await _db.SaveChangesAsync();
+        return true;
     }
 }

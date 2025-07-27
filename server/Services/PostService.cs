@@ -79,7 +79,17 @@ public class PostService : IPostService {
         throw new NotImplementedException();
     }
 
-    public Task<bool> DeletePost(int userId, int postId) {
-        throw new NotImplementedException();
+    public async Task<bool> DeletePost(int userId, int postId) {
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        var post = await _postRepository.GetPostByIdAsync(postId);
+        if (user == null || post == null) {
+            return false;
+        }
+
+        if (user.Id != post.UserId) {
+            return false;
+        }
+
+        return await _postRepository.DeleteAsync(postId);
     }
 }

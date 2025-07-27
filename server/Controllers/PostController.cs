@@ -31,4 +31,16 @@ public class PostController : ControllerBase {
         var result = await _postService.CreatePost(dto, userId);
         return result != null ? Ok(result) : BadRequest(new { message = "Something went wrong" });
     }
+
+    [Authorize]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeletePost([FromRoute] int id) {
+        string? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdClaim == null) {
+            return Unauthorized();
+        }
+
+        bool result = await _postService.DeletePost(int.Parse(userIdClaim), id);
+        return result ? Ok() : BadRequest(new { message = "Something went wrong" });
+    }
 }
