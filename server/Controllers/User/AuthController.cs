@@ -68,7 +68,7 @@ public class AuthController : ControllerBase {
     /// <response code="200">Deletes the token</response>
     [Authorize]
     [HttpGet("logout")]
-    public async Task<IActionResult> GetMe() {
+    public async Task<IActionResult> Logout() {
         Response.Cookies.Delete("token");
         return Ok();
     }
