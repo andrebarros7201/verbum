@@ -12,7 +12,7 @@ public class UserCommunityRepository : IUserCommunityRepository {
         _db = db;
     }
 
-    public async Task<UserCommunity> GetUserCommunity(int userId, int communityId) {
+    public async Task<UserCommunity?> GetUserCommunity(int userId, int communityId) {
         return await _db.UserCommunities.FindAsync(userId, communityId);
     }
 
