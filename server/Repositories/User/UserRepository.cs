@@ -13,7 +13,10 @@ public class UserRepository : IUserRepository {
     }
 
     public async Task<User> GetUserByIdAsync(int id) {
-        return await _db.Users.FindAsync(id);
+        return await _db.Users.Include(u => u.Posts)
+            .Include(u => u.Comments)
+            .Include(u => u.CommunitiesJoined).ThenInclude(uc => uc.Community)
+            .FirstOrDefaultAsync(u => u.Id == id);
     }
 
 

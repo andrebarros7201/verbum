@@ -19,6 +19,18 @@ public class UserController : ControllerBase {
     }
 
     [Authorize]
+    [HttpGet("me")]
+    public async Task<IActionResult> GetMe() {
+        string? userClaimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userClaimId == null) {
+            return Unauthorized();
+        }
+
+        var result = await _userService.GetUserCompleteById(int.Parse(userClaimId));
+        return result != null ? Ok(result) : NotFound(new { message = "User not found" });
+    }
+
+    [Authorize]
     [HttpPatch]
     public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto dto) {
         if (!ModelState.IsValid) {
