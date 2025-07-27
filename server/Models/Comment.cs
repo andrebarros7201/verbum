@@ -11,12 +11,12 @@ public class Comment {
     public string Text { get; set; }
 
     [Required] public int UserId { get; set; }
-    [Required] public User User { get; set; }
+    public User User { get; set; }
 
     [Required] public int PostId { get; set; }
-    [Required] public Post Post { get; set; }
+    public Post Post { get; set; }
 
     public List<VoteComment> Votes { get; set; } = new();
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime UpdatedAt { get; set; }
+    [Required] public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; }
 }

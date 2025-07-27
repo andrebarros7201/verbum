@@ -6,10 +6,10 @@ public class VotePost {
     public int Id { get; set; }
 
     [Required] public int UserId { get; set; }
-    [Required] public User User { get; set; }
+    public User User { get; set; }
 
     [Required] public int PostId { get; set; }
-    [Required] public Post Post { get; set; }
+    public Post Post { get; set; }
 
-    [Range(-1, 1)] public int Value { get; set; }
+    [Required] [Range(-1, 1)] public int Value { get; set; }
 }

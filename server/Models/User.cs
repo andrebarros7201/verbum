@@ -6,7 +6,8 @@ public class User {
     public int Id { get; set; }
     [Required] [MinLength(3)] public string Username { get; set; } = string.Empty;
     [Required] [MinLength(6)] public string Password { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    [Required] public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; }
 
     // Relationships
     public List<UserCommunity> CommunitiesJoined { get; set; } = new();
