@@ -39,6 +39,22 @@ public class PostController : ControllerBase {
     }
 
     [Authorize]
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> UpdatePost([FromRoute] int id, [FromBody] UpdatePostDto dto) {
+        string? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdClaim == null) {
+            return Unauthorized();
+        }
+
+        if (!ModelState.IsValid) {
+            return BadRequest(ModelState);
+        }
+
+        var result = await _postService.UpdatePost(int.Parse(userIdClaim), id, dto);
+        return result != null ? Ok(result) : BadRequest(new { message = "Something went wrong" });
+    }
+
+    [Authorize]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePost([FromRoute] int id) {
         string? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

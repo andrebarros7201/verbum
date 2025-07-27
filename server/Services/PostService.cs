@@ -53,10 +53,6 @@ public class PostService : IPostService {
         };
     }
 
-    public Task<List<PostSimpleDto>> GetPostsByCommunityId(int communityId) {
-        throw new NotImplementedException();
-    }
-
     public async Task<PostSimpleDto> CreatePost(CreatePostDto dto, int userId) {
         var user = await _userRepository.GetUserByIdAsync(userId);
         var community = await _communityRepository.GetCommunityByIdAsync(dto.CommunityId);
@@ -102,8 +98,32 @@ public class PostService : IPostService {
         };
     }
 
-    public Task<PostSimpleDto> UpdatePost(int userId, int postId, UpdatePostDto dto) {
-        throw new NotImplementedException();
+    public async Task<PostSimpleDto?> UpdatePost(int userId, int postId, UpdatePostDto dto) {
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        var post = await _postRepository.GetPostByIdAsync(postId);
+        if (user == null || post == null) {
+            return null;
+        }
+
+        if (user.Id != post.UserId) {
+            return null;
+        }
+
+        post.Title = dto.Title;
+        post.Text = dto.Text;
+        post.UpdatedAt = DateTime.Now;
+
+        await _postRepository.UpdateAsync(post);
+        return new PostSimpleDto {
+            Id = post.Id, Title = post.Title, Created = post.CreatedAt,
+            Votes = post.Votes.Aggregate(0, (acc, curr) => acc + curr.Value),
+            Community = new CommunitySimpleDto {
+                Id = post.Community.Id, MembersCount = post.Community.Members.Count, UserId = post.Community.UserId, Name = post.Community.Name,
+                Description = post.Community.Description
+            },
+            CommentsCount = post.Comments.Count,
+            User = new UserSimpleDto { Id = post.User.Id, Username = post.User.Username }
+        };
     }
 
     public async Task<bool> DeletePost(int userId, int postId) {

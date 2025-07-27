@@ -26,8 +26,10 @@ public class PostRepository : IPostRepository {
         return post;
     }
 
-    public Task<Post> UpdateAsync(Post post) {
-        throw new NotImplementedException();
+    public async Task<Post> UpdateAsync(Post post) {
+        _db.Posts.Update(post);
+        await _db.SaveChangesAsync();
+        return post;
     }
 
     public async Task<bool> DeleteAsync(int id) {
