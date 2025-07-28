@@ -17,19 +17,23 @@ public class CommunityController : ControllerBase {
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetCommunityById([FromRoute] int id) {
-        var result = await _communityService.GetCommunityById(id);
+        string? userClaimsId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        var result = await _communityService.GetCommunityById(id, int.Parse(userClaimsId ?? "0"));
         return result != null ? Ok(result) : NotFound(new { message = "Community not found" });
     }
 
     [HttpGet]
     public async Task<IActionResult> GetCommunities() {
-        List<CommunitySimpleDto> result = await _communityService.GetCommunities();
+        string? userClaimsId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        List<CommunitySimpleDto> result = await _communityService.GetCommunities(int.Parse(userClaimsId));
         return Ok(result);
     }
 
     [HttpGet("search")]
     public async Task<IActionResult> GetCommunitiesByName([FromQuery] string name) {
-        List<CommunitySimpleDto> result = await _communityService.GetCommunitiesByName(name);
+        string? userClaimsId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        List<CommunitySimpleDto> result = await _communityService.GetCommunitiesByName(name, int.Parse(userClaimsId ?? "0"));
         return Ok(result);
     }
 

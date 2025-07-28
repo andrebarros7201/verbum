@@ -17,7 +17,8 @@ public class PostController : ControllerBase {
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetPostById([FromRoute] int id) {
-        var result = await _postService.GetPostById(id);
+        string? userClaimsId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var result = await _postService.GetPostById(id, int.Parse(userClaimsId ?? "0"));
         return result != null ? Ok(result) : NotFound(new { message = "Post not found" });
     }
 
@@ -50,7 +51,7 @@ public class PostController : ControllerBase {
             return BadRequest(ModelState);
         }
 
-        var result = await _postService.UpdatePost(int.Parse(userIdClaim), id, dto);
+        var result = await _postService.UpdatePost(int.Parse(userIdClaim ?? "0"), id, dto);
         return result != null ? Ok(result) : BadRequest(new { message = "Something went wrong" });
     }
 
@@ -62,7 +63,21 @@ public class PostController : ControllerBase {
             return Unauthorized();
         }
 
-        bool result = await _postService.DeletePost(int.Parse(userIdClaim), id);
+        bool result = await _postService.DeletePost(int.Parse(userIdClaim ?? "0"), id);
         return result ? Ok() : BadRequest(new { message = "Something went wrong" });
+    }
+
+    [Authorize]
+    [HttpPost("{id}/like")]
+    public async Task<IActionResult> LikePost([FromRoute] int id) {
+        string? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdClaim == null) {
+            return Unauthorized();
+        }
+
+        var result = await _postService.PostVote(int.Parse(userIdClaim), id, 1);
+        var updatedPost = await _postService.GetPostById(id, int.Parse(userIdClaim));
+        ;
+        return result != null ? Ok(updatedPost) : BadRequest(new { message = "Something went wrong" });
     }
 }
