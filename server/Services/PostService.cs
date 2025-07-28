@@ -23,7 +23,7 @@ public class PostService : IPostService {
         _userCommunityRepository = userCommunityRepository;
     }
 
-    public async Task<PostCompleteDto?> GetPostById(int id) {
+    public async Task<PostCompleteDto?> GetPostById(int id, int userId) {
         var post = await _postRepository.GetPostByIdAsync(id);
         if (post == null) {
             return null;
@@ -39,7 +39,9 @@ public class PostService : IPostService {
             Votes = post.Votes != null ? post.Votes.Aggregate(0, (acc, curr) => acc + curr.Value) : 0,
             Community = new CommunitySimpleDto {
                 Id = post.Community.Id, Name = post.Community.Name, Description = post.Community.Description,
-                MembersCount = post.Community.Members.Count, UserId = post.Community.UserId
+                MembersCount = post.Community.Members.Count, UserId = post.Community.UserId,
+                isMember = post.Community.Members.Any(m => m.UserId == userId),
+                isOwner = post.Community.UserId == userId
             },
             CommentsCount = post.Comments.Count,
             Comments = post.Comments.Select(c => new CommentDto {
@@ -77,14 +79,6 @@ public class PostService : IPostService {
         };
 
         var userDto = new UserSimpleDto { Id = user.Id, Username = user.Username };
-        var communityDto = new CommunitySimpleDto {
-            Id = community.Id,
-            Name = community.Name,
-            Description = community.Description,
-            UserId = community.UserId,
-            MembersCount = community.Members.Count
-        };
-
         await _postRepository.AddAsync(post);
 
         return new PostSimpleDto {
@@ -94,7 +88,7 @@ public class PostService : IPostService {
             User = userDto,
             CommentsCount = post.Comments.Count,
             Votes = post.Votes != null ? post.Votes.Aggregate(0, (acc, curr) => acc + curr.Value) : 0,
-            Community = communityDto
+            CommunityId = post.CommunityId
         };
     }
 
@@ -117,10 +111,7 @@ public class PostService : IPostService {
         return new PostSimpleDto {
             Id = post.Id, Title = post.Title, Created = post.CreatedAt,
             Votes = post.Votes.Aggregate(0, (acc, curr) => acc + curr.Value),
-            Community = new CommunitySimpleDto {
-                Id = post.Community.Id, MembersCount = post.Community.Members.Count, UserId = post.Community.UserId, Name = post.Community.Name,
-                Description = post.Community.Description
-            },
+            CommunityId = post.CommunityId,
             CommentsCount = post.Comments.Count,
             User = new UserSimpleDto { Id = post.User.Id, Username = post.User.Username }
         };
@@ -138,5 +129,13 @@ public class PostService : IPostService {
         }
 
         return await _postRepository.DeleteAsync(postId);
+    }
+
+    // Todo create VotePost Repo and finish this
+    // Check if composite key exists
+    // Check if value is the same. If so delete it
+    // If not, change the value
+    public async Task<PostCompleteDto?> PostVote(int userId, int communityId, int value) {
+        throw new NotImplementedException();
     }
 }

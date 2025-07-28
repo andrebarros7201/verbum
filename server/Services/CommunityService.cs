@@ -20,21 +20,6 @@ public class CommunityService : ICommunityService {
         _userCommunityRepository = userCommunityRepository;
     }
 
-    /// <summary>
-    ///     Fetch all the communities as a list of Community DTO
-    /// </summary>
-    /// <returns>A list of Community DTO</returns>
-    public async Task<List<CommunitySimpleDto>> GetCommunities() {
-        List<Community> result = await _communityRepository.GetAllCommunitiesAsync();
-        return result.Select(c => new CommunitySimpleDto {
-            Id = c.Id,
-            Name = c.Name,
-            Description = c.Description,
-            UserId = c.UserId,
-            MembersCount = c.Members.Count
-        }).ToList();
-    }
-
     public async Task<bool> JoinCommunity(int communityId, int userId) {
         var community = await _communityRepository.GetCommunityByIdAsync(communityId);
         if (community == null) {
@@ -113,43 +98,9 @@ public class CommunityService : ICommunityService {
             Name = community.Name,
             Description = community.Description,
             UserId = community.UserId,
-            MembersCount = community.Members.Count
-        };
-    }
-
-    /// <summary>
-    ///     Find a Community based on received ID
-    /// </summary>
-    /// <param name="id">Community ID</param>
-    /// <returns>Returns a community dto or null if it didn't find a community</returns>
-    public async Task<CommunityCompleteDto?> GetCommunityById(int id) {
-        var result = await _communityRepository.GetCommunityByIdAsync(id);
-        if (result == null) {
-            return null;
-        }
-
-        return new CommunityCompleteDto {
-            Id = result.Id,
-            Name = result.Name,
-            Description = result.Description,
-            Owner = new UserSimpleDto { Id = result.UserId, Username = result.Owner.Username },
-            Members = result.Members.Select(m => new UserSimpleDto { Id = m.UserId, Username = m.User.Username }).ToList(),
-            MembersCount = result.Members.Count,
-            Posts = result.Posts
-                .Select(p => new PostSimpleDto {
-                    Id = p.Id,
-                    CommentsCount = p.Comments.Count,
-                    Created = p.CreatedAt,
-                    Title = p.Title,
-                    Community = new CommunitySimpleDto {
-                        Id = p.Community.Id, Name = p.Community.Name, Description = p.Community.Description,
-                        MembersCount = p.Community.Members.Count, UserId = p.Community.UserId
-                    },
-                    User = new UserSimpleDto { Id = p.User.Id, Username = p.User.Username },
-                    Votes = p?.Votes?.Aggregate(0, (acc, curr) => acc + curr.Value) ?? 0
-                })
-                .ToList(),
-            PostsCount = result.Posts.Count
+            MembersCount = community.Members.Count,
+            isMember = community.Members.Any(m => m.UserId == userId),
+            isOwner = community.UserId == userId
         };
     }
 
@@ -158,14 +109,16 @@ public class CommunityService : ICommunityService {
     /// </summary>
     /// <param name="name">Community Name</param>
     /// <returns>Returns a list of Community DTO</returns>
-    public async Task<List<CommunitySimpleDto>> GetCommunitiesByName(string name) {
+    public async Task<List<CommunitySimpleDto>> GetCommunitiesByName(string name, int userId) {
         List<Community> result = await _communityRepository.GetCommunitiesByNameAsync(name);
         return result.Select(c => new CommunitySimpleDto {
             Id = c.Id,
             Name = c.Name,
             Description = c.Description,
             UserId = c.UserId,
-            MembersCount = c.Members.Count
+            MembersCount = c.Members.Count,
+            isMember = userId == null ? false : c.Members.Any(m => m.UserId == userId),
+            isOwner = c.UserId == userId
         }).ToList();
     }
 
@@ -192,7 +145,60 @@ public class CommunityService : ICommunityService {
             Name = community.Name,
             Description = community.Description,
             UserId = community.UserId,
-            MembersCount = community.Members.Count
+            MembersCount = community.Members.Count,
+            isOwner = true,
+            isMember = true
         };
+    }
+
+    /// <summary>
+    ///     Find a Community based on received ID
+    /// </summary>
+    /// <param name="id">Community ID</param>
+    /// <param name="userId">User Id</param>
+    /// <returns>Returns a community dto or null if it didn't find a community</returns>
+    public async Task<CommunityCompleteDto?> GetCommunityById(int id, int userId) {
+        var result = await _communityRepository.GetCommunityByIdAsync(id);
+        if (result == null) {
+            return null;
+        }
+
+        return new CommunityCompleteDto {
+            Id = result.Id,
+            Name = result.Name,
+            Description = result.Description,
+            isOwner = result.UserId == userId,
+            isMember = result.Members.Any(m => m.UserId == userId),
+            MembersCount = result.Members.Count,
+            Posts = result.Posts
+                .Select(p => new PostSimpleDto {
+                    Id = p.Id,
+                    CommentsCount = p.Comments.Count,
+                    Created = p.CreatedAt,
+                    Title = p.Title,
+                    CommunityId = p.CommunityId,
+                    User = new UserSimpleDto { Id = p.User.Id, Username = p.User.Username },
+                    Votes = p?.Votes?.Aggregate(0, (acc, curr) => acc + curr.Value) ?? 0
+                })
+                .ToList(),
+            PostsCount = result.Posts.Count
+        };
+    }
+
+    /// <summary>
+    ///     Fetch all the communities as a list of Community DTO
+    /// </summary>
+    /// <returns>A list of Community DTO</returns>
+    public async Task<List<CommunitySimpleDto>> GetCommunities(int userId) {
+        List<Community> result = await _communityRepository.GetAllCommunitiesAsync();
+        return result.Select(c => new CommunitySimpleDto {
+            Id = c.Id,
+            Name = c.Name,
+            Description = c.Description,
+            UserId = c.UserId,
+            MembersCount = c.Members.Count,
+            isMember = c.Members.Any(m => m.UserId == userId),
+            isOwner = c.UserId == userId
+        }).ToList();
     }
 }
