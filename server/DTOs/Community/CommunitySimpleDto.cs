@@ -6,4 +6,6 @@ public class CommunitySimpleDto {
     public string Description { get; set; }
     public int UserId { get; set; }
     public int MembersCount { get; set; }
+    public bool isMember { get; set; }
+    public bool isOwner { get; set; }
 }
