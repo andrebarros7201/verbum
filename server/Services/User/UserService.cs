@@ -34,13 +34,7 @@ public class UserService : IUserService {
                     User = new UserSimpleDto { Id = p.User.Id, Username = p.User.Username },
                     CommentsCount = user.Comments.Count,
                     Created = p.CreatedAt,
-                    Community = new CommunitySimpleDto {
-                        Id = p.Community.Id,
-                        Name = p.Community.Name,
-                        Description = p.Community.Description,
-                        MembersCount = p.Community.Members.Count,
-                        UserId = p.Community.UserId
-                    }
+                    CommunityId = p.CommunityId
                 })
                 .ToList(),
             Comments = user.Comments.Select(c => new CommentDto {
@@ -56,7 +50,9 @@ public class UserService : IUserService {
                 UserId = c.UserId,
                 MembersCount = c.Community.Members.Count,
                 Description = c.Community.Description,
-                Name = c.Community.Name
+                Name = c.Community.Name,
+                isMember = c.Community.Members.Any(m => m.UserId == id),
+                isOwner = c.Community.UserId == id
             }).ToList()
         };
     }

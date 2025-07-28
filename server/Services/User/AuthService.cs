@@ -49,13 +49,7 @@ public class AuthService : IAuthService {
                         User = new UserSimpleDto { Id = p.User.Id, Username = p.User.Username },
                         CommentsCount = existingUser.Comments.Count,
                         Created = p.CreatedAt,
-                        Community = new CommunitySimpleDto {
-                            Id = p.Community.Id,
-                            Name = p.Community.Name,
-                            Description = p.Community.Description,
-                            MembersCount = p.Community.Members.Count,
-                            UserId = p.Community.UserId
-                        }
+                        CommunityId = p.CommunityId
                     })
                     .ToList(),
                 Comments = existingUser.Comments.Select(c => new CommentDto {
