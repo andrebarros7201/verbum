@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Verbum.API.DTOs.User;
 using Verbum.API.Interfaces.Services;
+using Verbum.API.Results;
 using Verbum.API.Services;
 
 namespace Verbum.API.Controllers;
@@ -23,27 +24,35 @@ public class AuthController : ControllerBase {
     /// <param name="dto">Login credentials (username and password).</param>
     /// <response code="200">Returns the authenticated user</response>
     /// <response code="400">If the request model is invalid</response>
+    /// <response code="401">Wrong credentials</response>
     /// <response code="404">If the user is not found or credentials are incorrect</response>
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] UserLoginDto dto) {
         if (!ModelState.IsValid) {
-            return BadRequest();
+            return BadRequest(ModelState);
         }
 
-        var result = await _authService.Login(dto);
+        ServiceResult<UserSimpleDto> result = await _authService.Login(dto);
 
-        if (result == null) {
-            return NotFound(new { message = "Invalid credentials" });
+        if (result.Status != ServiceResultStatus.Success) {
+            return result.Status switch {
+                ServiceResultStatus.NotFound => NotFound(result.Message),
+                ServiceResultStatus.Unauthorized => Unauthorized(result.Message),
+                _ => BadRequest("Something went wrong")
+            };
         }
 
-        var user = new UserSimpleDto { Id = result.Id, Username = result.Username };
-
+        var user = result.Data;
         string token = _tokenService.GenerateToken(user);
-
         Response.Cookies.Append("token", token,
-            new CookieOptions { HttpOnly = true, Secure = false, Expires = DateTime.UtcNow.AddDays(7), SameSite = SameSiteMode.Lax });
+            new CookieOptions {
+                HttpOnly = true,
+                Secure = false,
+                Expires = DateTime.UtcNow.AddDays(7),
+                SameSite = SameSiteMode.Lax
+            });
 
-        return Ok(result);
+        return Ok(user);
     }
 
     /// <summary>
@@ -52,16 +61,20 @@ public class AuthController : ControllerBase {
     /// <param name="dto">Register credentials (username and password).</param>
     /// <response code="200">Returns the authenticated user</response>
     /// <response code="400">If the request model is invalid</response>
-    /// <response code="409">If user already exitst</response>
+    /// <response code="409">If the user already exists</response>
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] CreateUserDto dto) {
         if (!ModelState.IsValid) {
-            return BadRequest();
+            return BadRequest(ModelState);
         }
 
-        bool result = await _authService.Register(dto);
+        ServiceResult<bool> result = await _authService.Register(dto);
 
-        return result ? Created() : Conflict("User already exists");
+        return result.Status switch {
+            ServiceResultStatus.Success => Ok(),
+            ServiceResultStatus.Conflict => Conflict(result.Message),
+            _ => BadRequest("Something went wrong")
+        };
     }
 
     /// <summary>

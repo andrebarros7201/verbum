@@ -1,8 +1,9 @@
 using Verbum.API.DTOs.User;
+using Verbum.API.Results;
 
 namespace Verbum.API.Interfaces.Services;
 
 public interface IAuthService {
-    Task<UserCompleteDto?> Login(UserLoginDto user);
-    Task<bool> Register(CreateUserDto user);
+    Task<ServiceResult<UserSimpleDto>> Login(UserLoginDto user);
+    Task<ServiceResult<bool>> Register(CreateUserDto user);
 }

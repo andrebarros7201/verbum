@@ -1,10 +1,8 @@
-using Verbum.API.DTOs.Comment;
-using Verbum.API.DTOs.Community;
-using Verbum.API.DTOs.Post;
 using Verbum.API.DTOs.User;
 using Verbum.API.Interfaces.Repositories;
 using Verbum.API.Interfaces.Services;
 using Verbum.API.Models;
+using Verbum.API.Results;
 
 namespace Verbum.API.Services;
 
@@ -15,12 +13,12 @@ public class AuthService : IAuthService {
         _userRepository = userRepository;
     }
 
-    public async Task<bool> Register(CreateUserDto user) {
+    public async Task<ServiceResult<bool>> Register(CreateUserDto user) {
         var existingUser = await _userRepository.GetUserByUsernameAsync(user.Username);
 
         // User exists
         if (existingUser != null) {
-            return false;
+            return ServiceResult<bool>.Error(ServiceResultStatus.Conflict, "User already exists!");
         }
 
         var newUser = new User {
@@ -29,45 +27,24 @@ public class AuthService : IAuthService {
         };
 
         await _userRepository.AddAsync(newUser);
-        return true;
+        return ServiceResult<bool>.Success(true);
     }
 
-    public async Task<UserCompleteDto?> Login(UserLoginDto user) {
+    public async Task<ServiceResult<UserSimpleDto>> Login(UserLoginDto user) {
         var existingUser = await _userRepository.GetUserByUsernameAsync(user.Username);
         if (existingUser == null) {
-            return null;
+            return ServiceResult<UserSimpleDto>.Error(ServiceResultStatus.NotFound, "User not found!");
         }
 
         // Check if hashed password matches password stored in db
         bool isMatch = BCrypt.Net.BCrypt.Verify(user.Password, existingUser.Password);
 
         return isMatch
-            ? new UserCompleteDto {
-                Id = existingUser.Id, Username = existingUser.Username,
-                Posts = existingUser.Posts.Select(p => new PostSimpleDto {
-                        Id = p.Id,
-                        User = new UserSimpleDto { Id = p.User.Id, Username = p.User.Username },
-                        CommentsCount = existingUser.Comments.Count,
-                        Created = p.CreatedAt,
-                        CommunityId = p.CommunityId
-                    })
-                    .ToList(),
-                Comments = existingUser.Comments.Select(c => new CommentDto {
-                    Id = c.Id,
-                    Author = new UserSimpleDto { Id = c.User.Id, Username = c.User.Username },
-                    CreatedAt = c.CreatedAt,
-                    Text = c.Text,
-                    UpdatedAt = c.UpdatedAt,
-                    Votes = c.Votes.Aggregate(0, (acc, curr) => acc + curr.Value)
-                }).ToList(),
-                Communities = existingUser.CommunitiesJoined.Select(c => new CommunitySimpleDto {
-                    Id = c.Community.Id,
-                    UserId = c.UserId,
-                    MembersCount = c.Community.Members.Count,
-                    Description = c.Community.Description,
-                    Name = c.Community.Name
-                }).ToList()
-            }
-            : null;
+            ? ServiceResult<UserSimpleDto>.Success(
+                new UserSimpleDto {
+                    Id = existingUser.Id,
+                    Username = existingUser.Username
+                })
+            : ServiceResult<UserSimpleDto>.Error(ServiceResultStatus.Unauthorized, "Invalid credentials!");
     }
 }
