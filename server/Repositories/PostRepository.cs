@@ -18,6 +18,7 @@ public class PostRepository : IPostRepository {
             .Include(p => p.Community)
             .ThenInclude(c => c.Members)
             .Include(c => c.Votes)
+            .Include(c => c.Comments)
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 
