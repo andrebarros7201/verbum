@@ -1,11 +1,12 @@
 using Verbum.API.DTOs.Post;
+using Verbum.API.Results;
 
 namespace Verbum.API.Interfaces.Services;
 
 public interface IPostService {
-    Task<PostCompleteDto> GetPostById(int id, int userId);
-    Task<PostSimpleDto> CreatePost(CreatePostDto dto, int userId);
-    Task<PostSimpleDto> UpdatePost(int userId, int postId, UpdatePostDto dto);
-    Task<bool> DeletePost(int userId, int postId);
-    Task<PostCompleteDto?> PostVote(int userId, int postId, int value);
+    Task<ServiceResult<PostCompleteDto>> GetPostById(int id, int userId);
+    Task<ServiceResult<PostSimpleDto>> CreatePost(CreatePostDto dto, int userId);
+    Task<ServiceResult<PostSimpleDto>> UpdatePost(int userId, int postId, UpdatePostDto dto);
+    Task<ServiceResult<bool>> DeletePost(int userId, int postId);
+    Task<ServiceResult<PostCompleteDto>> PostVote(int userId, int postId, int value);
 }

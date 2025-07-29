@@ -6,6 +6,7 @@ using Verbum.API.Interfaces;
 using Verbum.API.Interfaces.Repositories;
 using Verbum.API.Interfaces.Services;
 using Verbum.API.Models;
+using Verbum.API.Results;
 
 namespace Verbum.API.Services;
 
@@ -23,49 +24,60 @@ public class PostService : IPostService {
         _userCommunityRepository = userCommunityRepository;
     }
 
-    public async Task<PostCompleteDto?> GetPostById(int id, int userId) {
+    public async Task<ServiceResult<PostCompleteDto>> GetPostById(int id, int userId) {
         var post = await _postRepository.GetPostByIdAsync(id);
         if (post == null) {
-            return null;
+            return ServiceResult<PostCompleteDto>.Error(ServiceResultStatus.NotFound, "Post not found!");
         }
 
-        return new PostCompleteDto {
-            Id = post.Id,
-            Title = post.Title,
-            Text = post.Text,
-            Created = post.CreatedAt,
-            Updated = post.UpdatedAt,
-            User = new UserSimpleDto { Id = post.User.Id, Username = post.User.Username },
-            Votes = post.Votes != null ? post.Votes.Aggregate(0, (acc, curr) => acc + curr.Value) : 0,
-            Community = new CommunitySimpleDto {
-                Id = post.Community.Id, Name = post.Community.Name, Description = post.Community.Description,
-                MembersCount = post.Community.Members.Count, UserId = post.Community.UserId,
-                isMember = post.Community.Members.Any(m => m.UserId == userId),
-                isOwner = post.Community.UserId == userId
-            },
-            CommentsCount = post.Comments.Count,
-            Comments = post.Comments.Select(c => new CommentDto {
-                Id = c.Id,
-                Author = new UserSimpleDto { Id = c.User.Id, Username = c.User.Username },
-                CreatedAt = c.CreatedAt,
-                Text = c.Text,
-                UpdatedAt = c.UpdatedAt,
-                Votes = c.Votes.Aggregate(0, (acc, curr) => acc + curr.Value)
-            }).ToList()
-        };
+        return ServiceResult<PostCompleteDto>.Success(new PostCompleteDto {
+                Id = post.Id,
+                Title = post.Title,
+                Text = post.Text,
+                Created = post.CreatedAt,
+                Updated = post.UpdatedAt,
+                User = new UserSimpleDto { Id = post.User.Id, Username = post.User.Username },
+                Votes = post.Votes.Aggregate(0, (acc, curr) => acc + curr.Value),
+                Community = new CommunitySimpleDto {
+                    Id = post.Community.Id,
+                    Name = post.Community.Name,
+                    Description = post.Community.Description,
+                    MembersCount = post.Community.Members.Count,
+                    UserId = post.Community.UserId,
+                    isMember = post.Community.Members.Any(m => m.UserId == userId),
+                    isOwner = post.Community.UserId == userId
+                },
+                CommentsCount = post.Comments.Count,
+                Comments = post.Comments
+                    .Select(c => new CommentDto {
+                            Id = c.Id,
+                            Author = new UserSimpleDto { Id = c.User.Id, Username = c.User.Username },
+                            CreatedAt = c.CreatedAt,
+                            Text = c.Text,
+                            UpdatedAt = c.UpdatedAt,
+                            Votes = c.Votes.Aggregate(0, (acc, curr) => acc + curr.Value)
+                        }
+                    )
+                    .ToList()
+            }
+        );
     }
 
-    public async Task<PostSimpleDto> CreatePost(CreatePostDto dto, int userId) {
+    public async Task<ServiceResult<PostSimpleDto>> CreatePost(CreatePostDto dto, int userId) {
         var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user == null) {
+            return ServiceResult<PostSimpleDto>.Error(ServiceResultStatus.NotFound, "User not found!");
+        }
+
         var community = await _communityRepository.GetCommunityByIdAsync(dto.CommunityId);
-        if (user == null || community == null) {
-            return null;
+        if (community == null) {
+            return ServiceResult<PostSimpleDto>.Error(ServiceResultStatus.NotFound, "Community not found!");
         }
 
         // User must be a member to create a post
         bool userIsMember = await _userCommunityRepository.GetUserCommunity(userId, community.Id) != null;
         if (!userIsMember) {
-            return null;
+            return ServiceResult<PostSimpleDto>.Error(ServiceResultStatus.Unauthorized, "User is not a member of the community!");
         }
 
         var post = new Post {
@@ -78,29 +90,33 @@ public class PostService : IPostService {
             Comments = new List<Comment>()
         };
 
-        var userDto = new UserSimpleDto { Id = user.Id, Username = user.Username };
         await _postRepository.AddAsync(post);
 
-        return new PostSimpleDto {
-            Id = post.Id,
-            Title = post.Title,
-            Created = post.CreatedAt,
-            User = userDto,
-            CommentsCount = post.Comments.Count,
-            Votes = post.Votes != null ? post.Votes.Aggregate(0, (acc, curr) => acc + curr.Value) : 0,
-            CommunityId = post.CommunityId
-        };
+        return ServiceResult<PostSimpleDto>.Success(new PostSimpleDto {
+                Id = post.Id,
+                Title = post.Title,
+                Created = post.CreatedAt,
+                User = new UserSimpleDto { Id = user.Id, Username = user.Username },
+                CommentsCount = post.Comments.Count,
+                Votes = post.Votes != null ? post.Votes.Aggregate(0, (acc, curr) => acc + curr.Value) : 0,
+                CommunityId = post.CommunityId
+            }
+        );
     }
 
-    public async Task<PostSimpleDto?> UpdatePost(int userId, int postId, UpdatePostDto dto) {
+    public async Task<ServiceResult<PostSimpleDto>> UpdatePost(int userId, int postId, UpdatePostDto dto) {
         var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user == null) {
+            return ServiceResult<PostSimpleDto>.Error(ServiceResultStatus.NotFound, "User not found!");
+        }
+
         var post = await _postRepository.GetPostByIdAsync(postId);
-        if (user == null || post == null) {
-            return null;
+        if (post == null) {
+            return ServiceResult<PostSimpleDto>.Error(ServiceResultStatus.NotFound, "Post not found!");
         }
 
         if (user.Id != post.UserId) {
-            return null;
+            return ServiceResult<PostSimpleDto>.Error(ServiceResultStatus.Unauthorized, "User is not the owner of the post!");
         }
 
         post.Title = dto.Title;
@@ -108,34 +124,37 @@ public class PostService : IPostService {
         post.UpdatedAt = DateTime.Now;
 
         await _postRepository.UpdateAsync(post);
-        return new PostSimpleDto {
-            Id = post.Id, Title = post.Title, Created = post.CreatedAt,
-            Votes = post.Votes.Aggregate(0, (acc, curr) => acc + curr.Value),
-            CommunityId = post.CommunityId,
-            CommentsCount = post.Comments.Count,
-            User = new UserSimpleDto { Id = post.User.Id, Username = post.User.Username }
-        };
+        return ServiceResult<PostSimpleDto>.Success(new PostSimpleDto {
+                Id = post.Id, Title = post.Title, Created = post.CreatedAt,
+                Votes = post.Votes.Aggregate(0, (acc, curr) => acc + curr.Value),
+                CommunityId = post.CommunityId,
+                CommentsCount = post.Comments.Count,
+                User = new UserSimpleDto { Id = post.User.Id, Username = post.User.Username }
+            }
+        );
     }
 
-    public async Task<bool> DeletePost(int userId, int postId) {
+    public async Task<ServiceResult<bool>> DeletePost(int userId, int postId) {
         var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user == null) {
+            return ServiceResult<bool>.Error(ServiceResultStatus.NotFound, "User not found!");
+        }
+
         var post = await _postRepository.GetPostByIdAsync(postId);
-        if (user == null || post == null) {
-            return false;
+        if (post == null) {
+            return ServiceResult<bool>.Error(ServiceResultStatus.NotFound, "Post not found!");
         }
 
         if (user.Id != post.UserId) {
-            return false;
+            return ServiceResult<bool>.Error(ServiceResultStatus.Unauthorized, "User is not the owner of the post!");
         }
 
-        return await _postRepository.DeleteAsync(postId);
+        await _postRepository.DeleteAsync(postId);
+
+        return ServiceResult<bool>.Success(true);
     }
 
-    // Todo create VotePost Repo and finish this
-    // Check if composite key exists
-    // Check if value is the same. If so delete it
-    // If not, change the value
-    public async Task<PostCompleteDto?> PostVote(int userId, int communityId, int value) {
+    public async Task<ServiceResult<PostCompleteDto>> PostVote(int userId, int communityId, int value) {
         throw new NotImplementedException();
     }
 }

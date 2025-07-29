@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Verbum.API.DTOs.Post;
 using Verbum.API.Interfaces.Services;
+using Verbum.API.Results;
 
 namespace Verbum.API.Controllers;
 
@@ -18,8 +19,12 @@ public class PostController : ControllerBase {
     [HttpGet("{id}")]
     public async Task<IActionResult> GetPostById([FromRoute] int id) {
         string? userClaimsId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var result = await _postService.GetPostById(id, int.Parse(userClaimsId ?? "0"));
-        return result != null ? Ok(result) : NotFound(new { message = "Post not found" });
+        ServiceResult<PostCompleteDto> result = await _postService.GetPostById(id, int.Parse(userClaimsId ?? "0"));
+        return result.Status switch {
+            ServiceResultStatus.Success => Ok(result.Data),
+            ServiceResultStatus.NotFound => NotFound(new { message = "Post not found" }),
+            _ => BadRequest(new { message = "Something went wrong" })
+        };
     }
 
     [Authorize]
@@ -27,7 +32,7 @@ public class PostController : ControllerBase {
     public async Task<IActionResult> CreatePost([FromBody] CreatePostDto dto) {
         string? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userIdClaim == null) {
-            return Unauthorized();
+            return Unauthorized("User not logged in");
         }
 
         if (!ModelState.IsValid) {
@@ -35,8 +40,13 @@ public class PostController : ControllerBase {
         }
 
         int userId = int.Parse(userIdClaim);
-        var result = await _postService.CreatePost(dto, userId);
-        return result != null ? Ok(result) : BadRequest(new { message = "Something went wrong" });
+        ServiceResult<PostSimpleDto> result = await _postService.CreatePost(dto, userId);
+        return result.Status switch {
+            ServiceResultStatus.Success => Ok(result.Data),
+            ServiceResultStatus.Unauthorized => Unauthorized(result.Message),
+            ServiceResultStatus.NotFound => NotFound(result.Message),
+            _ => BadRequest(new { message = "Something went wrong" })
+        };
     }
 
     [Authorize]
@@ -44,15 +54,20 @@ public class PostController : ControllerBase {
     public async Task<IActionResult> UpdatePost([FromRoute] int id, [FromBody] UpdatePostDto dto) {
         string? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userIdClaim == null) {
-            return Unauthorized();
+            return Unauthorized("User not logged in!");
         }
 
         if (!ModelState.IsValid) {
             return BadRequest(ModelState);
         }
 
-        var result = await _postService.UpdatePost(int.Parse(userIdClaim ?? "0"), id, dto);
-        return result != null ? Ok(result) : BadRequest(new { message = "Something went wrong" });
+        ServiceResult<PostSimpleDto> result = await _postService.UpdatePost(int.Parse(userIdClaim ?? "0"), id, dto);
+        return result.Status switch {
+            ServiceResultStatus.Success => Ok(result.Data),
+            ServiceResultStatus.Unauthorized => Unauthorized(result.Message),
+            ServiceResultStatus.NotFound => NotFound(result.Message),
+            _ => BadRequest(new { message = "Something went wrong" })
+        };
     }
 
     [Authorize]
@@ -60,11 +75,16 @@ public class PostController : ControllerBase {
     public async Task<IActionResult> DeletePost([FromRoute] int id) {
         string? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userIdClaim == null) {
-            return Unauthorized();
+            return Unauthorized("User not logged in!");
         }
 
-        bool result = await _postService.DeletePost(int.Parse(userIdClaim ?? "0"), id);
-        return result ? Ok() : BadRequest(new { message = "Something went wrong" });
+        ServiceResult<bool> result = await _postService.DeletePost(int.Parse(userIdClaim ?? "0"), id);
+        return result.Status switch {
+            ServiceResultStatus.Success => Ok("Post deleted"),
+            ServiceResultStatus.Unauthorized => Unauthorized(result.Message),
+            ServiceResultStatus.NotFound => NotFound(result.Message),
+            _ => BadRequest(new { message = "Something went wrong" })
+        };
     }
 
     [Authorize]
@@ -72,12 +92,11 @@ public class PostController : ControllerBase {
     public async Task<IActionResult> LikePost([FromRoute] int id) {
         string? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userIdClaim == null) {
-            return Unauthorized();
+            return Unauthorized("User not logged in!");
         }
 
-        var result = await _postService.PostVote(int.Parse(userIdClaim), id, 1);
-        var updatedPost = await _postService.GetPostById(id, int.Parse(userIdClaim));
-        ;
+        ServiceResult<PostCompleteDto> result = await _postService.PostVote(int.Parse(userIdClaim), id, 1);
+        ServiceResult<PostCompleteDto> updatedPost = await _postService.GetPostById(id, int.Parse(userIdClaim));
         return result != null ? Ok(updatedPost) : BadRequest(new { message = "Something went wrong" });
     }
 }
