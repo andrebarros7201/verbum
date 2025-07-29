@@ -49,12 +49,52 @@ public class CommentService : ICommentService {
         });
     }
 
-    public Task<ServiceResult<CommentDto>> UpdateComment(int userId, int commentId, UpdateCommentDto dto) {
-        throw new NotImplementedException();
+    public async Task<ServiceResult<CommentDto>> UpdateComment(int userId, int commentId, UpdateCommentDto dto) {
+        var comment = await _commentRepository.GetCommentByIdAsync(commentId);
+        if (comment == null) {
+            return ServiceResult<CommentDto>.Error(ServiceResultStatus.NotFound, "Comment not found!");
+        }
+
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user == null) {
+            return ServiceResult<CommentDto>.Error(ServiceResultStatus.NotFound, "User not found!");
+        }
+
+        if (user.Id != comment.UserId) {
+            return ServiceResult<CommentDto>.Error(ServiceResultStatus.Unauthorized, "User is not the owner of the comment!");
+        }
+
+        comment.Text = dto.Text;
+        comment.UpdatedAt = DateTime.Now;
+
+        await _commentRepository.UpdateAsync(comment);
+        return ServiceResult<CommentDto>.Success(new CommentDto {
+            Id = comment.Id,
+            Text = comment.Text,
+            Author = new UserSimpleDto { Id = comment.User.Id, Username = comment.User.Username },
+            CreatedAt = comment.CreatedAt,
+            UpdatedAt = comment.UpdatedAt,
+            Votes = comment.Votes.Aggregate(0, (acc, curr) => acc + curr.Value)
+        });
     }
 
-    public Task<ServiceResult<bool>> DeleteComment(int userId, int commentId) {
-        throw new NotImplementedException();
+    public async Task<ServiceResult<bool>> DeleteComment(int userId, int commentId) {
+        var comment = await _commentRepository.GetCommentByIdAsync(commentId);
+        if (comment == null) {
+            return ServiceResult<bool>.Error(ServiceResultStatus.NotFound, "Comment not found!");
+        }
+
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user == null) {
+            return ServiceResult<bool>.Error(ServiceResultStatus.NotFound, "User not found!");
+        }
+
+        if (user.Id != comment.UserId) {
+            return ServiceResult<bool>.Error(ServiceResultStatus.Unauthorized, "User is not the owner of the comment!");
+        }
+
+        await _commentRepository.DeleteAsync(commentId);
+        return ServiceResult<bool>.Success(true);
     }
 
     public Task<ServiceResult<CommentDto>> PostVote(int userId, int commentId, int value) {

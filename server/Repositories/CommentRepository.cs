@@ -11,8 +11,8 @@ public class CommentRepository : ICommentRepository {
         _db = db;
     }
 
-    public Task<Comment?> GetCommentByIdAsync(int id) {
-        throw new NotImplementedException();
+    public async Task<Comment?> GetCommentByIdAsync(int id) {
+        return await _db.Comments.FindAsync(id);
     }
 
     public async Task<Comment> AddAsync(Comment comment) {
@@ -21,11 +21,20 @@ public class CommentRepository : ICommentRepository {
         return comment;
     }
 
-    public Task<Comment> UpdateAsync(Comment comment) {
-        throw new NotImplementedException();
+    public async Task<Comment> UpdateAsync(Comment comment) {
+        _db.Comments.Update(comment);
+        await _db.SaveChangesAsync();
+        return comment;
     }
 
-    public Task<bool> DeleteAsync(int id) {
-        throw new NotImplementedException();
+    public async Task<bool> DeleteAsync(int id) {
+        var comment = await _db.Comments.FindAsync(id);
+        if (comment == null) {
+            return false;
+        }
+
+        _db.Comments.Remove(comment);
+        await _db.SaveChangesAsync();
+        return true;
     }
 }
