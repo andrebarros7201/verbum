@@ -39,7 +39,9 @@ public class UserService : IUserService {
                         User = new UserSimpleDto { Id = p.User.Id, Username = p.User.Username },
                         CommentsCount = user.Comments.Count,
                         Created = p.CreatedAt,
-                        CommunityId = p.CommunityId
+                        CommunityId = p.CommunityId,
+                        Votes = p.Votes.Aggregate(0, (acc, curr) => acc + curr.Value),
+                        Title = p.Title
                     })
                     .ToList(),
                 Comments = user.Comments.Select(c => new CommentDto {

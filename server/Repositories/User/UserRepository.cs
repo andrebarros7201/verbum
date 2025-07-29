@@ -16,6 +16,7 @@ public class UserRepository : IUserRepository {
         return await _db.Users.Include(u => u.Posts)
             .Include(u => u.Comments)
             .Include(u => u.CommunitiesJoined).ThenInclude(uc => uc.Community)
+            .Include(u => u.VotePosts)
             .FirstOrDefaultAsync(u => u.Id == id);
     }
 
