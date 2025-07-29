@@ -20,10 +20,6 @@ public class PostRepository : IPostRepository {
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 
-    public Task<List<Post>> GetPostsByCommunityIdAsync(int communityId) {
-        throw new NotImplementedException();
-    }
-
     public async Task<Post> AddAsync(Post post) {
         _db.Posts.Add(post);
         await _db.SaveChangesAsync();
