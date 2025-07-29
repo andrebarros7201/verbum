@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Verbum.API.DTOs.Community;
 using Verbum.API.Interfaces.Services;
+using Verbum.API.Results;
 
 namespace Verbum.API.Controllers;
 
@@ -15,26 +16,32 @@ public class CommunityController : ControllerBase {
         _communityService = communityService;
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetCommunities() {
+        string? userClaimsId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        ServiceResult<List<CommunitySimpleDto>> result = await _communityService.GetCommunities(int.Parse(userClaimsId));
+        return Ok(result.Data);
+    }
+
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetCommunityById([FromRoute] int id) {
         string? userClaimsId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        var result = await _communityService.GetCommunityById(id, int.Parse(userClaimsId ?? "0"));
-        return result != null ? Ok(result) : NotFound(new { message = "Community not found" });
+        ServiceResult<CommunityCompleteDto>? result = await _communityService.GetCommunityById(id, int.Parse(userClaimsId ?? "0"));
+
+        return result.Status switch {
+            ServiceResultStatus.Success => Ok(result.Data),
+            ServiceResultStatus.NotFound => NotFound(new { message = "Community not found" }),
+            _ => BadRequest(new { message = "Something went wrong" })
+        };
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetCommunities() {
-        string? userClaimsId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        List<CommunitySimpleDto> result = await _communityService.GetCommunities(int.Parse(userClaimsId));
-        return Ok(result);
-    }
 
     [HttpGet("search")]
     public async Task<IActionResult> GetCommunitiesByName([FromQuery] string name) {
         string? userClaimsId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        List<CommunitySimpleDto> result = await _communityService.GetCommunitiesByName(name, int.Parse(userClaimsId ?? "0"));
-        return Ok(result);
+        ServiceResult<List<CommunitySimpleDto>> result = await _communityService.GetCommunitiesByName(name, int.Parse(userClaimsId ?? "0"));
+        return Ok(result.Data);
     }
 
     [Authorize]
@@ -42,7 +49,7 @@ public class CommunityController : ControllerBase {
     public async Task<IActionResult> CreateCommunity([FromBody] CreateCommunityDto dto) {
         string? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userIdClaim == null) {
-            return Unauthorized();
+            return Unauthorized("User not logged in");
         }
 
         int userId = int.Parse(userIdClaim);
@@ -51,52 +58,15 @@ public class CommunityController : ControllerBase {
             return BadRequest(ModelState);
         }
 
-        var result = await _communityService.CreateCommunity(dto, userId);
+        ServiceResult<CommunitySimpleDto>? result = await _communityService.CreateCommunity(dto, userId);
 
-        if (result == null) {
-            return Conflict(new { message = "Community already exists" });
-        }
-
-        return Ok(result);
+        return result.Status switch {
+            ServiceResultStatus.Success => Ok(result.Data),
+            ServiceResultStatus.Conflict => Conflict(result.Message),
+            _ => BadRequest(new { message = "Something went wrong" })
+        };
     }
 
-    [HttpPost("{id}/join")]
-    public async Task<IActionResult> JoinCommunity([FromRoute] int id) {
-        string? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userIdClaim == null) {
-            return Unauthorized();
-        }
-
-        int userId = int.Parse(userIdClaim);
-        bool result = await _communityService.JoinCommunity(id, userId);
-        return result ? Ok() : BadRequest(new { message = "Something went wrong" });
-    }
-
-    [HttpPost("{id}/leave")]
-    public async Task<IActionResult> LeaveCommunity([FromRoute] int id) {
-        string? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userIdClaim == null) {
-            return Unauthorized();
-        }
-
-        int userId = int.Parse(userIdClaim);
-        bool result = await _communityService.LeaveCommunity(id, userId);
-        return result ? Ok() : BadRequest(new { message = "Something went wrong" });
-    }
-
-    // Only the owner can delete the community
-    [Authorize]
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> DeleteCommunity([FromRoute] int id) {
-        string? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userIdClaim == null) {
-            return Unauthorized();
-        }
-
-        int userId = int.Parse(userIdClaim);
-        bool result = await _communityService.DeleteCommunity(id, userId);
-        return result ? Ok() : BadRequest(new { message = "Something went wrong" });
-    }
 
     [Authorize]
     [HttpPatch("{id:int}")]
@@ -111,7 +81,67 @@ public class CommunityController : ControllerBase {
             return BadRequest(ModelState);
         }
 
-        var result = await _communityService.UpdateCommunity(userId, id, dto);
-        return result != null ? Ok(result) : BadRequest(new { message = "Something went wrong" });
+        ServiceResult<CommunitySimpleDto> result = await _communityService.UpdateCommunity(userId, id, dto);
+        return result.Status switch {
+            ServiceResultStatus.Success => Ok(result.Data),
+            ServiceResultStatus.Unauthorized => Unauthorized(result.Message),
+            ServiceResultStatus.NotFound => NotFound(result.Message),
+            _ => BadRequest(new { message = "Something went wrong" })
+        };
+    }
+
+    // Only the owner can delete the community
+    [Authorize]
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteCommunity([FromRoute] int id) {
+        string? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdClaim == null) {
+            return Unauthorized();
+        }
+
+        int userId = int.Parse(userIdClaim);
+        ServiceResult<bool> result = await _communityService.DeleteCommunity(id, userId);
+        return result.Status switch {
+            ServiceResultStatus.Success => Ok("Community deleted"),
+            ServiceResultStatus.Unauthorized => Unauthorized(result.Message),
+            ServiceResultStatus.NotFound => NotFound(result.Message),
+            _ => BadRequest(new { message = "Something went wrong" })
+        };
+    }
+
+    [Authorize]
+    [HttpPost("{id}/join")]
+    public async Task<IActionResult> JoinCommunity([FromRoute] int id) {
+        string? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdClaim == null) {
+            return Unauthorized("User not logged in");
+        }
+
+        int userId = int.Parse(userIdClaim);
+        ServiceResult<bool> result = await _communityService.JoinCommunity(id, userId);
+        return result.Status switch {
+            ServiceResultStatus.Success => Ok("User joined community"),
+            ServiceResultStatus.Error => BadRequest(result.Message),
+            ServiceResultStatus.NotFound => NotFound(result.Message),
+            _ => BadRequest(new { message = "Something went wrong" })
+        };
+    }
+
+    [Authorize]
+    [HttpPost("{id}/leave")]
+    public async Task<IActionResult> LeaveCommunity([FromRoute] int id) {
+        string? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdClaim == null) {
+            return Unauthorized();
+        }
+
+        int userId = int.Parse(userIdClaim);
+        ServiceResult<bool> result = await _communityService.LeaveCommunity(id, userId);
+        return result.Status switch {
+            ServiceResultStatus.Success => Ok("User left community"),
+            ServiceResultStatus.Error => BadRequest(result.Message),
+            ServiceResultStatus.NotFound => NotFound(result.Message),
+            _ => BadRequest(new { message = "Something went wrong" })
+        };
     }
 }

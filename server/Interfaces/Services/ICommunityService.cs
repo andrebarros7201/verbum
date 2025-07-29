@@ -1,14 +1,15 @@
 using Verbum.API.DTOs.Community;
+using Verbum.API.Results;
 
 namespace Verbum.API.Interfaces.Services;
 
 public interface ICommunityService {
-    Task<CommunityCompleteDto?> GetCommunityById(int id, int userId);
-    Task<List<CommunitySimpleDto>> GetCommunities(int userId);
-    Task<List<CommunitySimpleDto>> GetCommunitiesByName(string name, int userId);
-    Task<CommunitySimpleDto?> CreateCommunity(CreateCommunityDto dto, int userId);
-    Task<CommunitySimpleDto?> UpdateCommunity(int userId, int communityId, UpdateCommunityDto dto);
-    Task<bool> JoinCommunity(int communityId, int userId);
-    Task<bool> LeaveCommunity(int communityId, int userId);
-    Task<bool> DeleteCommunity(int communityId, int userId);
+    Task<ServiceResult<CommunityCompleteDto>> GetCommunityById(int id, int userId);
+    Task<ServiceResult<List<CommunitySimpleDto>>> GetCommunities(int userId);
+    Task<ServiceResult<List<CommunitySimpleDto>>> GetCommunitiesByName(string name, int userId);
+    Task<ServiceResult<CommunitySimpleDto>> CreateCommunity(CreateCommunityDto dto, int userId);
+    Task<ServiceResult<CommunitySimpleDto>> UpdateCommunity(int userId, int communityId, UpdateCommunityDto dto);
+    Task<ServiceResult<bool>> JoinCommunity(int communityId, int userId);
+    Task<ServiceResult<bool>> LeaveCommunity(int communityId, int userId);
+    Task<ServiceResult<bool>> DeleteCommunity(int communityId, int userId);
 }
