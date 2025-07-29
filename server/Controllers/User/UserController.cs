@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Verbum.API.DTOs.User;
 using Verbum.API.Interfaces.Services;
+using Verbum.API.Results;
 using Verbum.API.Services;
 
 namespace Verbum.API.Controllers;
@@ -26,8 +27,12 @@ public class UserController : ControllerBase {
             return Unauthorized();
         }
 
-        var result = await _userService.GetUserCompleteById(int.Parse(userClaimId));
-        return result != null ? Ok(result) : NotFound(new { message = "User not found" });
+        ServiceResult<UserCompleteDto> result = await _userService.GetUserCompleteById(int.Parse(userClaimId));
+        return result.Status switch {
+            ServiceResultStatus.Success => Ok(result.Data),
+            ServiceResultStatus.NotFound => NotFound(new { message = "User not found" }),
+            _ => BadRequest(new { message = "Something went wrong" })
+        };
     }
 
     [Authorize]
@@ -39,29 +44,47 @@ public class UserController : ControllerBase {
 
         string? userClaimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (userClaimId == null) {
-            return Unauthorized();
+            return Unauthorized("User not logged in!");
         }
 
         dto.Id = int.Parse(userClaimId);
 
-        var result = await _userService.UpdateUser(dto);
-        if (result == null) {
-            return NotFound(new { message = "User not found" });
+        ServiceResult<UserSimpleDto> result = await _userService.UpdateUser(dto);
+
+        if (result.Status == ServiceResultStatus.NotFound || result.Data == null) {
+            return NotFound(result.Message);
         }
 
-        string token = _tokenService.GenerateToken(result);
+        if (result.Status == ServiceResultStatus.Conflict) {
+            return Conflict(new { message = result.Message });
+        }
+
+        string token = _tokenService.GenerateToken(result.Data);
 
         Response.Cookies.Append("token", token,
             new CookieOptions { HttpOnly = true, Secure = false, Expires = DateTime.UtcNow.AddDays(7), SameSite = SameSiteMode.Lax });
 
-        return Ok();
+        return Ok("User updated!");
     }
 
     [Authorize]
     [HttpDelete]
     public async Task<IActionResult> DeleteUser() {
-        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-        bool result = await _userService.DeleteUser(userId);
-        return result ? Ok() : NotFound(new { message = "User not found" });
+        string? userClaimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (userClaimId == null) {
+            return Unauthorized("User not logged in!");
+        }
+
+        int userId = int.Parse(userClaimId);
+
+        ServiceResult<bool> result = await _userService.DeleteUser(userId);
+
+        return result.Status switch {
+            ServiceResultStatus.Success => Ok("User deleted"),
+            ServiceResultStatus.Unauthorized => Unauthorized(result.Message),
+            ServiceResultStatus.NotFound => NotFound(result.Message),
+            _ => BadRequest(new { message = "Something went wrong" })
+        };
     }
 }
