@@ -15,13 +15,15 @@ public class PostService : IPostService {
     private readonly IPostRepository _postRepository;
     private readonly IUserCommunityRepository _userCommunityRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IVotePostRepository _votePostRepository;
 
     public PostService(IPostRepository postRepository, IUserRepository userRepository, ICommunityRepository communityRepository,
-        IUserCommunityRepository userCommunityRepository) {
+        IUserCommunityRepository userCommunityRepository, IVotePostRepository votePostRepository) {
         _postRepository = postRepository;
         _userRepository = userRepository;
         _communityRepository = communityRepository;
         _userCommunityRepository = userCommunityRepository;
+        _votePostRepository = votePostRepository;
     }
 
     public async Task<ServiceResult<PostCompleteDto>> GetPostById(int id, int userId) {
@@ -154,7 +156,60 @@ public class PostService : IPostService {
         return ServiceResult<bool>.Success(true);
     }
 
-    public async Task<ServiceResult<PostCompleteDto>> PostVote(int userId, int communityId, int value) {
-        throw new NotImplementedException();
+    public async Task<ServiceResult<PostCompleteDto>> PostVote(int userId, int postId, int value) {
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user == null) {
+            return ServiceResult<PostCompleteDto>.Error(ServiceResultStatus.NotFound, "User not found!");
+        }
+
+        var post = await _postRepository.GetPostByIdAsync(postId);
+        if (post == null) {
+            return ServiceResult<PostCompleteDto>.Error(ServiceResultStatus.NotFound, "Post not found!");
+        }
+
+        var existingVotePost = await _votePostRepository.GetVotePostByIdAsync(userId, postId);
+        if (existingVotePost == null) {
+            var newVotePost = new VotePost {
+                UserId = userId,
+                PostId = postId,
+                Value = value
+            };
+            await _votePostRepository.AddVotePostAsync(newVotePost);
+        }
+        else if (existingVotePost.Value != value) {
+            existingVotePost.Value = value;
+            await _votePostRepository.UpdateVotePostAsync(existingVotePost);
+        }
+        else {
+            await _votePostRepository.DeleteVotePostAsync(userId, postId);
+        }
+
+        return ServiceResult<PostCompleteDto>.Success(new PostCompleteDto {
+            Id = post.Id,
+            Title = post.Title,
+            Text = post.Text,
+            User = new UserSimpleDto { Id = post.User.Id, Username = post.User.Username },
+            Created = post.CreatedAt,
+            Updated = post.UpdatedAt,
+            Votes = post.Votes.Aggregate(0, (acc, curr) => acc + curr.Value),
+            Community = new CommunitySimpleDto {
+                Id = post.Community.Id,
+                Name = post.Community.Name,
+                Description = post.Community.Description,
+                MembersCount = post.Community.Members.Count,
+                UserId = post.Community.UserId,
+                isMember = post.Community.Members.Any(m => m.UserId == userId),
+                isOwner = post.Community.UserId == userId
+            },
+            Comments = post.Comments.Select(c => new CommentDto {
+                Id = c.Id,
+                Author = new UserSimpleDto { Id = c.User.Id, Username = c.User.Username },
+                CreatedAt = c.CreatedAt,
+                Text = c.Text,
+                UpdatedAt = c.UpdatedAt,
+                Votes = c.Votes.Aggregate(0, (acc, curr) => acc + curr.Value)
+            }).ToList(),
+            CommentsCount = post.Comments.Count
+        });
     }
 }

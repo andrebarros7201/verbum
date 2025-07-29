@@ -96,7 +96,28 @@ public class PostController : ControllerBase {
         }
 
         ServiceResult<PostCompleteDto> result = await _postService.PostVote(int.Parse(userIdClaim), id, 1);
-        ServiceResult<PostCompleteDto> updatedPost = await _postService.GetPostById(id, int.Parse(userIdClaim));
-        return result != null ? Ok(updatedPost) : BadRequest(new { message = "Something went wrong" });
+        return result.Status switch {
+            ServiceResultStatus.Success => Ok(result.Data),
+            ServiceResultStatus.Unauthorized => Unauthorized(result.Message),
+            ServiceResultStatus.NotFound => NotFound(result.Message),
+            _ => BadRequest(new { message = "Something went wrong" })
+        };
+    }
+
+    [Authorize]
+    [HttpPost("{id}/dislike")]
+    public async Task<IActionResult> DislikePost([FromRoute] int id) {
+        string? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdClaim == null) {
+            return Unauthorized("User not logged in!");
+        }
+
+        ServiceResult<PostCompleteDto> result = await _postService.PostVote(int.Parse(userIdClaim), id, -1);
+        return result.Status switch {
+            ServiceResultStatus.Success => Ok(result.Data),
+            ServiceResultStatus.Unauthorized => Unauthorized(result.Message),
+            ServiceResultStatus.NotFound => NotFound(result.Message),
+            _ => BadRequest(new { message = "Something went wrong" })
+        };
     }
 }
