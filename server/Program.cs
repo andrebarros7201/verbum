@@ -54,10 +54,20 @@ public class Program {
             };
         });
 
+        builder.Services.AddCors(options => {
+            options.AddPolicy("AllowFrontend",
+                builder => builder.WithOrigins(Configuration.CLIENT_URL)
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+        });
+
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
         var app = builder.Build();
+
+        app.UseCors("AllowFrontend");
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment()) {
