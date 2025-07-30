@@ -1,4 +1,4 @@
-import { ButtonLink } from "./ui/ButtonLink.tsx";
+import { ButtonLink } from "./ui/ButtonLink";
 
 const Header = () => {
   return (
