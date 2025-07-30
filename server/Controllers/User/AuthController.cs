@@ -47,9 +47,9 @@ public class AuthController : ControllerBase {
         Response.Cookies.Append("token", token,
             new CookieOptions {
                 HttpOnly = true,
-                Secure = false,
+                Secure = true,
                 Expires = DateTime.UtcNow.AddDays(7),
-                SameSite = SameSiteMode.Lax
+                SameSite = SameSiteMode.None
             });
 
         return Ok(user);

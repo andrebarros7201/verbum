@@ -62,7 +62,7 @@ public class UserController : ControllerBase {
         string token = _tokenService.GenerateToken(result.Data);
 
         Response.Cookies.Append("token", token,
-            new CookieOptions { HttpOnly = true, Secure = false, Expires = DateTime.UtcNow.AddDays(7), SameSite = SameSiteMode.Lax });
+            new CookieOptions { HttpOnly = true, Secure = true, Expires = DateTime.UtcNow.AddDays(7), SameSite = SameSiteMode.None });
 
         return Ok("User updated!");
     }
