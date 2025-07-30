@@ -2,7 +2,7 @@ import clsx from "clsx";
 
 type Props = {
   label: string;
-  type: "submit" | "button";
+  type?: "submit" | "button";
   variant: "primary" | "secondary";
   onClick?: () => void;
 };
