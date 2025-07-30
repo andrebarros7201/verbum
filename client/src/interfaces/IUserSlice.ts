@@ -1,6 +1,8 @@
+import type { IUser } from "./IUser.ts";
+
 interface IUserSlice {
   isAuthenticated: boolean;
-  user: { id: number; username: string } | null;
+  user: IUser | null;
   isLoading: boolean;
 }
 
