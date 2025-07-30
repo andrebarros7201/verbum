@@ -12,8 +12,13 @@ const RegisterForm = () => {
   return (
     <main className={"w-full max-w-2xl flex justify-center"}>
       <Form onSubmit={(e: FormEvent) => onSubmit(e)}>
-        <FormInput type={"text"} name={"username"} label={"Username"} />
-        <FormInput type={"password"} name={"password"} label={"Password"} />
+        <FormInput type={"text"} name={"username"} label={"Username"} min={3} />
+        <FormInput
+          type={"password"}
+          name={"password"}
+          label={"Password"}
+          min={6}
+        />
         <Button label={"Register"} variant={"primary"} type={"submit"} />
       </Form>
     </main>
