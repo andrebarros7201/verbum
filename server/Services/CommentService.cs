@@ -11,11 +11,14 @@ public class CommentService : ICommentService {
     private readonly ICommentRepository _commentRepository;
     private readonly IPostRepository _postRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IVoteCommentRepository _voteCommentRepository;
 
-    public CommentService(ICommentRepository commentRepository, IUserRepository userRepository, IPostRepository postRepository) {
+    public CommentService(ICommentRepository commentRepository, IUserRepository userRepository, IPostRepository postRepository,
+        IVoteCommentRepository voteCommentRepository) {
         _commentRepository = commentRepository;
         _userRepository = userRepository;
         _postRepository = postRepository;
+        _voteCommentRepository = voteCommentRepository;
     }
 
 
@@ -97,7 +100,42 @@ public class CommentService : ICommentService {
         return ServiceResult<bool>.Success(true);
     }
 
-    public Task<ServiceResult<CommentDto>> PostVote(int userId, int commentId, int value) {
-        throw new NotImplementedException();
+    public async Task<ServiceResult<CommentDto>> PostVote(int userId, int commentId, int value) {
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user == null) {
+            return ServiceResult<CommentDto>.Error(ServiceResultStatus.NotFound, "User not found!");
+        }
+
+        var comment = await _commentRepository.GetCommentByIdAsync(commentId);
+        if (comment == null) {
+            return ServiceResult<CommentDto>.Error(ServiceResultStatus.NotFound, "Comment not found!");
+        }
+
+        var voteComment = await _voteCommentRepository.GetVoteCommentByIdAsync(userId, commentId);
+        if (voteComment == null) {
+            var newVoteComment = new VoteComment {
+                UserId = userId,
+                CommentId = commentId,
+                Value = value
+            };
+            await _voteCommentRepository.AddVoteCommentAsync(newVoteComment);
+        }
+        else if (voteComment.Value != value) {
+            voteComment.Value = value;
+            await _voteCommentRepository.UpdateVoteCommentAsync(voteComment);
+        }
+        else {
+            await _voteCommentRepository.DeleteVoteCommentAsync(userId, commentId);
+        }
+
+
+        return ServiceResult<CommentDto>.Success(new CommentDto {
+            Id = comment.Id,
+            Text = comment.Text,
+            Author = new UserSimpleDto { Id = comment.User.Id, Username = comment.User.Username },
+            CreatedAt = comment.CreatedAt,
+            UpdatedAt = comment.UpdatedAt,
+            Votes = comment.Votes.Aggregate(0, (acc, curr) => acc + curr.Value)
+        });
     }
 }

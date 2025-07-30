@@ -33,6 +33,7 @@ public class Program {
         builder.Services.AddScoped<IVotePostRepository, VotePostRepository>();
         builder.Services.AddScoped<ICommentService, CommentService>();
         builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+        builder.Services.AddScoped<IVoteCommentRepository, VoteCommentRepositoryRepository>();
         builder.Services.AddTransient<TokenService>();
 
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {

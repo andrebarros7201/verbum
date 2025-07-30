@@ -76,4 +76,38 @@ public class CommentController : ControllerBase {
             _ => BadRequest(new { message = "Something went wrong" })
         };
     }
+
+    [Authorize]
+    [HttpPost("comment/{commentId:int}/like")]
+    public async Task<IActionResult> LikeComment([FromRoute] int commentId) {
+        string? userClaimsId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userClaimsId == null) {
+            return Unauthorized("User is not logged in!");
+        }
+
+        ServiceResult<CommentDto> result = await _commentService.PostVote(int.Parse(userClaimsId), commentId, 1);
+        return result.Status switch {
+            ServiceResultStatus.Success => Ok(result.Data),
+            ServiceResultStatus.Unauthorized => Unauthorized(result.Message),
+            ServiceResultStatus.NotFound => NotFound(result.Message),
+            _ => BadRequest(new { message = "Something went wrong" })
+        };
+    }
+
+    [Authorize]
+    [HttpPost("comment/{commentId:int}/dislike")]
+    public async Task<IActionResult> DislikeComment([FromRoute] int commentId) {
+        string? userClaimsId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userClaimsId == null) {
+            return Unauthorized("User is not logged in!");
+        }
+
+        ServiceResult<CommentDto> result = await _commentService.PostVote(int.Parse(userClaimsId), commentId, -1);
+        return result.Status switch {
+            ServiceResultStatus.Success => Ok(result.Data),
+            ServiceResultStatus.Unauthorized => Unauthorized(result.Message),
+            ServiceResultStatus.NotFound => NotFound(result.Message),
+            _ => BadRequest(new { message = "Something went wrong" })
+        };
+    }
 }
