@@ -1,23 +1,51 @@
 import { Form } from "./ui/Form.tsx";
 import { FormInput } from "./ui/Input.tsx";
 import { Button } from "./ui/Button.tsx";
-import type { FormEvent } from "react";
+import { type FormEvent, useRef } from "react";
+import { userRegister } from "../redux/slices/userSlice.ts";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "../redux/store.ts";
 
 const RegisterForm = () => {
-  function onSubmit(e: FormEvent) {
+  const dispatch = useDispatch<AppDispatch>();
+  const usernameRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+
+  async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    console.log("submit");
+    const username = usernameRef.current?.value;
+    const password = passwordRef.current?.value;
+
+    if (!username || !password) {
+      return;
+    }
+
+    try {
+      const response = await dispatch(
+        userRegister({ username, password }),
+      ).unwrap();
+      console.log(response);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   return (
     <main className={"w-full max-w-2xl flex justify-center"}>
-      <Form onSubmit={(e: FormEvent) => onSubmit(e)}>
-        <FormInput type={"text"} name={"username"} label={"Username"} min={3} />
+      <Form onSubmit={onSubmit}>
+        <FormInput
+          type={"text"}
+          name={"username"}
+          label={"Username"}
+          min={3}
+          ref={usernameRef}
+        />
         <FormInput
           type={"password"}
           name={"password"}
           label={"Password"}
           min={6}
+          ref={passwordRef}
         />
         <Button label={"Register"} variant={"primary"} type={"submit"} />
       </Form>
