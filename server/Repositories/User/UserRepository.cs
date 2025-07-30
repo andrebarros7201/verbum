@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Verbum.API.Data;
 using Verbum.API.Interfaces.Repositories;
 using Verbum.API.Models;
@@ -39,9 +40,9 @@ public class UserRepository : IUserRepository {
     /// <param name="user">User object</param>
     /// <returns>User record</returns>
     public async Task<User?> AddAsync(User? user) {
-        _db.Users.Add(user);
+        EntityEntry<User?> newUser = _db.Users.Add(user);
         await _db.SaveChangesAsync();
-        return user;
+        return newUser.Entity;
     }
 
     public async Task<User> UpdateAsync(User user) {

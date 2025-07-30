@@ -68,10 +68,10 @@ public class AuthController : ControllerBase {
             return BadRequest(ModelState);
         }
 
-        ServiceResult<bool> result = await _authService.Register(dto);
+        ServiceResult<UserSimpleDto> result = await _authService.Register(dto);
 
         return result.Status switch {
-            ServiceResultStatus.Success => Ok(),
+            ServiceResultStatus.Success => Ok(result.Data),
             ServiceResultStatus.Conflict => Conflict(result.Message),
             _ => BadRequest("Something went wrong")
         };

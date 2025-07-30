@@ -13,12 +13,12 @@ public class AuthService : IAuthService {
         _userRepository = userRepository;
     }
 
-    public async Task<ServiceResult<bool>> Register(CreateUserDto user) {
+    public async Task<ServiceResult<UserSimpleDto>> Register(CreateUserDto user) {
         var existingUser = await _userRepository.GetUserByUsernameAsync(user.Username);
 
         // User exists
         if (existingUser != null) {
-            return ServiceResult<bool>.Error(ServiceResultStatus.Conflict, "User already exists!");
+            return ServiceResult<UserSimpleDto>.Error(ServiceResultStatus.Conflict, "User already exists!");
         }
 
         var newUser = new User {
@@ -26,8 +26,11 @@ public class AuthService : IAuthService {
             Password = BCrypt.Net.BCrypt.HashPassword(user.Password)
         };
 
-        await _userRepository.AddAsync(newUser);
-        return ServiceResult<bool>.Success(true);
+        var result = await _userRepository.AddAsync(newUser);
+        return ServiceResult<UserSimpleDto>.Success(new UserSimpleDto {
+            Id = result.Id,
+            Username = result.Username
+        });
     }
 
     public async Task<ServiceResult<UserSimpleDto>> Login(UserLoginDto user) {
