@@ -44,7 +44,8 @@ const userLogin = createAsyncThunk<
     );
     return { user: response.data };
   } catch (e) {
-    return rejectWithValue(e);
+    const error = e as AxiosError;
+    return rejectWithValue(error.response!.data as string);
   }
 });
 
