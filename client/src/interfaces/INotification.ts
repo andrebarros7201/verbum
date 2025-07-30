@@ -1,6 +1,7 @@
 interface INotification {
-  type: "success" | "error";
-  message: string;
+  type: "success" | "error" | null;
+  message: string | null;
+  isVisible: boolean;
 }
 
 export type { INotification };
