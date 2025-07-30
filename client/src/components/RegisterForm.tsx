@@ -5,6 +5,8 @@ import { type FormEvent, useRef } from "react";
 import { userRegister } from "../redux/slices/userSlice.ts";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../redux/store.ts";
+import { setNotification } from "../redux/slices/notificationSlice.ts";
+import type { IReturnNotification } from "../interfaces/IReturnNotification.ts";
 
 const RegisterForm = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -24,9 +26,11 @@ const RegisterForm = () => {
       const response = await dispatch(
         userRegister({ username, password }),
       ).unwrap();
-      console.log(response);
-    } catch (e) {
-      console.log(e);
+      const { notification } = response;
+      dispatch(setNotification(notification));
+    } catch (e: any) {
+      const { notification } = e as { notification: IReturnNotification };
+      dispatch(setNotification(notification));
     }
   }
 

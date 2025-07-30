@@ -5,6 +5,7 @@ import { type FormEvent, useRef } from "react";
 import { userLogin } from "../redux/slices/userSlice.ts";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../redux/store.ts";
+import { setNotification } from "../redux/slices/notificationSlice.ts";
 
 const LoginForm = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -24,9 +25,11 @@ const LoginForm = () => {
       const response = await dispatch(
         userLogin({ username, password }),
       ).unwrap();
-      console.log(response);
-    } catch (e) {
-      console.log(e);
+      const { notification } = response;
+      dispatch(setNotification(notification));
+    } catch (e: any) {
+      const { notification } = e;
+      dispatch(setNotification(notification));
     }
   }
 

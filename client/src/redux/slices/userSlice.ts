@@ -6,6 +6,7 @@ import {
 } from "@reduxjs/toolkit";
 import type { IUser } from "../../interfaces/IUser.ts";
 import axios, { AxiosError } from "axios";
+import type { IReturnNotification } from "../../interfaces/IReturnNotification.ts";
 
 const initialState: IUserSlice = {
   isAuthenticated: false,
@@ -14,25 +15,33 @@ const initialState: IUserSlice = {
 };
 
 const userRegister = createAsyncThunk<
-  boolean,
+  { notification: IReturnNotification },
   { username: string; password: string },
-  { rejectValue: string }
+  { rejectValue: { notification: IReturnNotification } }
 >("user/login", async ({ username, password }, { rejectWithValue }) => {
   try {
     await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/auth/register`, {
       username,
       password,
     });
-    return true;
+    return {
+      notification: { type: "success", message: "Registration successful" },
+    };
   } catch (e) {
     const error = e as AxiosError;
-    return rejectWithValue(error.response!.data as string);
+    return rejectWithValue({
+      notification: {
+        type: "error",
+        message: (error.response?.data as string) || "Registration failed",
+      },
+    });
   }
 });
 
 const userLogin = createAsyncThunk<
-  { user: IUser },
-  { username: string; password: string }
+  { user: IUser; notification: IReturnNotification },
+  { username: string; password: string },
+  { rejectValue: { notification: IReturnNotification } }
 >("user/login", async ({ username, password }, { rejectWithValue }) => {
   try {
     const response = await axios.post(
@@ -42,10 +51,18 @@ const userLogin = createAsyncThunk<
         password,
       },
     );
-    return { user: response.data };
+    return {
+      user: response.data,
+      notification: { type: "success", message: "Login successful" },
+    };
   } catch (e) {
     const error = e as AxiosError;
-    return rejectWithValue(error.response!.data as string);
+    return rejectWithValue({
+      notification: {
+        type: "error",
+        message: (error.response?.data as string) || "Login failed",
+      },
+    });
   }
 });
 
