@@ -11,12 +11,21 @@ const Community = () => {
   const { id } = useParams();
 
   useEffect(() => {
-    try {
-      dispatch(fetchCurrentCommunity({ id: parseInt(id!) }));
-    } catch (e) {
-      const err = e as { notification: IReturnNotification };
-      dispatch(setNotification(err.notification));
-    }
+    const fetch = async () => {
+      try {
+        await dispatch(fetchCurrentCommunity({ id: parseInt(id!) })).unwrap();
+      } catch (e) {
+        const err = e as { notification: IReturnNotification };
+        dispatch(
+          setNotification({
+            type: err.notification.type,
+            message: err.notification.message,
+          }),
+        );
+      }
+    };
+
+    fetch();
   }, []);
 
   return <div></div>;
