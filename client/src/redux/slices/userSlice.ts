@@ -50,6 +50,9 @@ const userLogin = createAsyncThunk<
         username,
         password,
       },
+      {
+        withCredentials: true,
+      },
     );
     return {
       user: response.data,
