@@ -1,6 +1,10 @@
 import { ButtonLink } from "./ui/ButtonLink";
+import { useSelector } from "react-redux";
+import type { RootState } from "../redux/store.ts";
+import { ButtonLogout } from "./ButtonLogout.tsx";
 
 const Header = () => {
+  const { isAuthenticated } = useSelector((state: RootState) => state.user);
   return (
     <div
       className={
@@ -8,9 +12,16 @@ const Header = () => {
       }
     >
       <h2 className={"italic font-bold text-2xl"}>Verbum</h2>
+
       <div className={"flex gap-4"}>
-        <ButtonLink href={"/register"} label={"Register"} />
-        <ButtonLink href={"/login"} label={"Login"} variant={"primary"} />
+        {isAuthenticated ? (
+          <ButtonLogout />
+        ) : (
+          <>
+            <ButtonLink href={"/register"} label={"Register"} />
+            <ButtonLink href={"/login"} label={"Login"} variant={"primary"} />
+          </>
+        )}
       </div>
     </div>
   );
