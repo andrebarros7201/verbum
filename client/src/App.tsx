@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import type { RootDispatch } from "./redux/store.ts";
 import { useDispatch } from "react-redux";
 import { userVerify } from "./redux/slices/userSlice.ts";
-import { Header } from "./components/Header/Header.tsx";
+import { Header } from "./components/header/Header.tsx";
 
 function App() {
   const dispatch = useDispatch<RootDispatch>();
