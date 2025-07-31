@@ -1,8 +1,8 @@
-import { ButtonLink } from "./ui/ButtonLink";
 import { useSelector } from "react-redux";
-import type { RootState } from "../redux/store.ts";
 import { ButtonLogout } from "./ButtonLogout.tsx";
 import { HeaderLogo } from "./HeaderLogo.tsx";
+import type { RootState } from "../../redux/store.ts";
+import { ButtonLink } from "../ui/ButtonLink.tsx";
 
 const Header = () => {
   const { isAuthenticated } = useSelector((state: RootState) => state.user);
