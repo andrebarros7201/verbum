@@ -1,5 +1,4 @@
 #root {
-  border: 1px solid red;
   width: min(1200px, 100%);
   height: 100%;
   box-sizing: border-box;
