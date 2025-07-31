@@ -1,6 +1,7 @@
 import App from "./App";
 import { Register } from "./pages/Register.tsx";
 import { Login } from "./pages/Login.tsx";
+import { Community } from "./pages/Community.tsx";
 
 const routes = [
   {
@@ -14,6 +15,10 @@ const routes = [
       {
         path: "/login",
         element: <Login />,
+      },
+      {
+        path: "/communities",
+        element: <Community />,
       },
     ],
   },

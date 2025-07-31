@@ -12,8 +12,10 @@ const Header = () => {
         "w-full border-b-2 border-b-amber-600 py-2 flex gap-4 justify-between"
       }
     >
-      <HeaderLogo />
-
+      <div className={"flex gap-4"}>
+        <HeaderLogo />
+        <ButtonLink href={"/communities"} label={"Communities"} />
+      </div>
       <div className={"flex gap-4"}>
         {isAuthenticated ? (
           <ButtonLogout />
