@@ -90,6 +90,26 @@ const userLogout = createAsyncThunk<
     });
   }
 });
+
+const userVerify = createAsyncThunk<
+  { user: IUser },
+  void,
+  { rejectValue: boolean }
+>("user/verify", async (_, { rejectWithValue }) => {
+  try {
+    const response = await axios.get(
+      `${import.meta.env.VITE_SERVER_URL}/api/user/verify`,
+      {
+        withCredentials: true,
+      },
+    );
+    const { user } = response.data;
+    return { user };
+  } catch (e) {
+    return rejectWithValue(false);
+  }
+});
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -126,8 +146,22 @@ const userSlice = createSlice({
       })
       .addCase(userLogout.rejected, (state) => {
         state.isLoading = false;
+      })
+      // USER VERIFY
+      .addCase(userVerify.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(userVerify.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isAuthenticated = true;
+        state.user = action.payload.user;
+      })
+      .addCase(userVerify.rejected, (state) => {
+        state.isLoading = false;
+        state.isAuthenticated = false;
+        state.user = null;
       });
   },
 });
 
-export { userSlice, userLogin, userRegister, userLogout };
+export { userSlice, userLogin, userRegister, userLogout, userVerify };

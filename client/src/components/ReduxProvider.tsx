@@ -3,7 +3,7 @@ import { store } from "../redux/store";
 import type { ReactNode } from "react";
 
 type Props = {
-  children: ReactNode[];
+  children: ReactNode;
 };
 
 export const ReduxProvider = ({ children }: Props) => {
