@@ -1,12 +1,16 @@
 import { useParams } from "react-router-dom";
-import type { RootDispatch } from "../redux/store.ts";
-import { useDispatch } from "react-redux";
+import type { RootDispatch, RootState } from "../redux/store.ts";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import type { IReturnNotification } from "../interfaces/IReturnNotification.ts";
 import { setNotification } from "../redux/slices/notificationSlice.ts";
 import { fetchCurrentCommunity } from "../redux/slices/currentCommunitySlice.ts";
+import { PostList } from "../components/post/PostList.tsx";
 
 const Community = () => {
+  const { community } = useSelector(
+    (state: RootState) => state.currentCommunity,
+  );
   const dispatch = useDispatch<RootDispatch>();
   const { id } = useParams();
 
@@ -28,7 +32,11 @@ const Community = () => {
     fetch();
   }, []);
 
-  return <div></div>;
+  return (
+    <div className={"w-full flex flex-1"}>
+      {community && community.posts && <PostList posts={community.posts} />}
+    </div>
+  );
 };
 
 export { Community };

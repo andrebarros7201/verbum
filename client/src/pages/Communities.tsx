@@ -18,7 +18,7 @@ const Communities = () => {
   }, []);
 
   return (
-    <div className={"flex flex-col justify-start items-start"}>
+    <div className={"w-full flex-1 flex flex-col justify-start items-start"}>
       <CommunityList />
     </div>
   );
