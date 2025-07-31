@@ -109,8 +109,7 @@ const userVerify = createAsyncThunk<
         withCredentials: true,
       },
     );
-    const { user } = response.data;
-    return { user };
+    return { user: response.data };
   } catch (e) {
     return rejectWithValue(false);
   }
