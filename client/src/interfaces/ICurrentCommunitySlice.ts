@@ -1,8 +1,8 @@
-import type { ICommunitySimple } from "./ICommunitySimple.ts";
+import type { ICommunityComplete } from "./ICommunityComplete.ts";
 
 interface ICurrentCommunitySlice {
   isLoading: boolean;
-  community: ICommunitySimple | null;
+  community: ICommunityComplete | null;
 }
 
 export type { ICurrentCommunitySlice };
