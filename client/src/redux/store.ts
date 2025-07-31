@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { userSlice } from "./slices/userSlice.ts";
 import { notificationSlice } from "./slices/notificationSlice.ts";
-import { communitySlice } from "./slices/CommunitySlice.ts";
+import { communitySlice } from "./slices/communitySlice.ts";
 
 const store = configureStore({
   reducer: {
