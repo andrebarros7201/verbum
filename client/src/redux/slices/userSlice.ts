@@ -7,11 +7,17 @@ import {
 import type { IUser } from "../../interfaces/IUser.ts";
 import axios, { AxiosError } from "axios";
 import type { IReturnNotification } from "../../interfaces/IReturnNotification.ts";
+import type { ICommunitySimple } from "../../interfaces/ICommunitySimple.ts";
+import type { ICommentSimple } from "../../interfaces/ICommentSimple.ts";
+import type { IPostSimple } from "../../interfaces/IPostSimple.ts";
 
 const initialState: IUserSlice = {
   isAuthenticated: false,
   user: null,
   isLoading: false,
+  communities: [],
+  posts: [],
+  comments: [],
 };
 
 const userRegister = createAsyncThunk<
@@ -110,6 +116,34 @@ const userVerify = createAsyncThunk<
   }
 });
 
+const userMe = createAsyncThunk<
+  {
+    user: IUser;
+    communities: ICommunitySimple[];
+    posts: IPostSimple[];
+    comments: ICommentSimple[];
+  },
+  void,
+  { rejectValue: boolean }
+>("user/me", async (_, { rejectWithValue }) => {
+  try {
+    const response = await axios.get(
+      `${import.meta.env.VITE_SERVER_URL}/api/user/me`,
+      {
+        withCredentials: true,
+      },
+    );
+    const { communities, posts, comments } = response.data;
+    return {
+      user: { id: response.data.id, username: response.data.username },
+      communities,
+      posts,
+      comments,
+    };
+  } catch (e) {
+    return rejectWithValue(false);
+  }
+});
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -146,6 +180,26 @@ const userSlice = createSlice({
       })
       .addCase(userLogout.rejected, (state) => {
         state.isLoading = false;
+      })
+      // USER VERIFY
+      .addCase(userMe.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(userMe.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isAuthenticated = true;
+        state.user = action.payload.user;
+        state.communities = action.payload.communities;
+        state.posts = action.payload.posts;
+        state.comments = action.payload.comments;
+      })
+      .addCase(userMe.rejected, (state) => {
+        state.isLoading = false;
+        state.isAuthenticated = false;
+        state.user = null;
+        state.communities = [];
+        state.posts = [];
+        state.comments = [];
       })
       // USER VERIFY
       .addCase(userVerify.pending, (state) => {
