@@ -19,6 +19,9 @@ const fetchAllCommunities = createAsyncThunk<
   try {
     const response = await axios.get(
       `${import.meta.env.VITE_SERVER_URL}/api/community`,
+      {
+        withCredentials: true,
+      },
     );
 
     return { communities: response.data };
