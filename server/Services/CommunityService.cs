@@ -50,6 +50,7 @@ public class CommunityService : ICommunityService {
                 Id = result.Id,
                 Name = result.Name,
                 Description = result.Description,
+                Owner = new UserSimpleDto { Id = result.Owner.Id, Username = result.Owner.Username },
                 isOwner = result.UserId == userId,
                 isMember = result.Members.Any(m => m.UserId == userId),
                 MembersCount = result.Members.Count,
