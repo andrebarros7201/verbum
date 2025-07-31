@@ -87,4 +87,21 @@ public class UserController : ControllerBase {
             _ => BadRequest(new { message = "Something went wrong" })
         };
     }
+
+    [Authorize]
+    [HttpGet("verify")]
+    public async Task<IActionResult> VerifyUser() {
+        string? userClaimId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userClaimId == null) {
+            return Unauthorized("User not logged in!");
+        }
+
+        ServiceResult<UserSimpleDto> result = await _userService.GetUserById(int.Parse(userClaimId));
+
+        return result.Status switch {
+            ServiceResultStatus.Success => Ok(result.Data),
+            ServiceResultStatus.NotFound => NotFound(result.Message),
+            _ => BadRequest(new { message = "Something went wrong" })
+        };
+    }
 }

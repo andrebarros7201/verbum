@@ -22,7 +22,16 @@ public class UserService : IUserService {
         }
 
         return ServiceResult<UserSimpleDto>.Success(new UserSimpleDto { Id = user.Id, Username = user.Username });
-        ;
+    }
+
+    public async Task<ServiceResult<UserSimpleDto>> GetUserById(int userId) {
+        var user = await _userRepository.GetUserByIdAsync(userId);
+
+        if (user == null) {
+            return ServiceResult<UserSimpleDto>.Error(ServiceResultStatus.NotFound, "User not found!");
+        }
+
+        return ServiceResult<UserSimpleDto>.Success(new UserSimpleDto { Id = user.Id, Username = user.Username });
     }
 
     public async Task<ServiceResult<UserCompleteDto>> GetUserCompleteById(int id) {
