@@ -10,7 +10,9 @@ function App() {
       <ReduxProvider>
         <Header />
         <Notification />
-        <Outlet />
+        <div className={"w-full flex-1 border-2 border-red-500"}>
+          <Outlet />
+        </div>
       </ReduxProvider>
     </>
   );

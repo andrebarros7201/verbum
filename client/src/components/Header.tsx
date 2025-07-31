@@ -4,7 +4,7 @@ const Header = () => {
   return (
     <div
       className={
-        "w-full border-b-2 border-b-amber-600 p-4 flex gap-4 justify-between"
+        "w-full border-b-2 border-b-amber-600 py-4 flex gap-4 justify-between"
       }
     >
       <h2 className={"italic font-bold text-2xl"}>Verbum</h2>
