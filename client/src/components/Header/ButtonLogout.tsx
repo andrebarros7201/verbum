@@ -1,8 +1,8 @@
-import { Button } from "./ui/Button";
-import type { AppDispatch } from "../redux/store";
 import { useDispatch } from "react-redux";
-import { userLogout } from "../redux/slices/userSlice";
-import { setNotification } from "../redux/slices/notificationSlice";
+import type { AppDispatch } from "../../redux/store.ts";
+import { Button } from "../ui/Button.tsx";
+import { setNotification } from "../../redux/slices/notificationSlice.ts";
+import { userLogout } from "../../redux/slices/userSlice.ts";
 
 const ButtonLogout = () => {
   const dispatch = useDispatch<AppDispatch>();
