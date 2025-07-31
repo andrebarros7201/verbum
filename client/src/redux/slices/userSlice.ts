@@ -158,7 +158,13 @@ const userSlice = createSlice({
       })
       .addCase(
         userLogin.fulfilled,
-        (state, action: PayloadAction<{ user: IUser }>) => {
+        (
+          state,
+          action: PayloadAction<{
+            user: IUser;
+            notification: IReturnNotification;
+          }>,
+        ) => {
           state.user = action.payload.user;
           state.isAuthenticated = true;
           state.isLoading = false;

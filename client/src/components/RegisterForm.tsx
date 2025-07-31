@@ -28,8 +28,9 @@ const RegisterForm = () => {
       ).unwrap();
       const { notification } = response;
       dispatch(setNotification(notification));
-    } catch (e: any) {
-      const { notification } = e as { notification: IReturnNotification };
+    } catch (e) {
+      const err = e as { notification: IReturnNotification };
+      const { notification } = err;
       dispatch(setNotification(notification));
     }
   }

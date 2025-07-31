@@ -6,6 +6,7 @@ import { userLogin } from "../redux/slices/userSlice.ts";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../redux/store.ts";
 import { setNotification } from "../redux/slices/notificationSlice.ts";
+import type { IReturnNotification } from "../interfaces/IReturnNotification.ts";
 
 const LoginForm = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -27,8 +28,9 @@ const LoginForm = () => {
       ).unwrap();
       const { notification } = response;
       dispatch(setNotification(notification));
-    } catch (e: any) {
-      const { notification } = e;
+    } catch (e) {
+      const err = e as { notification: IReturnNotification };
+      const { notification } = err;
       dispatch(setNotification(notification));
     }
   }
