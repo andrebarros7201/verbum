@@ -1,7 +1,7 @@
 import App from "./App";
 import { Register } from "./pages/Register.tsx";
 import { Login } from "./pages/Login.tsx";
-import { Community } from "./pages/Community.tsx";
+import { Communities } from "./pages/Communities.tsx";
 
 const routes = [
   {
@@ -18,7 +18,7 @@ const routes = [
       },
       {
         path: "/communities",
-        element: <Community />,
+        element: <Communities />,
       },
     ],
   },

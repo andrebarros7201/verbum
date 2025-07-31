@@ -6,7 +6,7 @@ import type { IReturnNotification } from "../interfaces/IReturnNotification.ts";
 import { CommunityList } from "../components/Community/CommunityList.tsx";
 import { fetchAllCommunities } from "../redux/slices/communitySlice.ts";
 
-const Community = () => {
+const Communities = () => {
   const dispatch = useDispatch<RootDispatch>();
   useEffect(() => {
     try {
@@ -24,4 +24,4 @@ const Community = () => {
   );
 };
 
-export { Community };
+export { Communities };
