@@ -1,9 +1,10 @@
 import type { RootDispatch } from "../redux/store.ts";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { fetchAllCommunities } from "../redux/slices/CommunitySlice.ts";
 import { setNotification } from "../redux/slices/notificationSlice.ts";
 import type { IReturnNotification } from "../interfaces/IReturnNotification.ts";
+import { CommunityList } from "../components/Community/CommunityList.tsx";
+import { fetchAllCommunities } from "../redux/slices/communitySlice.ts";
 
 const Community = () => {
   const dispatch = useDispatch<RootDispatch>();
@@ -16,7 +17,11 @@ const Community = () => {
     }
   }, []);
 
-  return <div>Community</div>;
+  return (
+    <div className={"flex flex-col justify-start items-start"}>
+      <CommunityList />
+    </div>
+  );
 };
 
 export { Community };
