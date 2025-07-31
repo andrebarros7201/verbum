@@ -19,7 +19,7 @@ public class CommunityController : ControllerBase {
     [HttpGet]
     public async Task<IActionResult> GetCommunities() {
         string? userClaimsId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        ServiceResult<List<CommunitySimpleDto>> result = await _communityService.GetCommunities(int.Parse(userClaimsId));
+        ServiceResult<List<CommunitySimpleDto>> result = await _communityService.GetCommunities(int.Parse(userClaimsId ?? "0"));
         return Ok(result.Data);
     }
 
