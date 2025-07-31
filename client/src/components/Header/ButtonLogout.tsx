@@ -1,11 +1,11 @@
 import { useDispatch } from "react-redux";
-import type { AppDispatch } from "../../redux/store.ts";
+import type { RootDispatch } from "../../redux/store.ts";
 import { Button } from "../ui/Button.tsx";
 import { setNotification } from "../../redux/slices/notificationSlice.ts";
 import { userLogout } from "../../redux/slices/userSlice.ts";
 
 const ButtonLogout = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<RootDispatch>();
 
   async function handleLogout() {
     try {

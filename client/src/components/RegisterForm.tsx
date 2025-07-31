@@ -4,12 +4,12 @@ import { Button } from "./ui/Button.tsx";
 import { type FormEvent, useRef } from "react";
 import { userRegister } from "../redux/slices/userSlice.ts";
 import { useDispatch } from "react-redux";
-import type { AppDispatch } from "../redux/store.ts";
+import type { RootDispatch } from "../redux/store.ts";
 import { setNotification } from "../redux/slices/notificationSlice.ts";
 import type { IReturnNotification } from "../interfaces/IReturnNotification.ts";
 
 const RegisterForm = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<RootDispatch>();
   const usernameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 

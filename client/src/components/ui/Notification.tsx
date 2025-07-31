@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../../redux/store.ts";
+import type { RootDispatch, RootState } from "../../redux/store.ts";
 import clsx from "clsx";
 import { clearNotification } from "../../redux/slices/notificationSlice.ts";
 
@@ -7,7 +7,7 @@ const Notification = () => {
   const { isVisible, type, message } = useSelector(
     (state: RootState) => state.notification,
   );
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<RootDispatch>();
 
   function handleClose() {
     dispatch(clearNotification());
