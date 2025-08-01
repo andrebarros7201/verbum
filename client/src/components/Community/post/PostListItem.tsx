@@ -1,4 +1,5 @@
 import type { IPostSimple } from "../../../interfaces/IPostSimple.ts";
+import { ButtonLink } from "../../ui/ButtonLink.tsx";
 
 type Props = {
   post: IPostSimple;
@@ -14,6 +15,7 @@ const PostListItem = ({ post }: Props) => {
       <h3 className={"capitalize"}>{post.title}</h3>
       <p>{post.votes}</p>
       <p>Comments: {post.commentsCount}</p>
+      <ButtonLink href={`/post/${post.id}`} label={"Go To"} />
     </div>
   );
 };
