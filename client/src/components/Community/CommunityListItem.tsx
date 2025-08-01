@@ -1,6 +1,7 @@
 import type { ICommunitySimple } from "../../interfaces/ICommunitySimple.ts";
-import { Button } from "../ui/Button.tsx";
 import { ButtonLink } from "../ui/ButtonLink.tsx";
+import { ButtonCommunityLeave } from "./ButtonCommunityLeave.tsx";
+import { ButtonCommunityJoin } from "./ButtonCommunityJoin.tsx";
 
 type Props = {
   community: ICommunitySimple;
@@ -25,9 +26,9 @@ const CommunityListItem = ({ community }: Props) => {
       <div className={"flex gap-4 justify-center items-center w-full"}>
         <ButtonLink href={`/community/${community.id}`} label={"Go To"} />
         {community.isMember ? (
-          <Button label={"Leave"} variant={"primary"} />
+          <ButtonCommunityLeave id={community.id} />
         ) : (
-          <Button label={"Join"} variant={"secondary"} />
+          <ButtonCommunityJoin id={community.id} />
         )}
       </div>
     </div>
