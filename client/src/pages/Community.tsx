@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import type { IReturnNotification } from "../interfaces/IReturnNotification.ts";
 import { setNotification } from "../redux/slices/notificationSlice.ts";
 import { fetchCurrentCommunity } from "../redux/slices/currentCommunitySlice.ts";
-import { PostList } from "../components/post/PostList.tsx";
+import { PostList } from "../components/Community/post/PostList.tsx";
 
 const Community = () => {
   const { community } = useSelector(
