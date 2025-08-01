@@ -1,4 +1,4 @@
-import type { IPostSimple } from "../../interfaces/IPostSimple.ts";
+import type { IPostSimple } from "../../../interfaces/IPostSimple.ts";
 import { PostListItem } from "./PostListItem.tsx";
 
 type Props = {
