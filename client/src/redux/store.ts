@@ -3,6 +3,7 @@ import { userSlice } from "./slices/userSlice.ts";
 import { notificationSlice } from "./slices/notificationSlice.ts";
 import { communitySlice } from "./slices/communitySlice.ts";
 import { currentCommunitySlice } from "./slices/currentCommunitySlice.ts";
+import { currentPostSlice } from "./slices/currentPostSlice.ts";
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     notification: notificationSlice.reducer,
     community: communitySlice.reducer,
     currentCommunity: currentCommunitySlice.reducer,
+    currentPost: currentPostSlice.reducer,
   },
 });
 
