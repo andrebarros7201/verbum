@@ -3,6 +3,7 @@ import type { ICurrentPostSlice } from "../../interfaces/ICurrentPostSlice.ts";
 import type { IReturnNotification } from "../../interfaces/IReturnNotification.ts";
 import type { IPostComplete } from "../../interfaces/IPostComplete.ts";
 import axios, { type AxiosError } from "axios";
+import type { ICommentSimple } from "../../interfaces/ICommentSimple.ts";
 
 const initialState: ICurrentPostSlice = {
   post: null,
@@ -31,7 +32,6 @@ const fetchCurrentPost = createAsyncThunk<
   }
 });
 
-// Create a single function that receives id and value
 const votePost = createAsyncThunk<
   { id: number; value: number; post: IPostComplete },
   { id: number; value: number },
@@ -46,6 +46,29 @@ const votePost = createAsyncThunk<
     );
 
     return { id, value, post: response.data };
+  } catch (e) {
+    const error = e as AxiosError<string>;
+    const message = error.response?.data || "Something went wrong";
+    return rejectWithValue({
+      notification: { type: "error", message },
+    });
+  }
+});
+
+const voteComment = createAsyncThunk<
+  { id: number; value: number; comment: ICommentSimple },
+  { id: number; value: number },
+  { rejectValue: { notification: IReturnNotification } }
+>("post/commentVote", async ({ id, value }, { rejectWithValue }) => {
+  try {
+    const type = value === 1 ? "like" : "dislike";
+    const response = await axios.post(
+      `${import.meta.env.VITE_SERVER_URL}/api/comment/${id}/${type}`,
+      {},
+      { withCredentials: true },
+    );
+
+    return { id, value, comment: response.data };
   } catch (e) {
     const error = e as AxiosError<string>;
     const message = error.response?.data || "Something went wrong";
@@ -84,8 +107,28 @@ const currentPostSlice = createSlice({
       })
       .addCase(votePost.rejected, (state) => {
         state.isLoading = false;
+      })
+
+      // Comment vote
+      .addCase(voteComment.pending, (state) => {})
+      .addCase(voteComment.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const commentIndex = state.post!.comments.findIndex(
+          (c) => c.id === action.payload.id,
+        );
+
+        state.post!.comments[commentIndex] = action.payload.comment;
+      })
+      .addCase(voteComment.rejected, (state) => {
+        state.isLoading = false;
       });
   },
 });
 const { clearCurrentPost } = currentPostSlice.actions;
-export { currentPostSlice, votePost, fetchCurrentPost, clearCurrentPost };
+export {
+  currentPostSlice,
+  votePost,
+  voteComment,
+  fetchCurrentPost,
+  clearCurrentPost,
+};

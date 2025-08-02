@@ -1,7 +1,7 @@
 import { clsx } from "clsx";
 import { useDispatch } from "react-redux";
 import type { RootDispatch } from "../../redux/store";
-import { votePost } from "../../redux/slices/currentPostSlice";
+import { votePost, voteComment } from "../../redux/slices/currentPostSlice";
 import { setNotification } from "../../redux/slices/notificationSlice";
 
 type Props = {
@@ -16,6 +16,8 @@ const ButtonVote = ({ type, value, id }: Props) => {
     try {
       if (type === "post") {
         await dispatch(votePost({ id, value })).unwrap();
+      } else {
+        await dispatch(voteComment({ id, value }));
       }
     } catch (error: any) {
       dispatch(setNotification(error.notification));

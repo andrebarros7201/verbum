@@ -15,9 +15,9 @@ const CommentItem = ({ comment }: Props) => {
       <div className="w-full flex gap-4 items-center justify-start">
         <p>{comment.author.username}</p>
         <p>{comment.createdAt.split("T")[0]}</p>
-        <ButtonVote value={-1} type="comment" />
+        <ButtonVote value={-1} type="comment" id={comment.id} />
         <p>{comment.votes}</p>
-        <ButtonVote value={1} type="comment" />
+        <ButtonVote value={1} type="comment" id={comment.id} />
       </div>
       <p className={"w-full text-md text-left font-bold"}>{comment.text}</p>
     </main>
