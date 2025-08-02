@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store.ts";
 import { CommentItem } from "./CommentItem.tsx";
+import { ButtonVote } from "../ui/ButtonVote.tsx";
 
 const PostItem = () => {
   const { isLoading, post } = useSelector(
@@ -18,8 +19,13 @@ const PostItem = () => {
           "w-full flex-1 flex flex-col items-start justify-start gap-4 "
         }
       >
-        <h2 className={"font-bold text-3xl"}>{post.title}</h2>
-        <p className="text-lg">{post.votes}</p>
+        <div className={"flex gap-4 items-center"}>
+          <ButtonVote type="comment" value={-1} />
+          <p className="text-lg">{post.votes}</p>
+          <ButtonVote type="comment" value={1} />
+          <h2 className={"font-bold text-3xl"}>{post.title}</h2>
+        </div>
+        <p>{post.text}</p>
         <h4>Comments {post.commentsCount}</h4>
         <div className={"w-full flex flex-col gap-4 py-4"}>
           {post.comments.map((comment) => (
