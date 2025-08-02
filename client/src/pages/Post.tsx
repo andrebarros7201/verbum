@@ -21,7 +21,8 @@ const Post = () => {
     }
 
     fetch();
-  }, []);
+  }, [dispatch, id]);
+
   return <PostItem />;
 };
 
