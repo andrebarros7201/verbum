@@ -3,9 +3,10 @@ import { clsx } from "clsx";
 type Props = {
   type: "post" | "comment";
   value: -1 | 1;
+  id: number;
 };
 
-const ButtonVote = ({ type, value }: Props) => {
+const ButtonVote = ({ type, value, id }: Props) => {
   async function onClick() {}
 
   return (
