@@ -31,6 +31,30 @@ const fetchCurrentPost = createAsyncThunk<
   }
 });
 
+// Create a single function that receives id and value
+const votePost = createAsyncThunk<
+  { id: number; value: number; post: IPostComplete },
+  { id: number; value: number },
+  { rejectValue: { notification: IReturnNotification } }
+>("post/vote", async ({ id, value }, { rejectWithValue }) => {
+  try {
+    const type = value === 1 ? "like" : "dislike";
+    const response = await axios.post(
+      `${import.meta.env.VITE_SERVER_URL}/api/post/${id}/${type}`,
+      {},
+      { withCredentials: true },
+    );
+
+    return { id, value, post: response.data };
+  } catch (e) {
+    const error = e as AxiosError<string>;
+    const message = error.response?.data || "Something went wrong";
+    return rejectWithValue({
+      notification: { type: "error", message },
+    });
+  }
+});
+
 const currentPostSlice = createSlice({
   name: "currentPost",
   initialState,
@@ -51,8 +75,17 @@ const currentPostSlice = createSlice({
       .addCase(fetchCurrentPost.rejected, (state) => {
         state.isLoading = false;
         state.post = null;
+      })
+      // Post vote
+      .addCase(votePost.pending, (state) => {})
+      .addCase(votePost.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.post!.votes = action.payload.post.votes;
+      })
+      .addCase(votePost.rejected, (state) => {
+        state.isLoading = false;
       });
   },
 });
 const { clearCurrentPost } = currentPostSlice.actions;
-export { currentPostSlice, fetchCurrentPost, clearCurrentPost };
+export { currentPostSlice, votePost, fetchCurrentPost, clearCurrentPost };

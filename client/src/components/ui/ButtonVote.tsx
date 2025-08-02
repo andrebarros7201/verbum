@@ -1,4 +1,8 @@
 import { clsx } from "clsx";
+import { useDispatch } from "react-redux";
+import type { RootDispatch } from "../../redux/store";
+import { votePost } from "../../redux/slices/currentPostSlice";
+import { setNotification } from "../../redux/slices/notificationSlice";
 
 type Props = {
   type: "post" | "comment";
@@ -7,7 +11,16 @@ type Props = {
 };
 
 const ButtonVote = ({ type, value, id }: Props) => {
-  async function onClick() {}
+  const dispatch = useDispatch<RootDispatch>();
+  async function onClick() {
+    try {
+      if (type === "post") {
+        await dispatch(votePost({ id, value })).unwrap();
+      }
+    } catch (error: any) {
+      dispatch(setNotification(error.notification));
+    }
+  }
 
   return (
     <button

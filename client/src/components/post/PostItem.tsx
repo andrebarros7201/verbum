@@ -20,9 +20,9 @@ const PostItem = () => {
         }
       >
         <div className={"flex gap-4 items-center"}>
-          <ButtonVote type="comment" value={-1} />
+          <ButtonVote type="post" value={-1} id={post.id} />
           <p className="text-lg">{post.votes}</p>
-          <ButtonVote type="comment" value={1} />
+          <ButtonVote type="post" value={1} id={post.id} />
           <h2 className={"font-bold text-3xl"}>{post.title}</h2>
         </div>
         <p>{post.text}</p>
