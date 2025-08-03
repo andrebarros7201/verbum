@@ -83,6 +83,35 @@ const leaveCommunity = createAsyncThunk<
   }
 });
 
+const createCommunity = createAsyncThunk<
+  { notification: IReturnNotification; community: ICommunitySimple },
+  { name: string; description: string },
+  { rejectValue: { notification: IReturnNotification } }
+>("community/create", async ({ name, description }, { rejectWithValue }) => {
+  try {
+    const response = await axios.post(
+      `${import.meta.env.VITE_SERVER_URL}/api/community`,
+      { name, description },
+      {
+        withCredentials: true,
+      },
+    );
+    return {
+      notification: {
+        type: "success",
+        message: "Community Created",
+      },
+      community: response.data,
+    };
+  } catch (e) {
+    const error = e as AxiosError<string>;
+    const message = error.response?.data || "Something went wrong";
+    return rejectWithValue({
+      notification: { type: "error", message },
+    });
+  }
+});
+
 const communitySlice = createSlice({
   name: "community",
   initialState,
@@ -104,7 +133,17 @@ const communitySlice = createSlice({
         state.isLoading = false;
         state.communities = [];
       })
-
+      // Create Community
+      .addCase(createCommunity.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(createCommunity.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.communities.push(action.payload.community);
+      })
+      .addCase(createCommunity.rejected, (state) => {
+        state.isLoading = false;
+      })
       // Join Community
       .addCase(joinCommunity.pending, (state) => {
         state.isLoading = true;
@@ -141,4 +180,12 @@ const communitySlice = createSlice({
   },
 });
 
-export { communitySlice, fetchAllCommunities, leaveCommunity, joinCommunity };
+const { clearCommunities } = communitySlice.actions;
+export {
+  communitySlice,
+  clearCommunities,
+  createCommunity,
+  fetchAllCommunities,
+  leaveCommunity,
+  joinCommunity,
+};
