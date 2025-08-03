@@ -1,5 +1,5 @@
 import { Form } from "./ui/Form.tsx";
-import { FormInput } from "./ui/Input.tsx";
+import { FormInput } from "./ui/FormInput.tsx";
 import { Button } from "./ui/Button.tsx";
 import { type FormEvent, useRef } from "react";
 import { userLogin } from "../redux/slices/userSlice.ts";
