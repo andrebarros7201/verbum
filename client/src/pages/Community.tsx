@@ -6,6 +6,7 @@ import type { IReturnNotification } from "../interfaces/IReturnNotification.ts";
 import { setNotification } from "../redux/slices/notificationSlice.ts";
 import { fetchCurrentCommunity } from "../redux/slices/currentCommunitySlice.ts";
 import { PostList } from "../components/Community/post/PostList.tsx";
+import { ButtonCommunityMembership } from "../components/Community/ButtonCommunityMembership.tsx";
 
 const Community = () => {
   const { community } = useSelector(
@@ -33,9 +34,16 @@ const Community = () => {
   }, []);
 
   return (
-    <div className={"w-full flex flex-1"}>
-      {community && community.posts && <PostList posts={community.posts} />}
-    </div>
+    community && (
+      <div
+        className={
+          "w-full flex flex-1 flex-col justify-start items-start gap-4"
+        }
+      >
+        <ButtonCommunityMembership />
+        <PostList posts={community.posts} />
+      </div>
+    )
   );
 };
 
