@@ -9,7 +9,7 @@ const PostListItem = ({ post }: Props) => {
   return (
     <div
       className={
-        "max-w-sm flex flex-col gap-4 p-4 bg-white rounded border-2 border-amber-600"
+        "w-full flex flex-col gap-4 p-4 bg-white rounded border-2 border-amber-600"
       }
     >
       <h3 className={"capitalize"}>{post.title}</h3>
