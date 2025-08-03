@@ -6,11 +6,12 @@ import { Form } from "../ui/Form.tsx";
 import { FormTextArea } from "../ui/FormTextArea.tsx";
 import type { IReturnNotification } from "../../interfaces/IReturnNotification.ts";
 import type { RootDispatch } from "../../redux/store.ts";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setNotification } from "../../redux/slices/notificationSlice.ts";
 import { createPost } from "../../redux/slices/currentCommunitySlice.ts";
 
 const ButtonCreatePost = () => {
+  const { community } = useSelector((state: any) => state.currentCommunity);
   const dispatch = useDispatch<RootDispatch>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const titleRef = useRef<HTMLInputElement>(null);
@@ -41,6 +42,7 @@ const ButtonCreatePost = () => {
   return (
     <>
       <Button
+        isDisabled={!community.isMember}
         label={"Create Post"}
         variant={"primary"}
         onClick={() => {
