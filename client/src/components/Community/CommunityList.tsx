@@ -7,7 +7,7 @@ const CommunityList = () => {
 
   return (
     <main
-      className={"w-full flex justify-start items-start gap-4 p-4 flex-wrap "}
+      className={"w-full flex justify-start items-start gap-4 py-4 flex-wrap "}
     >
       {communities &&
         communities.map((community) => (
