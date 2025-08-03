@@ -25,7 +25,7 @@ public class CommunityRepository : ICommunityRepository {
             .Include(c => c.Posts)
             .ThenInclude(p => p.Votes)
             .Include(c => c.Posts)
-            .ThenInclude(p => p.Comments)
+            .ThenInclude(p => p.User)
             .FirstOrDefaultAsync();
     }
 
