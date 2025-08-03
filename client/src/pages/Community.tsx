@@ -7,6 +7,7 @@ import { setNotification } from "../redux/slices/notificationSlice.ts";
 import { fetchCurrentCommunity } from "../redux/slices/currentCommunitySlice.ts";
 import { PostList } from "../components/Community/post/PostList.tsx";
 import { ButtonCommunityMembership } from "../components/Community/ButtonCommunityMembership.tsx";
+import { ButtonCreatePost } from "../components/Community/ButtonCreatePost.tsx";
 
 const Community = () => {
   const { community } = useSelector(
@@ -40,7 +41,13 @@ const Community = () => {
           "w-full flex flex-1 flex-col justify-start items-start gap-4"
         }
       >
-        <ButtonCommunityMembership />
+        <div className={"w-full flex gap-4 justify-start items-center"}>
+          <h3 className={"text-4xl font-bold text-amber-600"}>
+            {community.name}
+          </h3>
+          <ButtonCreatePost />
+          <ButtonCommunityMembership />
+        </div>
         <PostList posts={community.posts} />
       </div>
     )
