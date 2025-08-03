@@ -36,8 +36,8 @@ const LoginForm = () => {
   }
 
   return (
-    <main className={"w-full max-w-2xl flex justify-center"}>
-      <Form onSubmit={onSubmit}>
+    <main className={"w-full max-w-2xl flex justify-center items-start"}>
+      <Form onSubmit={onSubmit} title={"Login"}>
         <FormInput
           type={"text"}
           name={"username"}

@@ -36,8 +36,8 @@ const RegisterForm = () => {
   }
 
   return (
-    <main className={"w-full max-w-2xl flex justify-center"}>
-      <Form onSubmit={onSubmit}>
+    <main className={"w-full max-w-2xl flex justify-center items-start"}>
+      <Form onSubmit={onSubmit} title={"Register"}>
         <FormInput
           type={"text"}
           name={"username"}
