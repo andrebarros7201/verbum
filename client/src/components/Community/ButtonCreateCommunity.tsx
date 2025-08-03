@@ -49,25 +49,23 @@ const ButtonCreateCommunity = () => {
       />
       {isModalOpen && (
         <Modal onClose={() => setIsModalOpen(false)}>
-          <div className={"w-xl"}>
-            <Form onSubmit={handleCreateCommunity} title={"Create Community"}>
-              <FormInput
-                type={"text"}
-                name={"name"}
-                label={"Name"}
-                min={3}
-                ref={nameRef}
-              />
-              <FormInput
-                type={"text"}
-                name={"description"}
-                label={"Description"}
-                min={3}
-                ref={descriptionRef}
-              />
-              <Button label={"Create"} variant={"primary"} type={"submit"} />
-            </Form>
-          </div>
+          <Form onSubmit={handleCreateCommunity} title={"Create Community"}>
+            <FormInput
+              type={"text"}
+              name={"name"}
+              label={"Name"}
+              min={3}
+              ref={nameRef}
+            />
+            <FormInput
+              type={"text"}
+              name={"description"}
+              label={"Description"}
+              min={3}
+              ref={descriptionRef}
+            />
+            <Button label={"Create"} variant={"primary"} type={"submit"} />
+          </Form>
         </Modal>
       )}
     </>
