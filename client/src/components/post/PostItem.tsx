@@ -27,7 +27,7 @@ const PostItem = () => {
         </div>
         <p>{post.text}</p>
         <h4>Comments {post.commentsCount}</h4>
-        <div className={"w-full flex flex-col gap-4 py-4"}>
+        <div className={"w-full flex flex-col gap-4"}>
           {post.comments.map((comment) => (
             <CommentItem comment={comment} />
           ))}
