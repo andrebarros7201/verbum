@@ -100,7 +100,7 @@ const currentPostSlice = createSlice({
         state.post = null;
       })
       // Post vote
-      .addCase(votePost.pending, (state) => {})
+      //.addCase(votePost.pending, (state) => {})
       .addCase(votePost.fulfilled, (state, action) => {
         state.isLoading = false;
         state.post!.votes = action.payload.post.votes;
@@ -110,7 +110,7 @@ const currentPostSlice = createSlice({
       })
 
       // Comment vote
-      .addCase(voteComment.pending, (state) => {})
+      //.addCase(voteComment.pending, (state) => {})
       .addCase(voteComment.fulfilled, (state, action) => {
         state.isLoading = false;
         const commentIndex = state.post!.comments.findIndex(
