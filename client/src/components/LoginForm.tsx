@@ -7,11 +7,13 @@ import { useDispatch } from "react-redux";
 import type { RootDispatch } from "../redux/store.ts";
 import { setNotification } from "../redux/slices/notificationSlice.ts";
 import type { IReturnNotification } from "../interfaces/IReturnNotification.ts";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
   const dispatch = useDispatch<RootDispatch>();
   const usernameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -28,6 +30,7 @@ const LoginForm = () => {
       ).unwrap();
       const { notification } = response;
       dispatch(setNotification(notification));
+      navigate("/communities");
     } catch (e) {
       const err = e as { notification: IReturnNotification };
       const { notification } = err;
