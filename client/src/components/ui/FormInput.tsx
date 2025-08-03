@@ -13,9 +13,8 @@ interface Props {
 const FormInput = forwardRef<HTMLInputElement, Props>(
   ({ placeholder, type, name, min, max, value, label }, ref) => {
     return (
-      <div className={"flex flex-col items-start gap-2 text-nowrap"}>
+      <div className={"flex flex-col items-start gap-2 text-nowrap w-full"}>
         {label ? <label htmlFor={name}>{label}</label> : null}
-
         <input
           type={type}
           required
