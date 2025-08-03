@@ -9,7 +9,7 @@ const PostList = ({ posts }: Props) => {
   return (
     <div className={"w-full gap-4 flex-wrap grid-cols-3  flex-1"}>
       {posts.map((post) => (
-        <PostListItem post={post} />
+        <PostListItem post={post} key={post.id} />
       ))}
     </div>
   );

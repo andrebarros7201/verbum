@@ -11,7 +11,7 @@ const CommunityList = () => {
     >
       {communities &&
         communities.map((community) => (
-          <CommunityListItem community={community} />
+          <CommunityListItem community={community} key={community.id} />
         ))}
     </main>
   );
