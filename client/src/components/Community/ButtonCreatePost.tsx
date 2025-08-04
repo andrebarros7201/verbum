@@ -59,7 +59,7 @@ const ButtonCreatePost = () => {
               min={3}
               ref={titleRef}
             />
-            <FormTextArea name={"text"} label={"text"} min={3} ref={textRef} />
+            <FormTextArea name={"text"} label={"Text"} min={3} ref={textRef} />
             <Button label={"Create"} variant={"primary"} type={"submit"} />
           </Form>
         </Modal>
