@@ -11,7 +11,7 @@ const CommunityListItem = ({ community }: Props) => {
   return (
     <div
       className={
-        "max-w-sm w-full border-2 border-amber-600 flex flex-col gap-4 items-center justify-start bg-white p-4 rounded"
+        "max-w-sm w-full border-2 border-amber-600 flex flex-col gap-4 items-center justify-start bg-white p-4 rounded shadow-2xl"
       }
     >
       <h3 className={"font-bold text-xl"}>{community.name}</h3>
