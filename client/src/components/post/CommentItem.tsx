@@ -1,11 +1,15 @@
 import type { ICommentSimple } from "../../interfaces/ICommentSimple";
 import { ButtonVote } from "../ui/ButtonVote";
+import type { RootState } from "../../redux/store.ts";
+import { useSelector } from "react-redux";
+import { ButtonDeleteComment } from "./ButtonDeleteComment.tsx";
 
 type Props = {
   comment: ICommentSimple;
 };
 
 const CommentItem = ({ comment }: Props) => {
+  const { user } = useSelector((state: RootState) => state.user);
   return (
     <main
       className={
@@ -18,6 +22,9 @@ const CommentItem = ({ comment }: Props) => {
         <ButtonVote value={-1} type="comment" id={comment.id} />
         <p>{comment.votes}</p>
         <ButtonVote value={1} type="comment" id={comment.id} />
+        {comment.author.id == user?.id && (
+          <ButtonDeleteComment commentId={comment.id} />
+        )}
       </div>
       <p className={"w-full text-md text-left font-bold"}>{comment.text}</p>
     </main>
