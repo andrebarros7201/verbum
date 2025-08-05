@@ -34,7 +34,7 @@ const PostItem = () => {
         <ButtonDeletePost />
         <div className={"w-full flex flex-col gap-4"}>
           {post.comments.map((comment) => (
-            <CommentItem comment={comment} />
+            <CommentItem comment={comment} key={comment.id} />
           ))}
         </div>
       </main>
