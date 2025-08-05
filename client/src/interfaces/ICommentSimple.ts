@@ -5,6 +5,7 @@ interface ICommentSimple {
   text: string;
   author: IUser;
   votes: number;
+  postId: number;
   createdAt: string;
   updatedAt?: string;
 }
