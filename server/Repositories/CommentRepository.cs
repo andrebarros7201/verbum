@@ -34,6 +34,8 @@ public class CommentRepository : ICommentRepository {
             return false;
         }
 
+        _db.VoteComments.RemoveRange(comment.Votes);
+
         _db.Comments.Remove(comment);
         await _db.SaveChangesAsync();
         return true;
