@@ -29,8 +29,10 @@ const PostItem = () => {
           <h2 className={"font-bold text-3xl"}>{post.title}</h2>
         </div>
         <p>{post.text}</p>
-        <h4>Comments {post.commentsCount}</h4>
-        {isAuthenticated && <ButtonAddComment />}
+        <div className={"flex w-full gap-4 justify-start items-center"}>
+          <h4>Comments {post.commentsCount}</h4>
+          {isAuthenticated && <ButtonAddComment />}
+        </div>
         <ButtonDeletePost />
         <div className={"w-full flex flex-col gap-4"}>
           {post.comments.map((comment) => (
