@@ -4,6 +4,7 @@ import type { IReturnNotification } from "../../interfaces/IReturnNotification.t
 import type { IPostComplete } from "../../interfaces/IPostComplete.ts";
 import axios, { type AxiosError } from "axios";
 import type { ICommentSimple } from "../../interfaces/ICommentSimple.ts";
+import type { RootState } from "../store.ts";
 
 const initialState: ICurrentPostSlice = {
   post: null,
@@ -55,6 +56,29 @@ const votePost = createAsyncThunk<
   }
 });
 
+const addComment = createAsyncThunk<
+  { comment: ICommentSimple },
+  { text: string },
+  { rejectValue: { notification: IReturnNotification }; state: RootState }
+>("post/AddComment", async ({ text }, { rejectWithValue, getState }) => {
+  try {
+    const state = getState();
+    const { post } = state.currentPost;
+    const response = await axios.post(
+      `${import.meta.env.VITE_SERVER_URL}/api/${post!.id}/comment`,
+      { text },
+      { withCredentials: true },
+    );
+
+    return { comment: response.data };
+  } catch (e) {
+    const error = e as AxiosError<string>;
+    const message = error.response?.data || "Something went wrong";
+    return rejectWithValue({
+      notification: { type: "error", message },
+    });
+  }
+});
 const voteComment = createAsyncThunk<
   { id: number; value: number; comment: ICommentSimple },
   { id: number; value: number },
@@ -99,6 +123,15 @@ const currentPostSlice = createSlice({
         state.isLoading = false;
         state.post = null;
       })
+      // Add Comment
+      //.addCase(addComment.pending, (state) => {})
+      .addCase(addComment.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.post!.comments.push(action.payload.comment);
+      })
+      .addCase(addComment.rejected, (state) => {
+        state.isLoading = false;
+      })
       // Post vote
       //.addCase(votePost.pending, (state) => {})
       .addCase(votePost.fulfilled, (state, action) => {
@@ -127,6 +160,7 @@ const currentPostSlice = createSlice({
 const { clearCurrentPost } = currentPostSlice.actions;
 export {
   currentPostSlice,
+  addComment,
   votePost,
   voteComment,
   fetchCurrentPost,
