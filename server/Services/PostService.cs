@@ -56,6 +56,7 @@ public class PostService : IPostService {
                             Author = new UserSimpleDto { Id = c.User.Id, Username = c.User.Username },
                             CreatedAt = c.CreatedAt,
                             Text = c.Text,
+                            PostId = c.PostId,
                             UpdatedAt = c.UpdatedAt,
                             Votes = c.Votes.Aggregate(0, (acc, curr) => acc + curr.Value)
                         }
