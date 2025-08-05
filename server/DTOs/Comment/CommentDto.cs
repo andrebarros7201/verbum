@@ -7,6 +7,7 @@ public class CommentDto {
     public string Text { get; set; }
     public UserSimpleDto Author { get; set; }
     public int Votes { get; set; }
+    public int PostId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 }
