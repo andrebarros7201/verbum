@@ -3,6 +3,7 @@ import type { RootState } from "../../redux/store.ts";
 import { CommentItem } from "./CommentItem.tsx";
 import { ButtonVote } from "../ui/ButtonVote.tsx";
 import { ButtonAddComment } from "./ButtonAddComment.tsx";
+import { ButtonDeletePost } from "./ButtonDeletePost.tsx";
 
 const PostItem = () => {
   const { isLoading, post } = useSelector(
@@ -30,6 +31,7 @@ const PostItem = () => {
         <p>{post.text}</p>
         <h4>Comments {post.commentsCount}</h4>
         {isAuthenticated && <ButtonAddComment />}
+        <ButtonDeletePost />
         <div className={"w-full flex flex-col gap-4"}>
           {post.comments.map((comment) => (
             <CommentItem comment={comment} />

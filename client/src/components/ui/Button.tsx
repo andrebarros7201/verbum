@@ -3,7 +3,7 @@ import clsx from "clsx";
 type Props = {
   label: string;
   type?: "submit" | "button";
-  variant: "primary" | "secondary";
+  variant: "primary" | "secondary" | "danger";
   onClick?: () => void;
   isDisabled?: boolean;
 };
@@ -24,6 +24,7 @@ const Button = ({
         {
           "bg-amber-600": variant === "primary",
           "bg-gray-400": variant === "secondary",
+          "bg-red-600": variant === "danger",
           "cursor-not-allowed": isDisabled,
           "cursor-pointer": !isDisabled,
         },

@@ -33,6 +33,26 @@ const fetchCurrentPost = createAsyncThunk<
   }
 });
 
+const deletePost = createAsyncThunk<
+  { notification: IReturnNotification },
+  { id: number },
+  { rejectValue: { notification: IReturnNotification } }
+>("post/deletePost", async ({ id }) => {
+  try {
+    await axios.delete(`${import.meta.env.VITE_SERVER_URL}/api/post/${id}`, {
+      withCredentials: true,
+    });
+    return {
+      id,
+      notification: { type: "success", message: "Post deleted" },
+    };
+  } catch (e) {
+    const error = e as AxiosError<string>;
+    const message = error.response?.data || "Something went wrong";
+    return { id, notification: { type: "error", message } };
+  }
+});
+
 const votePost = createAsyncThunk<
   { id: number; value: number; post: IPostComplete },
   { id: number; value: number },
@@ -79,6 +99,27 @@ const addComment = createAsyncThunk<
     });
   }
 });
+
+const deleteComment = createAsyncThunk<
+  { id: number; notification: IReturnNotification },
+  { id: number },
+  { rejectValue: { notification: IReturnNotification } }
+>("post/deleteComment", async ({ id }) => {
+  try {
+    await axios.delete(`${import.meta.env.VITE_SERVER_URL}/api/comment/${id}`, {
+      withCredentials: true,
+    });
+    return {
+      id,
+      notification: { type: "success", message: "Comment deleted" },
+    };
+  } catch (e) {
+    const error = e as AxiosError<string>;
+    const message = error.response?.data || "Something went wrong";
+    return { id, notification: { type: "error", message } };
+  }
+});
+
 const voteComment = createAsyncThunk<
   { id: number; value: number; comment: ICommentSimple },
   { id: number; value: number },
@@ -123,6 +164,15 @@ const currentPostSlice = createSlice({
         state.isLoading = false;
         state.post = null;
       })
+      // Delete Post
+      //.addCase(deletePost.pending, (state) => {})
+      .addCase(deletePost.fulfilled, (state) => {
+        state.isLoading = false;
+        state.post = null;
+      })
+      .addCase(deletePost.rejected, (state) => {
+        state.isLoading = false;
+      })
       // Add Comment
       //.addCase(addComment.pending, (state) => {})
       .addCase(addComment.fulfilled, (state, action) => {
@@ -130,6 +180,18 @@ const currentPostSlice = createSlice({
         state.post!.comments.push(action.payload.comment);
       })
       .addCase(addComment.rejected, (state) => {
+        state.isLoading = false;
+      })
+      // Delete Comment
+      //.addCase(addComment.pending, (state) => {})
+      .addCase(deleteComment.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const commentIndex = state.post!.comments.findIndex(
+          (c) => c.id === action.payload.id,
+        );
+        state.post!.comments.splice(commentIndex, 1);
+      })
+      .addCase(deleteComment.rejected, (state) => {
         state.isLoading = false;
       })
       // Post vote
@@ -141,7 +203,6 @@ const currentPostSlice = createSlice({
       .addCase(votePost.rejected, (state) => {
         state.isLoading = false;
       })
-
       // Comment vote
       //.addCase(voteComment.pending, (state) => {})
       .addCase(voteComment.fulfilled, (state, action) => {
@@ -160,7 +221,9 @@ const currentPostSlice = createSlice({
 const { clearCurrentPost } = currentPostSlice.actions;
 export {
   currentPostSlice,
+  deletePost,
   addComment,
+  deleteComment,
   votePost,
   voteComment,
   fetchCurrentPost,
