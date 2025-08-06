@@ -13,9 +13,9 @@ const HeaderLink = ({ label, href }: Props) => {
     <Link
       to={href}
       className={clsx(
-        "border-b-2 border-transparent text-amber-600 cursor-pointer inline-block text-lg font-bold px-2",
+        "border-b-2 border-transparent text-sky-600 cursor-pointer inline-block text-lg font-bold px-2",
         {
-          " border-b-amber-600": active,
+          " border-b-sky-600": active,
         },
       )}
     >
