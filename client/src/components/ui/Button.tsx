@@ -22,7 +22,7 @@ const Button = ({
       disabled={isDisabled}
       type={type}
       className={clsx(
-        `text-white rounded-md border-2 border-transparent hover:shadow-xl transition-all duration-300`,
+        `text-white font-semibold rounded-md border-2 border-transparent hover:shadow-xl transition-all duration-300`,
         {
           "bg-sky-600 hover:bg-transparent hover:border-sky-600 hover:text-sky-600":
             variant === "primary",
