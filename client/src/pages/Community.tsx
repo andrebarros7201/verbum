@@ -5,9 +5,9 @@ import { useEffect } from "react";
 import type { IReturnNotification } from "../interfaces/IReturnNotification.ts";
 import { setNotification } from "../redux/slices/notificationSlice.ts";
 import { fetchCurrentCommunity } from "../redux/slices/currentCommunitySlice.ts";
-import { PostList } from "../components/Community/post/PostList.tsx";
 import { ButtonCommunityMembership } from "../components/Community/ButtonCommunityMembership.tsx";
 import { ButtonCreatePost } from "../components/Community/ButtonCreatePost.tsx";
+import { List } from "../components/List.tsx";
 
 const Community = () => {
   const { community } = useSelector(
@@ -48,7 +48,7 @@ const Community = () => {
           <ButtonCreatePost />
           <ButtonCommunityMembership />
         </div>
-        <PostList posts={community.posts} />
+        <List list={community.posts} type={"post"} />
       </div>
     )
   );
