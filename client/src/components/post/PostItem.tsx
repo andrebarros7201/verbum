@@ -1,9 +1,9 @@
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store.ts";
-import { CommentItem } from "./CommentItem.tsx";
 import { ButtonVote } from "../ui/ButtonVote.tsx";
 import { ButtonAddComment } from "./ButtonAddComment.tsx";
 import { ButtonDeletePost } from "./ButtonDeletePost.tsx";
+import { CommentsList } from "./CommentsList.tsx";
 
 const PostItem = () => {
   const { isLoading, post } = useSelector(
@@ -34,11 +34,7 @@ const PostItem = () => {
           <h4 className={"font-semibold"}>Comments {post.commentsCount}</h4>
           {isAuthenticated && <ButtonAddComment />}
         </div>
-        <div className={"w-full flex flex-col gap-4"}>
-          {post.comments.map((comment) => (
-            <CommentItem comment={comment} key={comment.id} />
-          ))}
-        </div>
+        <CommentsList list={post.comments} />
       </main>
     )
   );
