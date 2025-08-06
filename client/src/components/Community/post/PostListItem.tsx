@@ -9,7 +9,7 @@ const PostListItem = ({ post }: Props) => {
   return (
     <div
       className={
-        "w-full flex flex-col justify-start items-start gap-4 p-4 bg-white rounded border-2 border-amber-600 shadow-2xl hover:scale-105 transition-all duration-300"
+        "w-full flex flex-col justify-start items-start gap-4 p-4 bg-white rounded border-2 border-sky-600 shadow-2xl hover:scale-105 transition-all duration-300"
       }
     >
       <h3 className={"capitalize font-bold text-xl"}>{post.title}</h3>
@@ -21,7 +21,7 @@ const PostListItem = ({ post }: Props) => {
             ? "1 Comment"
             : `${post.commentsCount} Comments`}
       </p>
-      <ButtonLink href={`/post/${post.id}`} label={"Go To"} />
+      <ButtonLink size={"small"} href={`/post/${post.id}`} label={"Go To"} />
     </div>
   );
 };

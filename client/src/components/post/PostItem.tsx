@@ -23,6 +23,7 @@ const PostItem = () => {
         }
       >
         <div className={"flex gap-4 items-center"}>
+          <ButtonDeletePost />
           <ButtonVote type="post" value={-1} id={post.id} />
           <p className="text-lg">{post.votes}</p>
           <ButtonVote type="post" value={1} id={post.id} />
@@ -33,7 +34,6 @@ const PostItem = () => {
           <h4>Comments {post.commentsCount}</h4>
           {isAuthenticated && <ButtonAddComment />}
         </div>
-        <ButtonDeletePost />
         <div className={"w-full flex flex-col gap-4"}>
           {post.comments.map((comment) => (
             <CommentItem comment={comment} key={comment.id} />
