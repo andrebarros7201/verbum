@@ -33,7 +33,7 @@ const ButtonDeletePost = () => {
       <Button
         size={"small"}
         label={"Delete Post"}
-        variant={"danger"}
+        variant={"secondary"}
         onClick={handleDeletePost}
       />
     )
