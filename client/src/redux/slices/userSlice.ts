@@ -75,6 +75,37 @@ const userLogin = createAsyncThunk<
   }
 });
 
+const userMe = createAsyncThunk<
+  {
+    posts: IPostSimple[];
+    comments: ICommentSimple[];
+    communities: ICommunitySimple[];
+  },
+  void,
+  { rejectValue: { notification: IReturnNotification } }
+>("user/Me", async (_, { rejectWithValue }) => {
+  try {
+    const response = await axios.get(
+      `${import.meta.env.VITE_SERVER_URL}/api/user/me`,
+      {
+        withCredentials: true,
+      },
+    );
+    return {
+      posts: response.data.posts,
+      comments: response.data.comments,
+      communities: response.data.communities,
+    };
+  } catch (e) {
+    return rejectWithValue({
+      notification: {
+        type: "error",
+        message: "Something went wrong!",
+      },
+    });
+  }
+});
+
 const userLogout = createAsyncThunk<
   { notification: IReturnNotification },
   void,
@@ -115,34 +146,6 @@ const userVerify = createAsyncThunk<
   }
 });
 
-const userMe = createAsyncThunk<
-  {
-    user: IUser;
-    communities: ICommunitySimple[];
-    posts: IPostSimple[];
-    comments: ICommentSimple[];
-  },
-  void,
-  { rejectValue: boolean }
->("user/me", async (_, { rejectWithValue }) => {
-  try {
-    const response = await axios.get(
-      `${import.meta.env.VITE_SERVER_URL}/api/user/me`,
-      {
-        withCredentials: true,
-      },
-    );
-    const { communities, posts, comments } = response.data;
-    return {
-      user: { id: response.data.id, username: response.data.username },
-      communities,
-      posts,
-      comments,
-    };
-  } catch (e) {
-    return rejectWithValue(false);
-  }
-});
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -193,7 +196,6 @@ const userSlice = createSlice({
       .addCase(userMe.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isAuthenticated = true;
-        state.user = action.payload.user;
         state.communities = action.payload.communities;
         state.posts = action.payload.posts;
         state.comments = action.payload.comments;
@@ -223,4 +225,4 @@ const userSlice = createSlice({
   },
 });
 
-export { userSlice, userLogin, userRegister, userLogout, userVerify };
+export { userSlice, userLogin, userRegister, userMe, userLogout, userVerify };
