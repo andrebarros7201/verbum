@@ -5,7 +5,7 @@ const HeaderLogo = () => {
     <Link to={"/"}>
       <h2
         className={
-          "italic font-bold text-2xl border-2 px-4 cursor-pointer hover:text-amber-600 hover:border-amber-600 transition-all duration-300"
+          "italic font-bold text-2xl border-2 px-4 cursor-pointer hover:text-sky-600 hover:border-sky-600 transition-all duration-300"
         }
       >
         Verbum
