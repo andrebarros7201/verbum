@@ -17,9 +17,12 @@ const Header = () => {
         <HeaderLogo />
         <HeaderLink href={"/communities"} label={"Communities"} />
       </div>
-      <div className={"flex gap-4"}>
+      <div className={"flex gap-4 items-center"}>
         {isAuthenticated ? (
-          <ButtonLogout />
+          <>
+            <HeaderLink href={"/profile"} label={"Profile"} />
+            <ButtonLogout />
+          </>
         ) : (
           <>
             <ButtonLink href={"/register"} label={"Register"} />
