@@ -15,7 +15,7 @@ const Form = ({ children, onSubmit, title }: Props) => {
       }
     >
       {title ? (
-        <h3 className={"font-bold text-xl text-amber-600"}>{title}</h3>
+        <h3 className={"font-bold text-xl text-sky-600"}>{title}</h3>
       ) : null}
       {children}
     </form>
