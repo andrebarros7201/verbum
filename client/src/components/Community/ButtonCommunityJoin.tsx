@@ -21,7 +21,14 @@ const ButtonCommunityJoin = ({ id }: Props) => {
     }
   }
 
-  return <Button label={"Join"} variant={"primary"} onClick={handleJoin} />;
+  return (
+    <Button
+      label={"Join"}
+      variant={"primary"}
+      size={"small"}
+      onClick={handleJoin}
+    />
+  );
 };
 
 export { ButtonCommunityJoin };
