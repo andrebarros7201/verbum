@@ -13,7 +13,7 @@ const CommentItem = ({ comment }: Props) => {
   return (
     <main
       className={
-        "w-full flex flex-col gap-4 items-start justify-start bg-gray-300 p-4 roudned border-2 border-amber-600"
+        "w-full flex flex-col gap-4 items-start justify-start bg-white shadow-2xl p-4 rounded border-2 border-gray-200"
       }
     >
       <div className="w-full flex gap-4 items-center justify-start">

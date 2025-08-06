@@ -5,12 +5,18 @@ type Props = {
   href: string;
   label: string;
   variant?: "primary" | "secondary";
+  size?: "small" | "medium" | "large";
 };
 
-const ButtonLink = ({ href, label, variant = "primary" }: Props) => {
+const ButtonLink = ({
+  href,
+  label,
+  variant = "primary",
+  size = "medium",
+}: Props) => {
   return (
     <Link to={href}>
-      <Button label={label} variant={variant} />
+      <Button label={label} variant={variant} size={size} />
     </Link>
   );
 };

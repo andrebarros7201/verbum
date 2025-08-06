@@ -38,6 +38,7 @@ const ButtonAddComment = () => {
         label={"Add Comment"}
         onClick={() => setIsModalOpen(true)}
         variant={"primary"}
+        size={"small"}
       />
       {isModalOpen && (
         <Modal onClose={() => setIsModalOpen(false)}>

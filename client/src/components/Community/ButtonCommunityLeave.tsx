@@ -20,7 +20,14 @@ const ButtonCommunityLeave = ({ id }: Props) => {
     }
   }
 
-  return <Button label={"Leave"} variant={"primary"} onClick={handleLeave} />;
+  return (
+    <Button
+      label={"Leave"}
+      variant={"primary"}
+      size={"small"}
+      onClick={handleLeave}
+    />
+  );
 };
 
 export { ButtonCommunityLeave };

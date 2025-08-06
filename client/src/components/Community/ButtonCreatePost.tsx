@@ -45,6 +45,7 @@ const ButtonCreatePost = () => {
         isDisabled={!community.isMember}
         label={"Create Post"}
         variant={"primary"}
+        size={"small"}
         onClick={() => {
           setIsModalOpen(true);
         }}

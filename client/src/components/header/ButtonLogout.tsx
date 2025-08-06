@@ -19,7 +19,12 @@ const ButtonLogout = () => {
   }
 
   return (
-    <Button label={"Logout"} variant={"secondary"} onClick={handleLogout} />
+    <Button
+      size={"small"}
+      label={"Logout"}
+      variant={"secondary"}
+      onClick={handleLogout}
+    />
   );
 };
 

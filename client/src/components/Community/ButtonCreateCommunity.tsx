@@ -45,6 +45,7 @@ const ButtonCreateCommunity = () => {
       <Button
         label={"Create Community"}
         variant={"primary"}
+        size={"small"}
         onClick={() => setIsModalOpen(true)}
       />
       {isModalOpen && (

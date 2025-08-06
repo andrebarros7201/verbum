@@ -42,7 +42,7 @@ const Community = () => {
         }
       >
         <div className={"w-full flex gap-4 justify-start items-center"}>
-          <h3 className={"text-4xl font-bold text-amber-600"}>
+          <h3 className={"text-4xl font-bold text-sky-600"}>
             {community.name}
           </h3>
           <ButtonCreatePost />

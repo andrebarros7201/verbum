@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { deleteComment } from "../../redux/slices/currentPostSlice.ts";
 import { setNotification } from "../../redux/slices/notificationSlice.ts";
 import type { IReturnNotification } from "../../interfaces/IReturnNotification.ts";
+import { Button } from "../ui/Button.tsx";
 
 type Props = {
   commentId: number;
@@ -25,12 +26,12 @@ const ButtonDeleteComment = ({ commentId }: Props) => {
   }
 
   return (
-    <button
-      className={"bg-red-600 text-white px-2 py-1 cursor-pointer rounded"}
+    <Button
       onClick={handleDeleteComment}
-    >
-      Delete
-    </button>
+      label={"Delete Comment"}
+      variant={"secondary"}
+      size={"small"}
+    />
   );
 };
 

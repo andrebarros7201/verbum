@@ -31,6 +31,7 @@ const ButtonDeletePost = () => {
     isAuthenticated &&
     user!.id === post!.user.id && (
       <Button
+        size={"small"}
         label={"Delete Post"}
         variant={"danger"}
         onClick={handleDeletePost}

@@ -28,6 +28,7 @@ const ButtonCommunityMembership = () => {
   return (
     <Button
       label={community!.isMember ? "Leave Community" : "Join Community"}
+      size={"small"}
       variant={"primary"}
       onClick={handleToggleCommunityMembership}
     />
