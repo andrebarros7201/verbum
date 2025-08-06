@@ -4,6 +4,7 @@ import { Login } from "./pages/Login.tsx";
 import { Communities } from "./pages/Communities.tsx";
 import { Post } from "./pages/Post.tsx";
 import { Community } from "./pages/Community.tsx";
+import { Profile } from "./pages/Profile.tsx";
 
 const routes = [
   {
@@ -29,6 +30,10 @@ const routes = [
       {
         path: "/post/:id",
         element: <Post />,
+      },
+      {
+        path: "/profile",
+        element: <Profile />,
       },
     ],
   },
