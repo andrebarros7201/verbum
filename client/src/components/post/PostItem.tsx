@@ -27,11 +27,11 @@ const PostItem = () => {
           <ButtonVote type="post" value={-1} id={post.id} />
           <p className="text-lg">{post.votes}</p>
           <ButtonVote type="post" value={1} id={post.id} />
-          <h2 className={"font-bold text-3xl"}>{post.title}</h2>
         </div>
-        <p>{post.text}</p>
+        <h2 className={"font-bold text-3xl"}>{post.title}</h2>
+        <p className={"font-semibold text-left"}>{post.text}</p>
         <div className={"flex w-full gap-4 justify-start items-center"}>
-          <h4>Comments {post.commentsCount}</h4>
+          <h4 className={"font-semibold"}>Comments {post.commentsCount}</h4>
           {isAuthenticated && <ButtonAddComment />}
         </div>
         <div className={"w-full flex flex-col gap-4"}>
