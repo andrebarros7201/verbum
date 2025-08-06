@@ -6,7 +6,7 @@ type Props = {
   variant: "primary" | "secondary" | "danger";
   onClick?: () => void;
   isDisabled?: boolean;
-  size: "small" | "medium" | "large";
+  size?: "small" | "medium" | "large";
 };
 
 const Button = ({
