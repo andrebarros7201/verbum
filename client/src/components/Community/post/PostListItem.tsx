@@ -13,7 +13,7 @@ const PostListItem = ({ post }: Props) => {
       }
     >
       <h3 className={"capitalize font-bold text-xl"}>{post.title}</h3>
-      <p>{post.votes}</p>
+      <p>{post.votes} Votes</p>
       <p>
         {post.commentsCount === 0
           ? "No Comments"
