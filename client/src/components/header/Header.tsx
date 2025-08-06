@@ -25,8 +25,13 @@ const Header = () => {
           </>
         ) : (
           <>
-            <ButtonLink href={"/register"} label={"Register"} />
-            <ButtonLink href={"/login"} label={"Login"} variant={"primary"} />
+            <ButtonLink href={"/register"} label={"Register"} size={"small"} />
+            <ButtonLink
+              href={"/login"}
+              label={"Login"}
+              variant={"primary"}
+              size={"small"}
+            />
           </>
         )}
       </div>
