@@ -44,7 +44,7 @@ const Profile = () => {
       }
     };
     fetchMe();
-  }, [communities, posts, comments, dispatch, setIndex, index, items]);
+  }, []);
   return (
     <div className={"w-full flex flex-col gap-4"}>
       <div className={"w-full flex flex-start items-center gap-4"}>
