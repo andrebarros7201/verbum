@@ -2,12 +2,15 @@ import type { ICommunitySimple } from "../../interfaces/ICommunitySimple.ts";
 import { ButtonLink } from "../ui/ButtonLink.tsx";
 import { ButtonCommunityLeave } from "./ButtonCommunityLeave.tsx";
 import { ButtonCommunityJoin } from "./ButtonCommunityJoin.tsx";
+import type { RootState } from "../../redux/store.ts";
+import { useSelector } from "react-redux";
 
 type Props = {
   community: ICommunitySimple;
 };
 
 const CommunityListItem = ({ community }: Props) => {
+  const { isAuthenticated } = useSelector((state: RootState) => state.user);
   return (
     <div
       className={
@@ -29,11 +32,12 @@ const CommunityListItem = ({ community }: Props) => {
           label={"Go To"}
           size={"small"}
         />
-        {community.isMember ? (
-          <ButtonCommunityLeave id={community.id} />
-        ) : (
-          <ButtonCommunityJoin id={community.id} />
-        )}
+        {isAuthenticated &&
+          (community.isMember ? (
+            <ButtonCommunityLeave id={community.id} />
+          ) : (
+            <ButtonCommunityJoin id={community.id} />
+          ))}
       </div>
     </div>
   );
