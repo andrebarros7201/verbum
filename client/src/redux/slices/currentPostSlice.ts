@@ -5,7 +5,6 @@ import type { IPostComplete } from "../../interfaces/IPostComplete.ts";
 import axios, { type AxiosError } from "axios";
 import type { ICommentSimple } from "../../interfaces/ICommentSimple.ts";
 import type { RootState } from "../store.ts";
-import { removePost } from "./currentCommunitySlice.ts";
 
 const initialState: ICurrentPostSlice = {
   post: null,
@@ -38,12 +37,11 @@ const deletePost = createAsyncThunk<
   { notification: IReturnNotification },
   { id: number },
   { rejectValue: { notification: IReturnNotification } }
->("post/deletePost", async ({ id }, { dispatch }) => {
+>("post/deletePost", async ({ id }) => {
   try {
     await axios.delete(`${import.meta.env.VITE_SERVER_URL}/api/post/${id}`, {
       withCredentials: true,
     });
-    dispatch(removePost(id));
     return {
       id,
       notification: { type: "success", message: "Post deleted" },
