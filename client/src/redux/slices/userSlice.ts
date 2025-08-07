@@ -149,7 +149,12 @@ const userVerify = createAsyncThunk<
 const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    removePost: (state, action: PayloadAction<number>) => {
+      const postIndex = state.posts.findIndex((x) => x.id === action.payload);
+      state.posts.splice(postIndex, 1);
+    },
+  },
   extraReducers: (builder) => {
     builder
       // USER LOGIN
@@ -224,5 +229,13 @@ const userSlice = createSlice({
       });
   },
 });
-
-export { userSlice, userLogin, userRegister, userMe, userLogout, userVerify };
+const { removePost } = userSlice.actions;
+export {
+  userSlice,
+  userLogin,
+  userRegister,
+  userMe,
+  userLogout,
+  userVerify,
+  removePost,
+};
