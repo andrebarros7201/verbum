@@ -22,7 +22,11 @@ const PostListItem = ({ post }: Props) => {
         <h3 className={"capitalize font-bold text-xl"}>{post.title}</h3>
         {user?.id === post.user.id && (
           <DropdownMenu>
-            <ButtonDeletePost id={post.id} userId={post.user.id} />
+            <ButtonDeletePost
+              id={post.id}
+              userId={post.user.id}
+              communityId={post.communityId}
+            />
           </DropdownMenu>
         )}
       </div>
