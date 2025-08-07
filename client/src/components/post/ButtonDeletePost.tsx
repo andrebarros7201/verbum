@@ -6,20 +6,24 @@ import type { IReturnNotification } from "../../interfaces/IReturnNotification.t
 import { useNavigate } from "react-router-dom";
 import { deletePost } from "../../redux/slices/currentPostSlice.ts";
 
-const ButtonDeletePost = () => {
+type Props = {
+  id: number;
+  userId: number; // Author ID number
+};
+
+const ButtonDeletePost = ({ id, userId }: Props) => {
   const dispatch = useDispatch<RootDispatch>();
-  const navagate = useNavigate();
-  const { post } = useSelector((state: RootState) => state.currentPost);
+  const navigate = useNavigate();
   const { user, isAuthenticated } = useSelector(
     (state: RootState) => state.user,
   );
 
   async function handleDeletePost() {
     try {
-      const response = await dispatch(deletePost({ id: post!.id })).unwrap();
+      const response = await dispatch(deletePost({ id })).unwrap();
       const { notification } = response;
       dispatch(setNotification(notification));
-      navagate("/communities");
+      navigate("/communities");
     } catch (e) {
       const err = e as { notification: IReturnNotification };
       const { notification } = err;
@@ -29,7 +33,7 @@ const ButtonDeletePost = () => {
 
   return (
     isAuthenticated &&
-    user!.id === post!.user.id && (
+    user!.id === userId && (
       <Button
         size={"small"}
         label={"Delete Post"}
