@@ -104,7 +104,14 @@ const toggleMembership = createAsyncThunk<
 const currentCommunitySlice = createSlice({
   name: "currentCommunity",
   initialState,
-  reducers: {},
+  reducers: {
+    removePost: (state, action) => {
+      const postIndex = state.community!.posts.findIndex(
+        (x) => x.id === action.payload.id,
+      );
+      state.community!.posts.splice(postIndex, 1);
+    },
+  },
   extraReducers: (builder) => {
     builder
       // Fetch Current Community
@@ -143,8 +150,9 @@ const currentCommunitySlice = createSlice({
       });
   },
 });
-
+const { removePost } = currentCommunitySlice.actions;
 export {
+  removePost,
   currentCommunitySlice,
   fetchCurrentCommunity,
   toggleMembership,
