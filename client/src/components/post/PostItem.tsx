@@ -23,7 +23,11 @@ const PostItem = () => {
         }
       >
         <div className={"flex gap-4 items-center"}>
-          <ButtonDeletePost id={post.id} userId={post.user.id} />
+          <ButtonDeletePost
+            id={post.id}
+            userId={post.user.id}
+            communityId={post.community.id}
+          />
           {isAuthenticated && (
             <ButtonVote type="post" value={-1} id={post.id} />
           )}
