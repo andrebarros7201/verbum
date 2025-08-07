@@ -8,6 +8,7 @@ interface IPostSimple {
   createdAt: string;
   updatedAt?: string;
   user: IUser;
+  communityId: number;
 }
 
 export type { IPostSimple };
