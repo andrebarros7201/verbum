@@ -3,7 +3,7 @@ import type { RootDispatch, RootState } from "../redux/store.ts";
 import { useDispatch, useSelector } from "react-redux";
 import { setNotification } from "../redux/slices/notificationSlice.ts";
 import type { IReturnNotification } from "../interfaces/IReturnNotification.ts";
-import { userMe } from "../redux/slices/userSlice.ts";
+import { clearUserContent, userMe } from "../redux/slices/userSlice.ts";
 import { List } from "../components/List.tsx";
 import { Button } from "../components/ui/Button.tsx";
 import { CommentsList } from "../components/post/CommentsList.tsx";
@@ -44,7 +44,12 @@ const Profile = () => {
       }
     };
     fetchMe();
+
+    return () => {
+      dispatch(clearUserContent());
+    };
   }, []);
+
   return (
     <div className={"w-full flex flex-col gap-4"}>
       <div className={"w-full flex flex-start items-center gap-4"}>
