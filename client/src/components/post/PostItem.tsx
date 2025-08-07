@@ -23,10 +23,13 @@ const PostItem = () => {
         }
       >
         <div className={"flex gap-4 items-center"}>
-          <ButtonDeletePost />
-          <ButtonVote type="post" value={-1} id={post.id} />
+          <ButtonDeletePost id={post.id} userId={post.user.id} />
+          {isAuthenticated && (
+            <ButtonVote type="post" value={-1} id={post.id} />
+          )}
           <p className="text-lg">{post.votes}</p>
-          <ButtonVote type="post" value={1} id={post.id} />
+          {isAuthenticated && <ButtonVote type="post" value={1} id={post.id} />}
+          <h3 className={"font-bold text-xl"}>{post.user.username}</h3>
         </div>
         <h2 className={"font-bold text-3xl"}>{post.title}</h2>
         <p className={"font-semibold text-left"}>{post.text}</p>
