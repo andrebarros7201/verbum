@@ -20,7 +20,7 @@ const Header = () => {
       <div className={"flex gap-4 items-center"}>
         {isAuthenticated ? (
           <>
-            <HeaderLink href={"/profile"} label={"Profile"} />
+            <HeaderLink href={"/profile"} label={"My Profile"} />
             <ButtonLogout />
           </>
         ) : (
