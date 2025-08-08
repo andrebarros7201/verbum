@@ -33,6 +33,60 @@ const fetchCurrentPost = createAsyncThunk<
   }
 });
 
+const updatePost = createAsyncThunk<
+  {
+    postId: number;
+    updatedPost: IPostComplete;
+    notification: IReturnNotification;
+  },
+  { postId: number; title: string; text: string },
+  { rejectValue: { notification: IReturnNotification } }
+>(
+  "currentPost/updatePost",
+  async ({ postId, title, text }, { rejectWithValue }) => {
+    try {
+      const response = await axios.patch(
+        `${import.meta.env.VITE_SERVER_URL}/api/post/${postId}`,
+        { title, text },
+        {
+          withCredentials: true,
+        },
+      );
+      const responseData = response.data;
+      const updatedPost: IPostComplete = {
+        id: responseData.id,
+        updatedAt: responseData.updatedAt,
+        text: responseData.text,
+        comments: responseData.comments,
+        commentsCount: responseData.commentsCount,
+        title: responseData.title,
+        community: responseData.community,
+        votes: responseData.votes,
+        user: responseData.user,
+        createdAt: responseData.createdAt,
+      };
+      return {
+        postId: postId,
+        updatedPost,
+        notification: { type: "success", message: "Post updated" },
+      };
+    } catch (e) {
+      if (axios.isAxiosError(e) && e.response?.status === 400) {
+        const firstKey = Object.keys(e.response?.data)[0];
+        const message = e.response?.data[firstKey] || "Something went wrong";
+        return rejectWithValue({
+          notification: { type: "error", message },
+        });
+      }
+      const error = e as AxiosError<string>;
+      const message = error.response?.data || "Something went wrong";
+      return rejectWithValue({
+        notification: { type: "error", message },
+      });
+    }
+  },
+);
+
 const deletePost = createAsyncThunk<
   { notification: IReturnNotification },
   { id: number },
@@ -164,6 +218,16 @@ const currentPostSlice = createSlice({
         state.isLoading = false;
         state.post = null;
       })
+
+      // Update Post
+      //.addCase(updatePost.pending, (state) => {})
+      .addCase(updatePost.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.post = action.payload.updatedPost;
+      })
+      .addCase(updatePost.rejected, (state) => {
+        state.isLoading = false;
+      })
       // Delete Post
       //.addCase(deletePost.pending, (state) => {})
       .addCase(deletePost.fulfilled, (state) => {
@@ -222,6 +286,7 @@ const { clearCurrentPost } = currentPostSlice.actions;
 export {
   currentPostSlice,
   deletePost,
+  updatePost,
   addComment,
   deleteComment,
   votePost,
