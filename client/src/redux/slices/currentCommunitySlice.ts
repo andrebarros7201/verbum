@@ -111,7 +111,7 @@ const updateCommunity = createAsyncThunk<
   async ({ id, name, description }, { rejectWithValue }) => {
     try {
       await axios.patch(
-        `${import.meta.env.SERVER_URL}/Community/${id}`,
+        `${import.meta.env.VITE_SERVER_URL}/api/community/${id}`,
         {
           name,
           description,

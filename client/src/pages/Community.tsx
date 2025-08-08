@@ -8,11 +8,13 @@ import { fetchCurrentCommunity } from "../redux/slices/currentCommunitySlice.ts"
 import { ButtonCommunityMembership } from "../components/Community/ButtonCommunityMembership.tsx";
 import { ButtonCreatePost } from "../components/Community/ButtonCreatePost.tsx";
 import { List } from "../components/List.tsx";
+import { ButtonUpdateCommunity } from "../components/Community/ButtonUpdateCommunity.tsx";
 
 const Community = () => {
   const { community } = useSelector(
     (state: RootState) => state.currentCommunity,
   );
+  const { user } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<RootDispatch>();
   const { id } = useParams();
 
@@ -45,6 +47,13 @@ const Community = () => {
           <h3 className={"text-4xl font-bold text-sky-600"}>
             {community.name}
           </h3>
+          {user?.id == community.owner.id && (
+            <ButtonUpdateCommunity
+              id={community.id}
+              name={community.name}
+              description={community.description}
+            />
+          )}
           <ButtonCreatePost />
           <ButtonCommunityMembership />
         </div>
