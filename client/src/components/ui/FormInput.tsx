@@ -24,7 +24,7 @@ const FormInput = forwardRef<HTMLInputElement, Props>(
             ? { minLength: min, maxLength: max }
             : { min: min, max: max })}
           ref={ref}
-          value={value}
+          defaultValue={value}
           placeholder={placeholder}
           className="p-2 bg-gray-300 rounded w-full text-black border-b-2 box-border outline-none border-b-sky-600 placeholder:italic appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-moz-appearance:textfield]"
         />
