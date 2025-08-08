@@ -55,6 +55,7 @@ const Profile = () => {
       <div className={"w-full flex flex-start items-center gap-4"}>
         {items.map((item, index) => (
           <Button
+            key={item.type}
             label={item.type}
             variant={"primary"}
             size={"small"}
