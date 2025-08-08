@@ -25,22 +25,26 @@ const PostItem = () => {
           "w-full flex-1 flex flex-col items-start justify-start gap-4 "
         }
       >
-        <div className={"flex gap-4 items-center"}>
-          {post.user.id === user?.id && (
-            <ButtonDeletePost id={post.id} communityId={post.community.id} />
+        <div className={"w-full flex gap-4 items-center flex-wrap"}>
+          {user?.id === post.user.id && (
+            <>
+              <ButtonDeletePost id={post.id} communityId={post.community.id} />
+              <ButtonUpdatePost
+                postId={post.id}
+                text={post.text}
+                title={post.title}
+              />
+            </>
           )}
-          {post.user.id === user?.id && (
-            <ButtonUpdatePost
-              postId={post.id}
-              text={post.text}
-              title={post.title}
-            />
-          )}
-          {isAuthenticated && (
-            <ButtonVote type="post" value={-1} id={post.id} />
-          )}
-          <p className="text-lg">{post.votes}</p>
-          {isAuthenticated && <ButtonVote type="post" value={1} id={post.id} />}
+          <div className={"flex gap-4 items-center"}>
+            {isAuthenticated && (
+              <ButtonVote type="post" value={-1} id={post.id} />
+            )}
+            <p className="text-lg">{post.votes}</p>
+            {isAuthenticated && (
+              <ButtonVote type="post" value={1} id={post.id} />
+            )}
+          </div>
           <h3 className={"font-bold text-xl"}>{post.user.username}</h3>
         </div>
         <h2 className={"font-bold text-3xl"}>{post.title}</h2>
