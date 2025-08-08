@@ -20,8 +20,9 @@ const FormInput = forwardRef<HTMLInputElement, Props>(
           required
           id={name}
           name={name}
-          min={min}
-          max={max}
+          {...(type !== "number"
+            ? { minLength: min, maxLength: max }
+            : { min: min, max: max })}
           ref={ref}
           value={value}
           placeholder={placeholder}
