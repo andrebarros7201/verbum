@@ -104,10 +104,35 @@ const createCommunity = createAsyncThunk<
       community: response.data,
     };
   } catch (e) {
-    const error = e as AxiosError<string>;
-    const message = error.response?.data || "Something went wrong";
+    if (axios.isAxiosError(e) && e.response) {
+      // Check if the error is thrown because of ModalState.IsValid on the backend
+      if (e.response.status === 400 && e.response.data.errors) {
+        // errors is a dictionary {key:value}
+        // Line below gets the key of the first element,
+        // But its value is a list, so we need to get the first value by using [0]
+        const firstField = Object.keys(e.response.data.errors)[0];
+        const firstMessage = e.response.data.errors[firstField][0];
+
+        return rejectWithValue({
+          notification: {
+            type: "error",
+            message: firstMessage,
+          },
+        });
+      }
+
+      const message =
+        typeof e.response.data === "string"
+          ? e.response.data
+          : "Something went wrong";
+
+      return rejectWithValue({
+        notification: { type: "error", message },
+      });
+    }
+
     return rejectWithValue({
-      notification: { type: "error", message },
+      notification: { type: "error", message: "Failed to create community" },
     });
   }
 });
