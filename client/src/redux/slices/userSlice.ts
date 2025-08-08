@@ -160,6 +160,12 @@ const userSlice = createSlice({
       state.comments = [];
       state.communities = [];
     },
+    removeCommunity: (state, action: PayloadAction<number>) => {
+      const communityIndex = state.communities.findIndex(
+        (x) => x.id === action.payload,
+      );
+      state.communities.splice(communityIndex, 1);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -236,7 +242,7 @@ const userSlice = createSlice({
   },
 });
 
-const { removePost, clearUserContent } = userSlice.actions;
+const { removePost, clearUserContent, removeCommunity } = userSlice.actions;
 export {
   clearUserContent,
   userSlice,
@@ -246,4 +252,5 @@ export {
   userLogout,
   userVerify,
   removePost,
+  removeCommunity,
 };

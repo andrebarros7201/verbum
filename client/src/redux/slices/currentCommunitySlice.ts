@@ -101,6 +101,48 @@ const toggleMembership = createAsyncThunk<
     }
   },
 );
+
+const updateCommunity = createAsyncThunk<
+  { name: string; description: string; notification: IReturnNotification },
+  { id: number; name: string; description: string },
+  { rejectValue: { notification: IReturnNotification } }
+>(
+  "currentCommunity/update",
+  async ({ id, name, description }, { rejectWithValue }) => {
+    try {
+      await axios.patch(
+        `${import.meta.env.SERVER_URL}/Community/${id}`,
+        {
+          name,
+          description,
+        },
+        {
+          withCredentials: true,
+        },
+      );
+
+      return {
+        name: name,
+        description: description,
+        notification: {
+          type: "success",
+          message: "Community updated",
+        },
+      };
+    } catch (e) {
+      if (axios.isAxiosError(e) && e.response?.status === 400) {
+        const firstKey = Object.keys(e.response?.data)[0];
+        const message = e.response?.data[firstKey] || "Something went wrong";
+        return rejectWithValue({
+          notification: { type: "error", message },
+        });
+      }
+      const error = e as AxiosError<string>;
+      const message = error.response?.data || "Something went wrong";
+      return rejectWithValue({ notification: { type: "error", message } });
+    }
+  },
+);
 const currentCommunitySlice = createSlice({
   name: "currentCommunity",
   initialState,
@@ -125,6 +167,19 @@ const currentCommunitySlice = createSlice({
       .addCase(fetchCurrentCommunity.rejected, (state) => {
         state.isLoading = false;
         state.community = null;
+      })
+      // Update Current Community
+      .addCase(updateCommunity.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateCommunity.fulfilled, (state, action) => {
+        const { name, description } = action.payload;
+        state.isLoading = false;
+        state.community!.name = name;
+        state.community!.description = description;
+      })
+      .addCase(updateCommunity.rejected, (state) => {
+        state.isLoading = false;
       })
       // Create Post
       .addCase(createPost.pending, (state) => {
@@ -152,8 +207,9 @@ const currentCommunitySlice = createSlice({
 });
 const { removePost } = currentCommunitySlice.actions;
 export {
-  removePost,
   currentCommunitySlice,
+  removePost,
+  updateCommunity,
   fetchCurrentCommunity,
   toggleMembership,
   createPost,
