@@ -4,12 +4,15 @@ import { ButtonVote } from "../ui/ButtonVote.tsx";
 import { ButtonAddComment } from "./ButtonAddComment.tsx";
 import { ButtonDeletePost } from "./ButtonDeletePost.tsx";
 import { CommentsList } from "./CommentsList.tsx";
+import { ButtonUpdatePost } from "./ButtonUpdatePost.tsx";
 
 const PostItem = () => {
   const { isLoading, post } = useSelector(
     (state: RootState) => state.currentPost,
   );
-  const { isAuthenticated } = useSelector((state: RootState) => state.user);
+  const { isAuthenticated, user } = useSelector(
+    (state: RootState) => state.user,
+  );
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -23,11 +26,16 @@ const PostItem = () => {
         }
       >
         <div className={"flex gap-4 items-center"}>
-          <ButtonDeletePost
-            id={post.id}
-            userId={post.user.id}
-            communityId={post.community.id}
-          />
+          {post.user.id === user?.id && (
+            <ButtonDeletePost id={post.id} communityId={post.community.id} />
+          )}
+          {post.user.id === user?.id && (
+            <ButtonUpdatePost
+              postId={post.id}
+              text={post.text}
+              title={post.title}
+            />
+          )}
           {isAuthenticated && (
             <ButtonVote type="post" value={-1} id={post.id} />
           )}
