@@ -17,7 +17,7 @@ const Notification = () => {
     isVisible && (
       <div
         className={clsx(
-          "max-w-lg w-full p-4 absolute top-4 border-2 flex flex-col items-start gap-4 text-white rounded",
+          "max-w-lg w-full p-4 absolute top-4 border-2 flex flex-col items-start gap-4 text-white rounded z-100",
           {
             " border-red-500 bg-red-700": type === "error",
             " border-green-500 bg-green-700": type === "success",
@@ -33,7 +33,7 @@ const Notification = () => {
             X
           </button>
         </div>
-        <p className={"capitalize"}>{message}</p>
+        <p className={"w-full capitalize text-left"}>{message}</p>
       </div>
     )
   );
