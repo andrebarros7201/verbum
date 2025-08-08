@@ -107,36 +107,6 @@ public class PostService : IPostService {
         );
     }
 
-    public async Task<ServiceResult<PostSimpleDto>> UpdatePost(int userId, int postId, UpdatePostDto dto) {
-        var user = await _userRepository.GetUserByIdAsync(userId);
-        if (user == null) {
-            return ServiceResult<PostSimpleDto>.Error(ServiceResultStatus.NotFound, "User not found!");
-        }
-
-        var post = await _postRepository.GetPostByIdAsync(postId);
-        if (post == null) {
-            return ServiceResult<PostSimpleDto>.Error(ServiceResultStatus.NotFound, "Post not found!");
-        }
-
-        if (user.Id != post.UserId) {
-            return ServiceResult<PostSimpleDto>.Error(ServiceResultStatus.Unauthorized, "User is not the owner of the post!");
-        }
-
-        post.Title = dto.Title;
-        post.Text = dto.Text;
-        post.UpdatedAt = DateTime.Now;
-
-        await _postRepository.UpdateAsync(post);
-        return ServiceResult<PostSimpleDto>.Success(new PostSimpleDto {
-                Id = post.Id, Title = post.Title, Created = post.CreatedAt,
-                Votes = post.Votes.Aggregate(0, (acc, curr) => acc + curr.Value),
-                CommunityId = post.CommunityId,
-                CommentsCount = post.Comments.Count,
-                User = new UserSimpleDto { Id = post.User.Id, Username = post.User.Username }
-            }
-        );
-    }
-
     public async Task<ServiceResult<bool>> DeletePost(int userId, int postId) {
         var user = await _userRepository.GetUserByIdAsync(userId);
         if (user == null) {
@@ -185,6 +155,55 @@ public class PostService : IPostService {
             await _votePostRepository.DeleteVotePostAsync(userId, postId);
         }
 
+        return ServiceResult<PostCompleteDto>.Success(new PostCompleteDto {
+            Id = post.Id,
+            Title = post.Title,
+            Text = post.Text,
+            User = new UserSimpleDto { Id = post.User.Id, Username = post.User.Username },
+            Created = post.CreatedAt,
+            Updated = post.UpdatedAt,
+            Votes = post.Votes.Aggregate(0, (acc, curr) => acc + curr.Value),
+            Community = new CommunitySimpleDto {
+                Id = post.Community.Id,
+                Name = post.Community.Name,
+                Description = post.Community.Description,
+                MembersCount = post.Community.Members.Count,
+                UserId = post.Community.UserId,
+                isMember = post.Community.Members.Any(m => m.UserId == userId),
+                isOwner = post.Community.UserId == userId
+            },
+            Comments = post.Comments.Select(c => new CommentDto {
+                Id = c.Id,
+                Author = new UserSimpleDto { Id = c.User.Id, Username = c.User.Username },
+                CreatedAt = c.CreatedAt,
+                Text = c.Text,
+                UpdatedAt = c.UpdatedAt,
+                Votes = c.Votes.Aggregate(0, (acc, curr) => acc + curr.Value)
+            }).ToList(),
+            CommentsCount = post.Comments.Count
+        });
+    }
+
+    public async Task<ServiceResult<PostCompleteDto>> UpdatePost(int userId, int postId, UpdatePostDto dto) {
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user == null) {
+            return ServiceResult<PostCompleteDto>.Error(ServiceResultStatus.NotFound, "User not found!");
+        }
+
+        var post = await _postRepository.GetPostByIdAsync(postId);
+        if (post == null) {
+            return ServiceResult<PostCompleteDto>.Error(ServiceResultStatus.NotFound, "Post not found!");
+        }
+
+        if (user.Id != post.UserId) {
+            return ServiceResult<PostCompleteDto>.Error(ServiceResultStatus.Unauthorized, "User is not the owner of the post!");
+        }
+
+        post.Title = dto.Title;
+        post.Text = dto.Text;
+        post.UpdatedAt = DateTime.Now;
+
+        await _postRepository.UpdateAsync(post);
         return ServiceResult<PostCompleteDto>.Success(new PostCompleteDto {
             Id = post.Id,
             Title = post.Title,

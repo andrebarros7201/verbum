@@ -61,7 +61,7 @@ public class PostController : ControllerBase {
             return BadRequest(ModelState);
         }
 
-        ServiceResult<PostSimpleDto> result = await _postService.UpdatePost(int.Parse(userIdClaim ?? "0"), id, dto);
+        ServiceResult<PostCompleteDto> result = await _postService.UpdatePost(int.Parse(userIdClaim ?? "0"), id, dto);
         return result.Status switch {
             ServiceResultStatus.Success => Ok(result.Data),
             ServiceResultStatus.Unauthorized => Unauthorized(result.Message),
