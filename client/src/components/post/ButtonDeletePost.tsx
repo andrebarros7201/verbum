@@ -1,5 +1,5 @@
-import { useDispatch, useSelector } from "react-redux";
-import type { RootDispatch, RootState } from "../../redux/store.ts";
+import { useDispatch } from "react-redux";
+import type { RootDispatch } from "../../redux/store.ts";
 import { Button } from "../ui/Button.tsx";
 import { setNotification } from "../../redux/slices/notificationSlice.ts";
 import type { IReturnNotification } from "../../interfaces/IReturnNotification.ts";
@@ -7,26 +7,16 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { deletePost } from "../../redux/slices/currentPostSlice.ts";
 import { removePost as userRemovePost } from "../../redux/slices/userSlice.ts";
 import { removePost as currentCommunityRemovePost } from "../../redux/slices/currentCommunitySlice.ts";
-import { useEffect } from "react";
 
 type Props = {
   id: number;
-  userId: number; // Author ID number
   communityId: number;
 };
 
-const ButtonDeletePost = ({ id, userId, communityId }: Props) => {
+const ButtonDeletePost = ({ id, communityId }: Props) => {
   const location = useLocation();
   const dispatch = useDispatch<RootDispatch>();
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useSelector(
-    (state: RootState) => state.user,
-  );
-
-  useEffect(() => {
-    console.log(location.pathname);
-    console.log(communityId);
-  }, []);
 
   async function handleDeletePost() {
     try {
@@ -51,15 +41,12 @@ const ButtonDeletePost = ({ id, userId, communityId }: Props) => {
   }
 
   return (
-    isAuthenticated &&
-    user!.id === userId && (
-      <Button
-        size={"small"}
-        label={"Delete Post"}
-        variant={"secondary"}
-        onClick={handleDeletePost}
-      />
-    )
+    <Button
+      size={"small"}
+      label={"Delete Post"}
+      variant={"secondary"}
+      onClick={handleDeletePost}
+    />
   );
 };
 
