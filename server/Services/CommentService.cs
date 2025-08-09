@@ -42,6 +42,9 @@ public class CommentService : ICommentService {
         };
 
         var comment = await _commentRepository.AddAsync(newComment);
+        // Automatically like the comment created
+        await CommentVote(userId, comment.Id, 1);
+
         return ServiceResult<CommentDto>.Success(new CommentDto {
             Id = comment.Id,
             Text = comment.Text,
