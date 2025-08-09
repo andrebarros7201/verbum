@@ -22,7 +22,7 @@ const DropdownMenu = ({ children }: Props) => {
       {isVisible && (
         <div
           className={
-            "absolute flex-1 top-0 right-10 bg-transparent hover:bg-gray-200 flex flex-col justify-start rounded min-w-max shadow-2xl"
+            "absolute flex-1 top-0 right-10 gap-2 bg-transparent hover:bg-gray-200 flex flex-col justify-start rounded min-w-max shadow-2xl"
           }
         >
           {children}

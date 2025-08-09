@@ -5,16 +5,14 @@ import { useEffect } from "react";
 import type { IReturnNotification } from "../interfaces/IReturnNotification.ts";
 import { setNotification } from "../redux/slices/notificationSlice.ts";
 import { fetchCurrentCommunity } from "../redux/slices/currentCommunitySlice.ts";
-import { ButtonCommunityMembership } from "../components/Community/ButtonCommunityMembership.tsx";
-import { ButtonCreatePost } from "../components/Community/ButtonCreatePost.tsx";
+import { CommunityMobileMenu } from "../components/Community/CommunityMobileMenu.tsx";
 import { List } from "../components/List.tsx";
-import { ButtonUpdateCommunity } from "../components/Community/ButtonUpdateCommunity.tsx";
+import { CommunityDesktopMenu } from "../components/Community/CommunityDesktopMenu.tsx";
 
 const Community = () => {
   const { community } = useSelector(
     (state: RootState) => state.currentCommunity,
   );
-  const { user } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<RootDispatch>();
   const { id } = useParams();
 
@@ -43,25 +41,12 @@ const Community = () => {
           "w-full flex flex-1 flex-col justify-start items-start gap-4"
         }
       >
-        <div
-          className={
-            "flex flex-col sm:flex-row w-full gap-4 justify-start items-center"
-          }
-        >
+        <div className={"flex w-full gap-4 justify-between items-center"}>
           <h3 className={"text-4xl font-bold text-sky-600"}>
             {community.name}
           </h3>
-          <div className={"flex gap-4"}>
-            {user?.id == community.owner.id && (
-              <ButtonUpdateCommunity
-                id={community.id}
-                name={community.name}
-                description={community.description}
-              />
-            )}
-            <ButtonCreatePost />
-            <ButtonCommunityMembership />
-          </div>
+          <CommunityMobileMenu />
+          <CommunityDesktopMenu />
         </div>
         <List list={community.posts} type={"post"} />
       </div>
