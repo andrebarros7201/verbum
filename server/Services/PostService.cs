@@ -94,6 +94,8 @@ public class PostService : IPostService {
         };
 
         await _postRepository.AddAsync(post);
+        // Automatically like the post created
+        await PostVote(userId, post.Id, 1);
 
         return ServiceResult<PostSimpleDto>.Success(new PostSimpleDto {
                 Id = post.Id,
