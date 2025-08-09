@@ -11,7 +11,7 @@ const MobileHeader = () => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <div className={"flex flex-col sm:hidden"}>
-      <button onClick={() => setIsOpen(true)}>
+      <button onClick={() => setIsOpen(true)} className={"cursor-pointer"}>
         <img src={menuSvg} alt={"menu icon"} width={32} />
       </button>
       {isOpen && (

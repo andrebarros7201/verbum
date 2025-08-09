@@ -53,13 +53,14 @@ const Profile = () => {
   return (
     <div className={"w-full flex flex-col gap-4"}>
       <div className={"w-full flex flex-start items-center gap-4"}>
-        {items.map((item, index) => (
+        {items.map((item, i) => (
           <Button
             key={item.type}
             label={item.type}
             variant={"primary"}
             size={"small"}
-            onClick={() => handleClick(index)}
+            selected={i === index}
+            onClick={() => handleClick(i)}
           />
         ))}
       </div>
