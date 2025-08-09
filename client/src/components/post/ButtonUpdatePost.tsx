@@ -65,6 +65,7 @@ const ButtonUpdatePost = ({ postId, title, text }: Props) => {
           <Form onSubmit={handleUpdate}>
             <FormInput
               min={3}
+              max={100}
               value={title}
               type={"text"}
               name={"title"}
@@ -73,6 +74,7 @@ const ButtonUpdatePost = ({ postId, title, text }: Props) => {
             />
             <FormTextArea
               min={3}
+              max={500}
               name={"text"}
               value={text}
               ref={textRef}

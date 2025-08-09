@@ -56,6 +56,7 @@ const ButtonCreateCommunity = () => {
               name={"name"}
               label={"Name"}
               min={3}
+              max={20}
               ref={nameRef}
             />
             <FormInput
@@ -63,6 +64,7 @@ const ButtonCreateCommunity = () => {
               name={"description"}
               label={"Description"}
               min={3}
+              max={300}
               ref={descriptionRef}
             />
             <Button label={"Create"} variant={"primary"} type={"submit"} />

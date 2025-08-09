@@ -45,14 +45,12 @@ const LoginForm = () => {
           type={"text"}
           name={"username"}
           label={"Username"}
-          min={3}
           ref={usernameRef}
         />
         <FormInput
           type={"password"}
           name={"password"}
           label={"Password"}
-          min={6}
           ref={passwordRef}
         />
         <Button label={"Login"} variant={"primary"} type={"submit"} />

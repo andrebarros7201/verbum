@@ -66,6 +66,7 @@ const ButtonUpdateCommunity = ({ id, name, description }: Props) => {
               name={"name"}
               label={"Name"}
               min={3}
+              max={20}
               ref={nameRef}
               value={name}
             />
@@ -75,6 +76,7 @@ const ButtonUpdateCommunity = ({ id, name, description }: Props) => {
               ref={descriptionRef}
               label={"Description"}
               min={3}
+              max={300}
               value={description}
             />
             <Button label={"Update"} variant={"primary"} type={"submit"} />
