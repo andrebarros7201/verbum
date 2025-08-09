@@ -23,7 +23,7 @@ const MobileHeader = () => {
       {isOpen && (
         <div
           className={
-            "h-screen w-screen backdrop-blur-md flex justify-end absolute top-0 right-0"
+            "h-screen w-screen backdrop-blur-md flex justify-end absolute top-0 right-0 z-100"
           }
           onClick={() => setIsOpen(false)}
         >
