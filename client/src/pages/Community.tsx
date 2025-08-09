@@ -43,19 +43,25 @@ const Community = () => {
           "w-full flex flex-1 flex-col justify-start items-start gap-4"
         }
       >
-        <div className={"w-full flex gap-4 justify-start items-center"}>
+        <div
+          className={
+            "flex flex-col sm:flex-row w-full gap-4 justify-start items-center"
+          }
+        >
           <h3 className={"text-4xl font-bold text-sky-600"}>
             {community.name}
           </h3>
-          {user?.id == community.owner.id && (
-            <ButtonUpdateCommunity
-              id={community.id}
-              name={community.name}
-              description={community.description}
-            />
-          )}
-          <ButtonCreatePost />
-          <ButtonCommunityMembership />
+          <div className={"flex gap-4"}>
+            {user?.id == community.owner.id && (
+              <ButtonUpdateCommunity
+                id={community.id}
+                name={community.name}
+                description={community.description}
+              />
+            )}
+            <ButtonCreatePost />
+            <ButtonCommunityMembership />
+          </div>
         </div>
         <List list={community.posts} type={"post"} />
       </div>
