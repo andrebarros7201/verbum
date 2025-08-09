@@ -17,7 +17,7 @@ const Community = () => {
   const { id } = useParams();
 
   useEffect(() => {
-    const fetch = async () => {
+    async function fetchCommunity() {
       try {
         await dispatch(fetchCurrentCommunity({ id: parseInt(id!) })).unwrap();
       } catch (e) {
@@ -29,9 +29,9 @@ const Community = () => {
           }),
         );
       }
-    };
+    }
 
-    fetch();
+    fetchCommunity();
   }, []);
 
   return (
