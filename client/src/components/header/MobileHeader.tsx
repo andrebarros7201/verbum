@@ -1,14 +1,20 @@
 import menuSvg from "../../assets/menu.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/Button.tsx";
 import { HeaderLink } from "./HeaderLink.tsx";
 import type { RootState } from "../../redux/store.ts";
 import { useSelector } from "react-redux";
 import { ButtonLogout } from "./ButtonLogout.tsx";
+import { useLocation } from "react-router-dom";
 
 const MobileHeader = () => {
+  const location = useLocation();
   const { isAuthenticated } = useSelector((state: RootState) => state.user);
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
   return (
     <div className={"flex flex-col sm:hidden"}>
       <button onClick={() => setIsOpen(true)} className={"cursor-pointer"}>
