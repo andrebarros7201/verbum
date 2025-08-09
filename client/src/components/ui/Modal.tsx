@@ -9,7 +9,7 @@ const Modal = ({ children, onClose }: Props) => {
     <div
       onClick={onClose}
       className={
-        "w-full h-full absolute top-0 left-0 bg-gray-600/60 backdrop-blur-sm flex-1 flex z-100 flex-col items-center justify-center "
+        "w-full h-screen absolute top-0 left-0 p-4 bg-gray-600/60 backdrop-blur-sm flex-1 flex z-100 flex-col items-center justify-start md:justify-center"
       }
     >
       <div
