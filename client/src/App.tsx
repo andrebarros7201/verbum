@@ -18,7 +18,7 @@ function App() {
     <>
       <Header />
       <Notification />
-      <div className={"w-full flex-1 flex"}>
+      <div className={"w-full flex-1 flex pb-4"}>
         <Outlet />
       </div>
     </>
