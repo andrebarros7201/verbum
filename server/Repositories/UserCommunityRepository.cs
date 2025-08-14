@@ -32,4 +32,10 @@ public class UserCommunityRepository : IUserCommunityRepository {
         await _db.SaveChangesAsync();
         return true;
     }
+
+    public async Task<bool> UpdateUserCommunity(UserCommunity uc) {
+        _db.UserCommunities.Update(uc);
+        await _db.SaveChangesAsync();
+        return true;
+    }
 }
