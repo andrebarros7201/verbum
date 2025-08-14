@@ -7,6 +7,7 @@ interface ICommunityComplete {
   description: string;
   owner: IUser;
   posts: IPostSimple[];
+  members: { username: string; id: number; isAdmin: boolean }[];
   membersCount: number;
   postsCount: number;
   isMember: boolean;
