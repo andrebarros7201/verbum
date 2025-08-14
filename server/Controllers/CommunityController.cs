@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Verbum.API.DTOs.Community;
+using Verbum.API.DTOs.User;
 using Verbum.API.Interfaces.Services;
 using Verbum.API.Results;
 
@@ -140,6 +141,24 @@ public class CommunityController : ControllerBase {
         return result.Status switch {
             ServiceResultStatus.Success => Ok("User left community"),
             ServiceResultStatus.Error => BadRequest(result.Message),
+            ServiceResultStatus.NotFound => NotFound(result.Message),
+            _ => BadRequest(new { message = "Something went wrong" })
+        };
+    }
+
+    [Authorize]
+    [HttpPatch("{communityId}/role/{userId}")]
+    public async Task<IActionResult> UpdateRole([FromRoute] int communityId, [FromRoute] int userId) {
+        string? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userIdClaim == null) {
+            return Unauthorized();
+        }
+
+        ServiceResult<MemberDto> result = await _communityService.UpdateRole(userId, int.Parse(userIdClaim), communityId);
+
+        return result.Status switch {
+            ServiceResultStatus.Success => Ok(result.Data),
+            ServiceResultStatus.Unauthorized => Unauthorized(result.Message),
             ServiceResultStatus.NotFound => NotFound(result.Message),
             _ => BadRequest(new { message = "Something went wrong" })
         };

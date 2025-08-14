@@ -53,6 +53,7 @@ public class CommunityService : ICommunityService {
                 Owner = new UserSimpleDto { Id = result.Owner.Id, Username = result.Owner.Username },
                 isOwner = result.UserId == userId,
                 isMember = result.Members.Any(m => m.UserId == userId),
+                Members = result.Members.Select(m => new MemberDto { Id = m.UserId, Username = m.User.Username, isAdmin = m.IsAdmin }).ToList(),
                 MembersCount = result.Members.Count,
                 Posts = result.Posts
                     .Select(p => new PostSimpleDto {
@@ -105,7 +106,8 @@ public class CommunityService : ICommunityService {
         };
 
         await _communityRepository.AddAsync(community);
-        await JoinCommunity(community.Id, userId);
+        await JoinCommunity(community.Id, userId); // Add the owner as a member
+        await UpdateRole(userId, userId, community.Id); // Add the owner as admin
         return ServiceResult<CommunitySimpleDto>.Success(
             new CommunitySimpleDto {
                 Id = community.Id,
@@ -204,5 +206,43 @@ public class CommunityService : ICommunityService {
 
         await _userCommunityRepository.RemoveUserFromCommunity(uc);
         return ServiceResult<bool>.Success(true);
+    }
+
+    public async Task<ServiceResult<MemberDto>> UpdateRole(int targetId, int currentUserId, int communityId) {
+        var targetUser = await _userRepository.GetUserByIdAsync(targetId);
+        if (targetUser == null) {
+            return ServiceResult<MemberDto>.Error(ServiceResultStatus.NotFound, "Target User not found!");
+        }
+
+        var currentUser = await _userRepository.GetUserByIdAsync(currentUserId);
+        if (currentUser == null) {
+            return ServiceResult<MemberDto>.Error(ServiceResultStatus.NotFound, "Current User not found!");
+        }
+
+        var community = await _communityRepository.GetCommunityByIdAsync(communityId);
+        if (community == null) {
+            return ServiceResult<MemberDto>.Error(ServiceResultStatus.NotFound, "Community not found!");
+        }
+
+        var currentUserCommunity = await _userCommunityRepository.GetUserCommunity(currentUserId, communityId);
+        if (currentUserCommunity == null) {
+            return ServiceResult<MemberDto>.Error(ServiceResultStatus.NotFound, "Current User not a member of the community!");
+        }
+
+        // User is not the owner or admin
+        if (!currentUserCommunity.IsAdmin && currentUser.Id != community.UserId) {
+            return ServiceResult<MemberDto>.Error(ServiceResultStatus.Unauthorized, "Only the Owner or Admin can update the role!");
+        }
+
+        var targetUserCommunity = await _userCommunityRepository.GetUserCommunity(targetId, communityId);
+        if (targetUserCommunity == null) {
+            return ServiceResult<MemberDto>.Error(ServiceResultStatus.NotFound, "Target User not a member of the community!");
+        }
+
+        targetUserCommunity.IsAdmin = !targetUserCommunity.IsAdmin;
+        await _userCommunityRepository.UpdateUserCommunity(targetUserCommunity);
+
+        return ServiceResult<MemberDto>.Success(new MemberDto
+            { Id = targetUserCommunity.UserId, Username = targetUserCommunity.User.Username, isAdmin = targetUserCommunity.IsAdmin });
     }
 }
