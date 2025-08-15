@@ -5,6 +5,7 @@ import { ButtonUpdateCommunity } from "./ButtonUpdateCommunity.tsx";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store.ts";
 import { CommunityMembersList } from "./CommunityMembersList.tsx";
+import { ListFilter } from "../ListFilter.tsx";
 
 const CommunityMobileMenu = () => {
   const { user } = useSelector((state: RootState) => state.user);
@@ -21,6 +22,7 @@ const CommunityMobileMenu = () => {
         />
       )}
       {(community?.isAdmin || community?.isOwner) && <CommunityMembersList />}
+      <ListFilter type={"post"} />
       <ButtonCreatePost />
       <ButtonCommunityMembership />
     </MobileMenu>
