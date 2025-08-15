@@ -4,14 +4,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import type { IReturnNotification } from "../interfaces/IReturnNotification.ts";
 import { setNotification } from "../redux/slices/notificationSlice.ts";
-import { fetchCurrentCommunity } from "../redux/slices/currentCommunitySlice.ts";
+import {
+  fetchCurrentCommunity,
+  setFilterMembers,
+  setFilterPosts,
+} from "../redux/slices/currentCommunitySlice.ts";
 import { CommunityMobileMenu } from "../components/Community/CommunityMobileMenu.tsx";
 import { List } from "../components/List.tsx";
 import { CommunityDesktopMenu } from "../components/Community/CommunityDesktopMenu.tsx";
 
 const Community = () => {
   const { community } = useSelector(
-    (state: RootState) => state.currentCommunity,
+    (state: RootState) => state.currentCommunity
   );
   const dispatch = useDispatch<RootDispatch>();
   const { id } = useParams();
@@ -26,13 +30,19 @@ const Community = () => {
           setNotification({
             type: err.notification.type,
             message: err.notification.message,
-          }),
+          })
         );
       }
     }
 
     fetchCommunity();
-  }, []);
+  }, [dispatch, id]);
+
+  // Initialize filtered list with all values
+  useEffect(() => {
+    dispatch(setFilterMembers());
+    dispatch(setFilterPosts());
+  }, [dispatch]);
 
   return (
     community && (

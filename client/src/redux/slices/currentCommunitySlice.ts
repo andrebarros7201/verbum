@@ -23,7 +23,7 @@ const fetchCurrentCommunity = createAsyncThunk<
       `${import.meta.env.VITE_SERVER_URL}/api/community/${id}`,
       {
         withCredentials: true,
-      },
+      }
     );
     return { community: response.data };
   } catch (e) {
@@ -48,7 +48,7 @@ const createPost = createAsyncThunk<
         { title, text, communityId: community!.id },
         {
           withCredentials: true,
-        },
+        }
       );
 
       return {
@@ -67,7 +67,7 @@ const createPost = createAsyncThunk<
         },
       });
     }
-  },
+  }
 );
 const toggleMembership = createAsyncThunk<
   { id: number; notification: IReturnNotification },
@@ -83,7 +83,7 @@ const toggleMembership = createAsyncThunk<
         {},
         {
           withCredentials: true,
-        },
+        }
       );
       return {
         id: id,
@@ -101,7 +101,7 @@ const toggleMembership = createAsyncThunk<
         },
       });
     }
-  },
+  }
 );
 
 const updateCommunity = createAsyncThunk<
@@ -120,7 +120,7 @@ const updateCommunity = createAsyncThunk<
         },
         {
           withCredentials: true,
-        },
+        }
       );
 
       return {
@@ -143,7 +143,7 @@ const updateCommunity = createAsyncThunk<
       const message = error.response?.data || "Something went wrong";
       return rejectWithValue({ notification: { type: "error", message } });
     }
-  },
+  }
 );
 
 // Toggle User Role
@@ -158,11 +158,13 @@ const toggleUserRole = createAsyncThunk<
       const state = getState();
       const { community } = state.currentCommunity;
       await axios.patch(
-        `${import.meta.env.VITE_SERVER_URL}/api/community/${community?.id}/role/${targetUserId}`,
+        `${import.meta.env.VITE_SERVER_URL}/api/community/${
+          community?.id
+        }/role/${targetUserId}`,
         {},
         {
           withCredentials: true,
-        },
+        }
       );
       return {
         targetUserId,
@@ -177,7 +179,7 @@ const toggleUserRole = createAsyncThunk<
         },
       });
     }
-  },
+  }
 );
 const currentCommunitySlice = createSlice({
   name: "currentCommunity",
@@ -185,20 +187,26 @@ const currentCommunitySlice = createSlice({
   reducers: {
     removePost: (state, action) => {
       const postIndex = state.community!.posts.findIndex(
-        (x) => x.id === action.payload.id,
+        (x) => x.id === action.payload.id
       );
       state.community!.posts.splice(postIndex, 1);
+    },
+    setFilterPosts: (state) => {
+      state.filteredPosts = state.community?.posts ?? [];
+    },
+    setFilterMembers: (state) => {
+      state.filteredMembers = state.community?.members ?? [];
     },
     filterPosts: (state, action) => {
       const { searchText } = action.payload;
       state.filteredPosts = state.community!.posts.filter((x) =>
-        x.title.includes(searchText),
+        x.title.includes(searchText)
       );
     },
     filterMembers: (state, action) => {
       const { searchText } = action.payload;
       state.filteredMembers = state.community!.members.filter((x) =>
-        x.username.includes(searchText),
+        x.username.includes(searchText)
       );
     },
   },
@@ -259,7 +267,7 @@ const currentCommunitySlice = createSlice({
         state.isLoading = false;
         const { targetUserId } = action.payload;
         const userIndex = state.community!.members.findIndex(
-          (x) => x.id === targetUserId,
+          (x) => x.id === targetUserId
         );
         state.community!.members[userIndex].isAdmin =
           !state.community!.members[userIndex].isAdmin;
@@ -269,11 +277,18 @@ const currentCommunitySlice = createSlice({
       });
   },
 });
-const { removePost, filterMembers, filterPosts } =
-  currentCommunitySlice.actions;
+const {
+  removePost,
+  filterMembers,
+  filterPosts,
+  setFilterMembers,
+  setFilterPosts,
+} = currentCommunitySlice.actions;
 export {
   currentCommunitySlice,
   removePost,
+  setFilterMembers,
+  setFilterPosts,
   filterMembers,
   filterPosts,
   updateCommunity,
