@@ -7,6 +7,7 @@ import type { ICommunitySlice } from "../../interfaces/ICommunitySlice.ts";
 const initialState: ICommunitySlice = {
   communities: [],
   isLoading: false,
+  filteredCommunities: [],
 };
 
 const fetchAllCommunities = createAsyncThunk<
@@ -144,6 +145,15 @@ const communitySlice = createSlice({
     clearCommunities: (state) => {
       state.communities = [];
     },
+    setCommunityFilterList: (state) => {
+      state.filteredCommunities = state.communities;
+    },
+    filterCommunities: (state, action) => {
+      const { searchText } = action.payload;
+      state.filteredCommunities = state.communities.filter((x) =>
+        x.name.includes(searchText),
+      );
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -153,6 +163,7 @@ const communitySlice = createSlice({
       .addCase(fetchAllCommunities.fulfilled, (state, action) => {
         state.isLoading = false;
         state.communities = action.payload.communities;
+        state.filteredCommunities = action.payload.communities;
       })
       .addCase(fetchAllCommunities.rejected, (state) => {
         state.isLoading = false;
@@ -205,10 +216,11 @@ const communitySlice = createSlice({
   },
 });
 
-const { clearCommunities } = communitySlice.actions;
+const { clearCommunities, filterCommunities } = communitySlice.actions;
 export {
   communitySlice,
   clearCommunities,
+  filterCommunities,
   createCommunity,
   fetchAllCommunities,
   leaveCommunity,
