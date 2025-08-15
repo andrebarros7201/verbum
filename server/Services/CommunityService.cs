@@ -53,6 +53,7 @@ public class CommunityService : ICommunityService {
                 Owner = new UserSimpleDto { Id = result.Owner.Id, Username = result.Owner.Username },
                 isOwner = result.UserId == userId,
                 isMember = result.Members.Any(m => m.UserId == userId),
+                isAdmin = result.Members.Any(m => m.UserId == userId && m.IsAdmin),
                 Members = result.Members.Select(m => new MemberDto { Id = m.UserId, Username = m.User.Username, isAdmin = m.IsAdmin }).ToList(),
                 MembersCount = result.Members.Count,
                 Posts = result.Posts

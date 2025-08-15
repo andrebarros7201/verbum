@@ -14,4 +14,5 @@ public class CommunityCompleteDto {
     public int PostsCount { get; set; }
     public bool isMember { get; set; }
     public bool isOwner { get; set; }
+    public bool isAdmin { get; set; }
 }
