@@ -1,7 +1,8 @@
-import { forwardRef } from "react";
+import { type ChangeEvent, forwardRef } from "react";
 
 interface Props {
   placeholder?: string;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   type: string;
   name: string;
   min?: number;
@@ -11,7 +12,7 @@ interface Props {
 }
 
 const FormInput = forwardRef<HTMLInputElement, Props>(
-  ({ placeholder, type, name, min, max, value, label }, ref) => {
+  ({ placeholder, type, name, min, max, value, label, onChange }, ref) => {
     return (
       <div className={"flex flex-col items-start gap-2 text-nowrap w-full"}>
         {label ? <label htmlFor={name}>{label}</label> : null}
@@ -20,6 +21,7 @@ const FormInput = forwardRef<HTMLInputElement, Props>(
           required
           id={name}
           name={name}
+          onChange={onChange}
           {...(type !== "number"
             ? { minLength: min, maxLength: max }
             : { min: min, max: max })}
