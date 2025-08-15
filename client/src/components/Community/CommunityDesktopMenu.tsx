@@ -3,6 +3,7 @@ import type { RootState } from "../../redux/store.ts";
 import { ButtonUpdateCommunity } from "./ButtonUpdateCommunity.tsx";
 import { ButtonCreatePost } from "./ButtonCreatePost.tsx";
 import { ButtonCommunityMembership } from "./ButtonCommunityMembership.tsx";
+import { CommunityMembersList } from "./CommunityMembersList.tsx";
 
 const CommunityDesktopMenu = () => {
   const { user } = useSelector((state: RootState) => state.user);
@@ -22,6 +23,7 @@ const CommunityDesktopMenu = () => {
           description={community!.description}
         />
       )}
+      {(community?.isAdmin || community?.isOwner) && <CommunityMembersList />}
       <ButtonCreatePost />
       <ButtonCommunityMembership />
     </div>
