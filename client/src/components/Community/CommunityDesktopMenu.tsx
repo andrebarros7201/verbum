@@ -3,13 +3,14 @@ import type { RootState } from "../../redux/store.ts";
 import { ButtonUpdateCommunity } from "./ButtonUpdateCommunity.tsx";
 import { ButtonCreatePost } from "./ButtonCreatePost.tsx";
 import { ButtonCommunityMembership } from "./ButtonCommunityMembership.tsx";
-import { CommunityMembersList } from "./CommunityMembersList.tsx";
 import { ListFilter } from "../ListFilter.tsx";
 
 const CommunityDesktopMenu = () => {
-  const { user } = useSelector((state: RootState) => state.user);
+  const { user, isAuthenticated } = useSelector(
+    (state: RootState) => state.user
+  );
   const { community } = useSelector(
-    (state: RootState) => state.currentCommunity,
+    (state: RootState) => state.currentCommunity
   );
   return (
     <div
@@ -29,7 +30,7 @@ const CommunityDesktopMenu = () => {
       )}
       <ListFilter type="post" />
       <ButtonCreatePost />
-      <ButtonCommunityMembership />
+      {isAuthenticated && <ButtonCommunityMembership />}
     </div>
   );
 };

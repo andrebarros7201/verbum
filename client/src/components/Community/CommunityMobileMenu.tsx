@@ -8,9 +8,11 @@ import { CommunityMembersList } from "./CommunityMembersList.tsx";
 import { ListFilter } from "../ListFilter.tsx";
 
 const CommunityMobileMenu = () => {
-  const { user } = useSelector((state: RootState) => state.user);
+  const { user, isAuthenticated } = useSelector(
+    (state: RootState) => state.user
+  );
   const { community } = useSelector(
-    (state: RootState) => state.currentCommunity,
+    (state: RootState) => state.currentCommunity
   );
   return (
     <MobileMenu>
@@ -24,7 +26,7 @@ const CommunityMobileMenu = () => {
       {(community?.isAdmin || community?.isOwner) && <CommunityMembersList />}
       <ListFilter type={"post"} />
       <ButtonCreatePost />
-      <ButtonCommunityMembership />
+      {isAuthenticated && <ButtonCommunityMembership />}
     </MobileMenu>
   );
 };
