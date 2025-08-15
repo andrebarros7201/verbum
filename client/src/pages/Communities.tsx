@@ -6,6 +6,7 @@ import type { IReturnNotification } from "../interfaces/IReturnNotification.ts";
 import { fetchAllCommunities } from "../redux/slices/communitySlice.ts";
 import { ButtonCreateCommunity } from "../components/Community/ButtonCreateCommunity.tsx";
 import { List } from "../components/List.tsx";
+import { ListFilter } from "../components/ListFilter.tsx";
 
 const Communities = () => {
   const { isAuthenticated } = useSelector((state: RootState) => state.user);
@@ -24,7 +25,10 @@ const Communities = () => {
     <div
       className={"w-full flex-1 flex gap-4 flex-col justify-start items-start"}
     >
-      {isAuthenticated && <ButtonCreateCommunity />}
+      <div className={"w-full flex gap-4 items-center justify-start"}>
+        {isAuthenticated && <ButtonCreateCommunity />}
+        <ListFilter type={"community"} />
+      </div>
       <List list={communities} type={"community"} />
     </div>
   );
