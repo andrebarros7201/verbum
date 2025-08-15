@@ -10,6 +10,7 @@ interface ICommunityComplete {
   members: { username: string; id: number; isAdmin: boolean }[];
   membersCount: number;
   postsCount: number;
+  isAdmin: boolean;
   isMember: boolean;
   isOwner: boolean;
 }
