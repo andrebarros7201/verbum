@@ -49,11 +49,7 @@ const ListFilter = ({ type }: Props) => {
   useEffect(() => {}, []);
 
   return (
-    <div
-      className={
-        "w-full max-w-[200px] gap-4 flex justify-start items-center box-border"
-      }
-    >
+    <div className={"gap-4 flex justify-start items-center box-border"}>
       <Button
         label={"Find"}
         variant={"primary"}
