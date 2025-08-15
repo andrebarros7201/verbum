@@ -9,6 +9,8 @@ import type { RootState } from "../store.ts";
 const initialState: ICurrentCommunitySlice = {
   isLoading: false,
   community: null,
+  filteredMembers: [],
+  filteredPosts: [],
 };
 
 const fetchCurrentCommunity = createAsyncThunk<
@@ -187,6 +189,18 @@ const currentCommunitySlice = createSlice({
       );
       state.community!.posts.splice(postIndex, 1);
     },
+    filterPosts: (state, action) => {
+      const { searchText } = action.payload;
+      state.filteredPosts = state.community!.posts.filter((x) =>
+        x.title.includes(searchText),
+      );
+    },
+    filterMembers: (state, action) => {
+      const { searchText } = action.payload;
+      state.filteredMembers = state.community!.members.filter((x) =>
+        x.username.includes(searchText),
+      );
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -255,10 +269,13 @@ const currentCommunitySlice = createSlice({
       });
   },
 });
-const { removePost } = currentCommunitySlice.actions;
+const { removePost, filterMembers, filterPosts } =
+  currentCommunitySlice.actions;
 export {
   currentCommunitySlice,
   removePost,
+  filterMembers,
+  filterPosts,
   updateCommunity,
   fetchCurrentCommunity,
   toggleMembership,
