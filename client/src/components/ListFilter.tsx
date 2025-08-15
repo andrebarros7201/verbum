@@ -11,15 +11,14 @@ import {
   filterPosts,
 } from "../redux/slices/currentCommunitySlice.ts";
 import { ListFilterPostItem } from "./ListFilterPostItem.tsx";
-import { ListFilterMemberItem } from "./ListFilterMemberItem.tsx";
-import type { ICommentSimple } from "../interfaces/ICommentSimple.ts";
-import type { ICommunitySimple } from "../interfaces/ICommunitySimple.ts";
+import { MemberListItem } from "./Community/MemberListItem.tsx";
 
 type Props = {
   type: "community" | "post" | "member";
+  label?: string;
 };
 
-const ListFilter = ({ type }: Props) => {
+const ListFilter = ({ label = "Find", type }: Props) => {
   const { filteredCommunities } = useSelector(
     (state: RootState) => state.community,
   );
@@ -49,9 +48,9 @@ const ListFilter = ({ type }: Props) => {
   useEffect(() => {}, []);
 
   return (
-    <div className={"gap-4 flex justify-start items-center box-border"}>
+    <>
       <Button
-        label={"Find"}
+        label={label}
         variant={"primary"}
         size={"small"}
         onClick={() => setIsInputVisible(!isInputVisible)}
@@ -84,13 +83,18 @@ const ListFilter = ({ type }: Props) => {
                     ))
                   : filteredMembers &&
                     filteredMembers.map((x) => (
-                      <ListFilterMemberItem member={x} key={x.id} />
+                      <MemberListItem
+                        id={x.id}
+                        username={x.username}
+                        isAdmin={x.isAdmin}
+                        key={x.id}
+                      />
                     ))}
             </div>
           </div>
         </Modal>
       )}
-    </div>
+    </>
   );
 };
 
