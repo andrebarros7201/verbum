@@ -143,6 +143,40 @@ const updateCommunity = createAsyncThunk<
     }
   },
 );
+
+// Toggle User Role
+const toggleUserRole = createAsyncThunk<
+  { targetUserId: number; notification: IReturnNotification },
+  { targetUserId: number },
+  { rejectValue: { notification: IReturnNotification }; state: RootState }
+>(
+  "currentCommunity/toggleUserRole",
+  async ({ targetUserId }, { rejectWithValue, getState }) => {
+    try {
+      const state = getState();
+      const { community } = state.currentCommunity;
+      await axios.patch(
+        `${import.meta.env.VITE_SERVER_URL}/api/community/${community?.id}/role/${targetUserId}`,
+        {},
+        {
+          withCredentials: true,
+        },
+      );
+      return {
+        targetUserId,
+        notification: { type: "success", message: "User role updated" },
+      };
+    } catch (e) {
+      const error = e as AxiosError<string>;
+      return rejectWithValue({
+        notification: {
+          type: "error",
+          message: error.response?.data || "Failed to update user role",
+        },
+      });
+    }
+  },
+);
 const currentCommunitySlice = createSlice({
   name: "currentCommunity",
   initialState,
@@ -202,6 +236,22 @@ const currentCommunitySlice = createSlice({
       })
       .addCase(toggleMembership.rejected, (state) => {
         state.isLoading = false;
+      })
+      // Toggle User Role
+      .addCase(toggleUserRole.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(toggleUserRole.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const { targetUserId } = action.payload;
+        const userIndex = state.community!.members.findIndex(
+          (x) => x.id === targetUserId,
+        );
+        state.community!.members[userIndex].isAdmin =
+          !state.community!.members[userIndex].isAdmin;
+      })
+      .addCase(toggleUserRole.rejected, (state) => {
+        state.isLoading = false;
       });
   },
 });
@@ -212,5 +262,6 @@ export {
   updateCommunity,
   fetchCurrentCommunity,
   toggleMembership,
+  toggleUserRole,
   createPost,
 };
