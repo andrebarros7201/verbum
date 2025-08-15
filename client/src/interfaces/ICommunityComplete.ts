@@ -1,5 +1,6 @@
 import type { IUser } from "./IUser.ts";
 import type { IPostSimple } from "./IPostSimple.ts";
+import type { ICommunityMember } from "./ICommunityMember.ts";
 
 interface ICommunityComplete {
   id: number;
@@ -7,7 +8,7 @@ interface ICommunityComplete {
   description: string;
   owner: IUser;
   posts: IPostSimple[];
-  members: { username: string; id: number; isAdmin: boolean }[];
+  members: ICommunityMember[];
   membersCount: number;
   postsCount: number;
   isAdmin: boolean;
