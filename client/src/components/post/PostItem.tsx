@@ -8,10 +8,10 @@ import { ButtonUpdatePost } from "./ButtonUpdatePost.tsx";
 
 const PostItem = () => {
   const { isLoading, post } = useSelector(
-    (state: RootState) => state.currentPost,
+    (state: RootState) => state.currentPost
   );
   const { isAuthenticated, user } = useSelector(
-    (state: RootState) => state.user,
+    (state: RootState) => state.user
   );
 
   if (isLoading) {
@@ -37,13 +37,9 @@ const PostItem = () => {
             </>
           )}
           <div className={"flex gap-4 items-center"}>
-            {isAuthenticated && (
-              <ButtonVote type="post" value={-1} id={post.id} />
-            )}
+            <ButtonVote type="post" value={-1} id={post.id} />
             <p className="text-lg">{post.votes}</p>
-            {isAuthenticated && (
-              <ButtonVote type="post" value={1} id={post.id} />
-            )}
+            <ButtonVote type="post" value={1} id={post.id} />
           </div>
           <h3 className={"font-bold text-xl"}>{post.user.username}</h3>
         </div>

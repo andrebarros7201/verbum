@@ -1,8 +1,10 @@
 import { clsx } from "clsx";
-import { useDispatch } from "react-redux";
-import type { RootDispatch } from "../../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootDispatch, RootState } from "../../redux/store";
 import { voteComment, votePost } from "../../redux/slices/currentPostSlice";
 import { setNotification } from "../../redux/slices/notificationSlice";
+import type { IReturnNotification } from "../../interfaces/IReturnNotification";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   type: "post" | "comment";
@@ -12,16 +14,31 @@ type Props = {
 
 const ButtonVote = ({ type, value, id }: Props) => {
   const dispatch = useDispatch<RootDispatch>();
+  const { isAuthenticated } = useSelector((state: RootState) => state.user);
+  const navigate = useNavigate();
 
   async function onClick() {
+    if (!isAuthenticated) {
+      navigate("/login");
+      dispatch(
+        setNotification({
+          type: "error",
+          message: "User must be logged in to vote!",
+        })
+      );
+      return;
+    }
+
     try {
       if (type === "post") {
         await dispatch(votePost({ id, value })).unwrap();
       } else {
         await dispatch(voteComment({ id, value }));
       }
-    } catch (error: any) {
-      dispatch(setNotification(error.notification));
+    } catch (e) {
+      const error = e as { notification: IReturnNotification };
+      const { notification } = error;
+      dispatch(setNotification(notification));
     }
   }
 
@@ -32,7 +49,7 @@ const ButtonVote = ({ type, value, id }: Props) => {
         {
           "bg-amber-500": value === -1,
           "bg-sky-600": value === 1,
-        },
+        }
       )}
       onClick={onClick}
     >
