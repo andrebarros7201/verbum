@@ -6,5 +6,5 @@ public class UpdateCommentDto {
     [Required]
     [MinLength(3)]
     [MaxLength(500)]
-    public string Text { get; set; }
+    public string Text { get; set; } = String.Empty;
 }
