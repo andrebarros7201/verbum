@@ -1,4 +1,8 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSlice,
+  type PayloadAction,
+} from "@reduxjs/toolkit";
 import type { ICurrentCommunitySlice } from "../../interfaces/ICurrentCommunitySlice.ts";
 import axios, { type AxiosError } from "axios";
 import type { ICommunityComplete } from "../../interfaces/ICommunityComplete.ts";
@@ -197,16 +201,16 @@ const currentCommunitySlice = createSlice({
     setFilterMembers: (state) => {
       state.filteredMembers = state.community?.members ?? [];
     },
-    filterPosts: (state, action) => {
+    filterPosts: (state, action: PayloadAction<{ searchText: string }>) => {
       const { searchText } = action.payload;
       state.filteredPosts = state.community!.posts.filter((x) =>
-        x.title.includes(searchText)
+        x.title.toLowerCase().includes(searchText.toLowerCase())
       );
     },
-    filterMembers: (state, action) => {
+    filterMembers: (state, action: PayloadAction<{ searchText: string }>) => {
       const { searchText } = action.payload;
       state.filteredMembers = state.community!.members.filter((x) =>
-        x.username.includes(searchText)
+        x.username.toLowerCase().includes(searchText.toLowerCase())
       );
     },
   },
