@@ -3,13 +3,20 @@ import { ButtonVote } from "../ui/ButtonVote";
 import type { RootState } from "../../redux/store.ts";
 import { useSelector } from "react-redux";
 import { ButtonDeleteComment } from "./ButtonDeleteComment.tsx";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Button } from "../ui/Button.tsx";
 
 type Props = {
   comment: ICommentSimple;
 };
 
 const CommentItem = ({ comment }: Props) => {
+  const path = useLocation();
+  const navigate = useNavigate();
   const { user } = useSelector((state: RootState) => state.user);
+  function handleClick() {
+    navigate(`/post/${comment.postId}`)
+  }
   return (
     <main
       className={
@@ -30,6 +37,9 @@ const CommentItem = ({ comment }: Props) => {
         {comment.author.id == user?.id && (
           <ButtonDeleteComment commentId={comment.id} />
         )}
+          {path.pathname.includes("profile") && (
+            <Button label={"Go To"} variant={"primary"} onClick={handleClick}  size="small"/>
+          )}
       </div>
       <p className={"w-full text-md text-left font-bold"}>{comment.text}</p>
     </main>
