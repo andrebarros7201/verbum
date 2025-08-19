@@ -3,7 +3,10 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setNotification } from "../redux/slices/notificationSlice.ts";
 import type { IReturnNotification } from "../interfaces/IReturnNotification.ts";
-import { fetchAllCommunities } from "../redux/slices/communitySlice.ts";
+import {
+  fetchAllCommunities,
+  setCommunityFilterList,
+} from "../redux/slices/communitySlice.ts";
 import { ButtonCreateCommunity } from "../components/Community/ButtonCreateCommunity.tsx";
 import { List } from "../components/List.tsx";
 import { ListFilter } from "../components/ListFilter.tsx";
@@ -15,6 +18,7 @@ const Communities = () => {
   useEffect(() => {
     try {
       dispatch(fetchAllCommunities()).unwrap();
+      dispatch(setCommunityFilterList());
     } catch (e) {
       const err = e as { notification: IReturnNotification };
       dispatch(setNotification(err.notification));

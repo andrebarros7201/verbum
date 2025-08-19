@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { ICommunitySimple } from "../../interfaces/ICommunitySimple.ts";
 import axios, { AxiosError } from "axios";
 import type { IReturnNotification } from "../../interfaces/IReturnNotification.ts";
@@ -22,7 +22,7 @@ const fetchAllCommunities = createAsyncThunk<
       `${import.meta.env.VITE_SERVER_URL}/api/community`,
       {
         withCredentials: true,
-      },
+      }
     );
 
     return { communities: response.data };
@@ -44,7 +44,7 @@ const joinCommunity = createAsyncThunk<
       {},
       {
         withCredentials: true,
-      },
+      }
     );
     return {
       notification: { type: "success", message: response.data },
@@ -71,7 +71,7 @@ const leaveCommunity = createAsyncThunk<
       {},
       {
         withCredentials: true,
-      },
+      }
     );
     return { notification: { type: "success", message: response.data }, id };
   } catch (e) {
@@ -95,7 +95,7 @@ const createCommunity = createAsyncThunk<
       { name, description },
       {
         withCredentials: true,
-      },
+      }
     );
     return {
       notification: {
@@ -148,10 +148,10 @@ const communitySlice = createSlice({
     setCommunityFilterList: (state) => {
       state.filteredCommunities = state.communities;
     },
-    filterCommunities: (state, action) => {
+    filterCommunities: (state, action: PayloadAction<{searchText: string}>) => {
       const { searchText } = action.payload;
       state.filteredCommunities = state.communities.filter((x) =>
-        x.name.includes(searchText),
+        x.name.toLowerCase().includes(searchText.toLowerCase())
       );
     },
   },
@@ -187,7 +187,7 @@ const communitySlice = createSlice({
       .addCase(joinCommunity.fulfilled, (state, action) => {
         state.isLoading = false;
         const communityIndex = state.communities.findIndex(
-          (x) => x.id === action.payload.id,
+          (x) => x.id === action.payload.id
         );
 
         state.communities[communityIndex].isMember = true;
@@ -204,7 +204,7 @@ const communitySlice = createSlice({
       .addCase(leaveCommunity.fulfilled, (state, action) => {
         state.isLoading = false;
         const communityIndex = state.communities.findIndex(
-          (x) => x.id === action.payload.id,
+          (x) => x.id === action.payload.id
         );
 
         state.communities[communityIndex].isMember = false;
@@ -216,11 +216,13 @@ const communitySlice = createSlice({
   },
 });
 
-const { clearCommunities, filterCommunities } = communitySlice.actions;
+const { clearCommunities, filterCommunities, setCommunityFilterList } =
+  communitySlice.actions;
 export {
   communitySlice,
   clearCommunities,
   filterCommunities,
+  setCommunityFilterList,
   createCommunity,
   fetchAllCommunities,
   leaveCommunity,
