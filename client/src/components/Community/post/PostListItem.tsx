@@ -11,6 +11,7 @@ type Props = {
 
 const PostListItem = ({ post }: Props) => {
   const { user } = useSelector((state: RootState) => state.user);
+  const {community} = useSelector((state:RootState) => state.currentCommunity)
 
   return (
     <div
@@ -20,7 +21,7 @@ const PostListItem = ({ post }: Props) => {
     >
       <div className={"flex gap-4 items-center justify-between w-full"}>
         <h3 className={"capitalize font-bold text-xl"}>{post.title}</h3>
-        {user?.id === post.user.id && (
+        {(user?.id === post.user.id || community?.isAdmin) && (
           <DropdownMenu>
             <ButtonDeletePost id={post.id} communityId={post.communityId} />
           </DropdownMenu>

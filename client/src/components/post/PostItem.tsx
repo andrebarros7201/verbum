@@ -13,6 +13,7 @@ const PostItem = () => {
   const { isAuthenticated, user } = useSelector(
     (state: RootState) => state.user
   );
+  const {community} = useSelector((state:RootState) => state.currentCommunity)
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -26,15 +27,13 @@ const PostItem = () => {
         }
       >
         <div className={"w-full flex gap-4 items-center flex-wrap"}>
+          { ((user?.id === post.user.id) || community?.isAdmin) && <ButtonDeletePost id={post.id} communityId={post.community.id} />}
           {user?.id === post.user.id && (
-            <>
-              <ButtonDeletePost id={post.id} communityId={post.community.id} />
               <ButtonUpdatePost
                 postId={post.id}
                 text={post.text}
                 title={post.title}
               />
-            </>
           )}
           <div className={"flex gap-4 items-center"}>
             <ButtonVote type="post" value={-1} id={post.id} />

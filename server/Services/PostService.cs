@@ -1,3 +1,4 @@
+using System.Net.NetworkInformation;
 using Verbum.API.DTOs.Comment;
 using Verbum.API.DTOs.Community;
 using Verbum.API.DTOs.Post;
@@ -120,13 +121,19 @@ public class PostService : IPostService {
             return ServiceResult<bool>.Error(ServiceResultStatus.NotFound, "Post not found!");
         }
 
-        if (user.Id != post.UserId) {
-            return ServiceResult<bool>.Error(ServiceResultStatus.Unauthorized, "User is not the owner of the post!");
+        // Get the relation between user and posts community
+        var uc = await _userCommunityRepository.GetUserCommunity(user.Id, post.CommunityId);
+
+        if (uc != null && uc.IsAdmin == false) {
+            return ServiceResult<bool>.Error(ServiceResultStatus.Unauthorized, "User is not authorized!");
         }
 
-        await _postRepository.DeleteAsync(postId);
+        if (user.Id == post.UserId || (uc != null && uc.IsAdmin == true)) {
+            await _postRepository.DeleteAsync(postId);
+            return ServiceResult<bool>.Success(true);
+        }
 
-        return ServiceResult<bool>.Success(true);
+        return ServiceResult<bool>.Error(ServiceResultStatus.Unauthorized, "User is not the owner of the post!");
     }
 
     public async Task<ServiceResult<PostCompleteDto>> PostVote(int userId, int postId, int value) {
