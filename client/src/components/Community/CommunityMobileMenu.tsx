@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../../redux/store.ts";
 import { CommunityMembersList } from "./CommunityMembersList.tsx";
 import { ListFilter } from "../ListFilter.tsx";
+import { ButtonDeleteCommunity } from "./ButtonDeleteCommunity.tsx";
 
 const CommunityMobileMenu = () => {
   const { user, isAuthenticated } = useSelector(
@@ -17,11 +18,14 @@ const CommunityMobileMenu = () => {
   return (
     <MobileMenu>
       {user?.id == community?.owner.id && (
+        <>
         <ButtonUpdateCommunity
           id={community!.id}
           name={community!.name}
           description={community!.description}
-        />
+          />
+          <ButtonDeleteCommunity/>
+          </>
       )}
       {(community?.isAdmin || community?.isOwner) && <CommunityMembersList />}
       <ListFilter type={"post"} />

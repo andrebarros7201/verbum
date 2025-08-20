@@ -69,11 +69,25 @@ public class CommunityRepository : ICommunityRepository {
     }
 
     public async Task<bool> DeleteAsync(int id) {
-        var community = await _db.Communities.FindAsync(id);
+        var community = await _db.Communities.Include(c => c.Posts).ThenInclude(p => p.Votes).Include(c => c.Posts).ThenInclude(p => p.Comments).ThenInclude(c => c.Votes).FirstOrDefaultAsync(c => c.Id == id);
         if (community == null) {
             return false;
         }
 
+        // For each post in the community
+        foreach (var post in community.Posts)
+        {
+            // For each comment in each post
+            foreach (var comment in post.Comments)
+            {
+                // Delete all the Votes
+                _db.VoteComments.RemoveRange(comment.Votes);
+            }
+            _db.Comments.RemoveRange(post.Comments);
+            _db.VotePosts.RemoveRange(post.Votes);
+        }
+
+        _db.Posts.RemoveRange(community.Posts);
         _db.Communities.Remove(community);
         await _db.SaveChangesAsync();
         return true;

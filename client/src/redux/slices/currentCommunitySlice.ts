@@ -150,6 +150,30 @@ const updateCommunity = createAsyncThunk<
   }
 );
 
+const deleteCommunity = createAsyncThunk<
+  { notification: IReturnNotification },
+  void,
+  { rejectValue: { notification: IReturnNotification }; state: RootState }
+>("currentCommunity/delete", async (_, { rejectWithValue, getState }) => {
+  try {
+    const state = getState();
+    const { community } = state.currentCommunity;
+    const response = await axios.delete(
+      `${import.meta.env.VITE_SERVER_URL}/api/community/${community!.id}`,
+      { withCredentials: true }
+    );
+    return { notification: { type: "success", message: response.data } };
+  } catch (e) {
+    const error = e as AxiosError<string>;
+    return rejectWithValue({
+      notification: {
+        type: "error",
+        message: error.response?.data || "Failed to delete community",
+      },
+    });
+  }
+});
+
 // Toggle User Role
 const toggleUserRole = createAsyncThunk<
   { targetUserId: number; notification: IReturnNotification },
@@ -296,6 +320,7 @@ export {
   filterMembers,
   filterPosts,
   updateCommunity,
+  deleteCommunity,
   fetchCurrentCommunity,
   toggleMembership,
   toggleUserRole,
